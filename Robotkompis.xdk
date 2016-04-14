@@ -5,7 +5,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "jsapp/template-phaser-portrait/sample.zip",
       "projectGuid": "70ec05c3-72ca-4afd-9660-4eb51cf28ea0",
-      "lastModifiedDate": 1459424456208,
+      "lastModifiedDate": 1460023336531,
       "creationDate": 1456497236762
     },
     "sourceDirectory": "www",
@@ -90,7 +90,7 @@
         "gitref": "",
         "name": "Splashscreen",
         "description": "Cordova Splashscreen Plugin",
-        "checksum": "170efb68"
+        "checksum": "a7fdb6d9"
       }
     ],
     "buildConfigurations": {
