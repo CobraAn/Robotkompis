@@ -4,7 +4,31 @@ html{
 body{
     height: 100%;
 }
-#test {
+#mainMenu {
     background: #9FCFDF;
     height: 100%;
+}
+
+#startRobot {
+	height: 50%;
+
+	position: absolute;
+	clip: rect(0px,150px,110px,0px);
+	left: 50%;
+	top: 10%;
+	z-index: 0;
+
+}
+#startButton {
+	position: absolute;
+	left: 50%;
+	top: 40%;
+	z-index: 1;
+}
+
+#guideButton {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
 }
