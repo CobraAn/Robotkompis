@@ -13,22 +13,26 @@ body{
 	height: 50%;
 
 	position: absolute;
-	clip: rect(0px,150px,110px,0px);
-	left: 50%;
-	top: 10%;
+	/*clip: rect(0px,150px,110px,0px);*/
+	left: 69%;
+	top: 9%;
 	z-index: 0;
 
 }
+.btn {
+	width: 10em; height: 5em;
+}
 #startButton {
 	position: absolute;
-	left: 50%;
-	top: 40%;
+	
+	left: 45%;
+	top: 30%;
 	z-index: 1;
 }
 
 #guideButton {
 	position: absolute;
-	left: 50%;
-	top: 50%;
+	left: 45%;
+	top: 45%;
 	z-index: 1;
 }

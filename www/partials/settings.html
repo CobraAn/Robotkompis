@@ -13,17 +13,22 @@
     <!-- Load bootstrap js -->
     <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     
-    <link rel="stylesheet" href="../css/mainMenuStyle.css">
+    <link rel="stylesheet" href="../css/settingsStyle.css">
 </head>  
 
 
-<div class="col-sm-12 " id="mainMenu">
-	<div class="form-group" id="startButton">
-	<button class="btn btn-warning" >STARTA</button>
+<div class="col-sm-12 " id="settings">
+    <div class="form-group" id="volymLabel">
+    <label>Spelvolym </label>
+    <input type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
     </div>
 
-    <div class="form-group" id="guideButton">
-    <button class="btn btn-warning" >GUIDE</button>
-	</div>
-	<img src="../images/while/While1.svg" id="startRobot" onmouseover="this.src='../images/while/While3.svg';" onmouseout="this.src='../images/while/While1.svg';">
+    <div class="form-group" id="musikVolymLabel">
+        <label>Musikvolym </label>
+    <input type="range" min="0" max="50" value="0" step="5" onchange="showValue(this.value)" />
+    </div>
+
+    <div class="form-group" id="quitBtn">
+        <button class="btn btn-success">AVSLUTA</button>
+    </div>
 </div>

@@ -47,6 +47,7 @@
     
     <!-- Load jquery -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
     
     <!-- Load angular and angular ui router -->
     <script src="bower_components/angular/angular.js"></script>
@@ -67,6 +68,10 @@
 </head>
 <body>
     <!-- Main canvas for rendering game stage -->
+    <ng-include src="'partials/mainMenu.html'"></ng-include>
+    <div>
+        <img src="settingIcon.png"/>
+    </div> 
     <div id="game"></div>
 </body>
 </html>
