@@ -19,12 +19,12 @@
 
 <div class="col-sm-12 " id="mainMenu">
 	<div class="form-group" id="startButton">
-	<button class="btn btn-success" >STARTA</button>
+	<button class="btn btn-success" ><p>Starta</p></button>
 	<!--<img src="settingIcon.png"/>-->
     </div>
 
     <div class="form-group" id="guideButton">
-    <button class="btn btn-warning" >GUIDE</button>
+    <button class="btn btn-warning" ><p>GUIDE</p></button>
 	</div>
 	<img src="../images/While/while1.svg" id="startRobot" onmouseover="this.src='../images/While/while3.svg';" onmouseout="this.src='../images/While/while1.svg';">
 </div>

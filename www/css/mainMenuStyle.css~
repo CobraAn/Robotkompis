@@ -37,3 +37,4 @@ body{
 	z-index: 1;
 }
 
+p { font-family: action_man; }
