@@ -1,0 +1,205 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Madness</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+// This is a GAME OBJECT FACTORY. 
+var game = new Phaser.Game(1024, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var graphics = new Phaser.Graphics(game, 0, 0);
+ 
+// var player;
+
+// 1024x600
+function preload() {
+    // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600. 
+    // Background
+    game.load.image('bg', 'assets/1024_600_bg.jpg');
+
+    game.load.tilemap('tilemap', 'assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
+    
+    // Tilemap blocks
+    game.load.image('ChestBlue', 'assets/ChestBlue.png');
+    game.load.image('rocks', 'assets/rocks.png');
+    game.load.image('berryBush', 'assets/qubodup-bush_berries_0.png');
+    game.load.image('BigTree', 'assets/tree2-final.png');
+    game.load.image('signpost-outsidestuff', 'assets/signpost-outsidestuff.png');
+    game.load.image('Tile_14', 'assets/PNG/Tile_14.png');
+    game.load.image('grassTiles', 'assets/grass_tiles.png');
+    game.load.image('Object_1', 'assets/PNG/Object_1.png');
+    
+    // Commands 
+    game.load.image('up_com', 'assets/up_60.png');
+    game.load.image('walk_com', 'assets/walk_60.png');
+    game.load.image('fly_com', 'assets/fly.png');
+
+    game.load.image('new', 'assets/new.png');
+
+    // Menu Buttons
+    game.load.image('run_btn', 'assets/run_button.png');
+    game.load.image('stop_btn', 'assets/stop_50.png');
+    game.load.image('restart_btn', 'assets/restart_50.png');
+    game.load.image('sound_btn', 'assets/sound_50.png');
+    game.load.image('home_btn', 'assets/home_50.png');
+    game.load.image('help_btn', 'assets/help_50.png');
+
+    // Playable character
+    game.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
+    
+
+}
+
+var map;
+var layer0;
+var layer1;
+var layer2;
+var layer3;
+var player;
+
+function create() {
+    // Later on used to create gravity. 
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    
+    game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
+
+    // ADD COMMAND LINE AND RUN LINE !
+
+    // F-king BLITTING !!!
+    graphics = game.add.graphics(0, 0);
+
+
+    // Run-file
+    /*
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(30, 20, 950, 350);
+    graphics.endFill();
+    */
+
+    // Command Line
+    
+    // Command Line
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(10, 500, 820, 80);
+    graphics.endFill();
+
+    // Block Library
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(840, 500, 170, 80);
+    graphics.endFill();
+
+    game.add.sprite(920, 500, 'new');
+    
+    // SPRITES // 
+
+    // Tilemap !
+
+    map = game.add.tilemap('tilemap');
+    // FORMAT // mad.addTilesetImage('json_name', 'name from load');
+    map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
+    map.addTilesetImage('Object_1', 'Object_1');
+    map.addTilesetImage('rocks', 'rocks');
+    map.addTilesetImage('ChestBlue', 'ChestBlue');
+    map.addTilesetImage('Tile_14', 'Tile_14');
+    map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
+    map.addTilesetImage('tree2-final', 'BigTree');
+    map.addTilesetImage('berry_bush', 'berryBush');
+    // Am having issues blitting rocks and sprite properly. Check LAYERS ! 
+    
+    
+    //map.addTilesetImage('sky', 'sky');
+    
+    layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
+    layer1 = map.createLayer('Ground');
+    layer2 = map.createLayer('Objects');
+
+    player = game.add.sprite(200, game.world.height - 300, 'switch');
+    game.physics.arcade.enable(player);
+    player.body.collideWorldBounds = true;
+
+    layer3 = map.createLayer('Above');
+    layer0.resizeWorld();
+    
+        // Blocks
+    // game.add.sprite(40, game.world.height - 100, 'block1');
+    /*
+    game.add.sprite(40, game.world.height - 330, 'block1');
+    game.add.sprite(40, game.world.height - 330, 'block1');
+    */
+    // Sprites 
+    
+    //game.physics.enable(player);
+    walk = game.add.sprite(20, game.world.height - 90, 'walk_com');
+    jump = game.add.sprite(90, game.world.height - 90, 'up_com');
+    fly = game.add.sprite(850, game.world.height - 90, 'fly_com');
+
+    // Menu buttons
+    run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
+    //stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
+    restart_btn = game.add.sprite(965, game.world.height - 350, 'restart_btn');
+    home_btn = game.add.sprite(965, game.world.height - 590, 'home_btn');
+    sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
+    help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
+
+    // Some kind of way to get pointer action to work !
+    // cursors = game.input.pointer;
+    cursors = game.input.keyboard.createCursorKeys();
+    
+}
+function update() {
+
+    // LET'S UPDATE !
+    player.body.velocity.x = 0;
+    
+    if (cursors.left.isDown)
+    {
+        //  Move to the left
+        player.body.velocity.x = -150;
+
+        // player.animations.play('left');
+    }
+    else if (cursors.right.isDown)
+    {
+        //  Move to the right
+        player.body.velocity.x = 150;
+
+        // player.animations.play('right');
+    }
+    //  Allow the player to jump if they are touching the ground.
+    else if (cursors.up.isDown)
+    {
+        player.body.velocity.y = -150;
+    }
+    else if (cursors.down.isDown)
+    {
+        player.body.velocity.y = 150;
+    }
+    else
+    {
+        //  Stand still
+        // player.animations.stop();
+        player.body.velocity.x = 0;
+        player.body.velocity.y = 0;
+        player.frame = 4;
+    }
+    
+}
+
+
+
+</script>
+
+</body>
+</html>
