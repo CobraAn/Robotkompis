@@ -15,6 +15,7 @@ RobotKompis.Preloader.prototype = {
 		this.titleText.anchor.setTo(0.5, 0.5);
         
         this.load.image('titleScreen', '../../images/startBG.png');
+        this.load.image('cogwheel', '../../images/settingIcon.png');
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
 	},
 	create: function () {
