@@ -43,7 +43,11 @@ function preload() {
     game.load.image('walk_com', 'assets/walk_60.png');
     game.load.image('fly_com', 'assets/fly.png');
 
+    // New Command Button
     game.load.image('new', 'assets/new.png');
+
+    //Command line :D
+    game.load.image('com_line', 'assets/com_line.png');
 
     // Menu Buttons
     game.load.image('run_btn', 'assets/run_button.png');
@@ -66,15 +70,23 @@ var layer2;
 var layer3;
 var player;
 
+var run_btn;
+var command_line = new Array(); // The command line is an empty array.
+var walk;
+var jump;
+var fly;
+var dragStartPosition;
+var currentCommand;
+
 function create() {
     // Later on used to create gravity. 
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    
+    //game.physics.arcade.gravity.y = 200;
+
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
     // ADD COMMAND LINE AND RUN LINE !
 
-    // F-king BLITTING !!!
     graphics = game.add.graphics(0, 0);
 
 
@@ -87,12 +99,12 @@ function create() {
     */
 
     // Command Line
-    
-    // Command Line
+    /*
     graphics.lineStyle(0);
     graphics.beginFill(0xFFFF0B);
     graphics.drawRect(10, 500, 820, 80);
     graphics.endFill();
+    */
 
     // Block Library
     graphics.lineStyle(0);
@@ -104,9 +116,13 @@ function create() {
     
     // SPRITES // 
 
+    // I somehow want this: var test = game.add.group();
+
     // Tilemap !
 
     map = game.add.tilemap('tilemap');
+
+    // for item in the pack: Add tilesetimage! Must make sure the names are the same!
     // FORMAT // mad.addTilesetImage('json_name', 'name from load');
     map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
     map.addTilesetImage('Object_1', 'Object_1');
@@ -117,8 +133,14 @@ function create() {
     map.addTilesetImage('tree2-final', 'BigTree');
     map.addTilesetImage('berry_bush', 'berryBush');
     // Am having issues blitting rocks and sprite properly. Check LAYERS ! 
-    
-    
+
+    // This thing is interesting for adding TilesetImages
+    // var images = game.cache.getKeys(Phaser.Cache.IMAGE);
+
+    // Command_line: 820 x 80 px
+    com_line = game.add.sprite(10, 500, 'com_line');
+    //game.physics.arcade.enable(com_line);
+
     //map.addTilesetImage('sky', 'sky');
     
     layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
@@ -127,6 +149,7 @@ function create() {
 
     player = game.add.sprite(200, game.world.height - 300, 'switch');
     game.physics.arcade.enable(player);
+    // Does this line below really do that much? I assume it stops the sprite from going outside the window.
     player.body.collideWorldBounds = true;
 
     layer3 = map.createLayer('Above');
@@ -140,16 +163,50 @@ function create() {
     */
     // Sprites 
     
-    //game.physics.enable(player);
-    walk = game.add.sprite(20, game.world.height - 90, 'walk_com');
-    jump = game.add.sprite(90, game.world.height - 90, 'up_com');
-    fly = game.add.sprite(850, game.world.height - 90, 'fly_com');
+    //commandLine = game.add.group();
+    //commandLibrary = game.add.group();
+    // PRE-LOADED COMMANDS !
+    //commandLine.create(20, game.world.height-90, 'walk');
+    walk = game.add.sprite(20, 510, 'walk_com');
+    walk.inputEnabled = true;
+    //  Allow dragging - the 'true' parameter will make the sprite snap to the center
+    walk.input.enableDrag(true);
+
+    walk.events.onDragStart.add(savePosition); // this
+
+    // sprite.savePosition ?
+    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not.
+    walk.collideWorldBounds = true;
+
+    command_line.push(walk);
+
+
+    jump = game.add.sprite(90, 510, 'up_com');
+    jump.inputEnabled = true;
+    jump.input.enableDrag(true);
+    //sprite.events.onDragStop.add(stopDrag, this);
+    command_line.push(jump);
+
+
+    fly = game.add.sprite(850, 510, 'fly_com');
+    fly.inputEnabled = true;
+    fly.input.enableDrag(true);
+    //fly.events.onDragStop.add(commandAdd(fly), this);
+
+    //game.physics.enable([walk, jump, com_line, fly], Phaser.Physics.ARCADE);
+    //walk.collideWorldBounds = true;
+    //jump.collideWorldBounds = true;
+    //fly.collideWorldBounds = true;
+    //com_line.immovable = true;
+
+    // game.physics.arcade.overlap(sprite, sprite2, function() {  // ... do something here});
+
 
     // Menu buttons
-    
+
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
     run_btn.inputEnabled = true;
-    
+
     stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
     stop_btn.inputEnabled = true;
     stop_btn.visible = false;
@@ -159,16 +216,23 @@ function create() {
     sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
     help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
 
-    // Some kind of way to get pointer action to work !
-    // cursors = game.input.pointer;
+    //
+
+
+    // Pointer is active by default and does not need to be turned on by game.input :)
     cursors = game.input.keyboard.createCursorKeys();
     
-    run_btn.events.onInputDown.add(listener, this); 
+    run_btn.events.onInputDown.add(listener, this);
     stop_btn.events.onInputDown.add(listenerStop, this);
-    
+
 }
 function update() {
+    /*
+    for (i = 0, i < command_line.length, i++) {
+        //Render command_line
 
+    }
+    */
     // LET'S UPDATE !
     player.body.velocity.x = 0;
     
@@ -191,8 +255,7 @@ function update() {
     {
         player.body.velocity.y = -150;
     }
-    else if (cursors.down.isDown)
-    {
+    else if (cursors.down.isDown){
         player.body.velocity.y = 150;
     }
     else
@@ -204,23 +267,60 @@ function update() {
         player.frame = 4;
     }
     
+}// Might be worth using a Phaser group instead of a Javascript Array.
 
-    
+// AddAt
+
+function commandAdd(sprite, pointer) {
+    /*
+    var commandLineIndex;
+    var withoutOffset;
+    if (command.overlap(com_line)) {
+        if (dragStartPosition.y == 510) {
+            commandLineIndex = (dragStartPosition - 20) % 70;
+            if (com_line[commandLineIndex] == sprite) {
+                command_line.splice(commandLineIndex, 1);
+            }
+        }
+        withoutOffset = command.position - 20; // Get the commands without offsets.
+        commandLineIndex = withoutOffset % 70; // Each command is 60 px wide, with 10 px between it to the next.
+        command_line.splice(commandLineIndex, 0, command); // splice.
+        // RENDER ! commandLine
+        commandLineRender();
+    }
+    else {
+        */
+    sprite.position = dragStartPosition;
+    //}
+
+
 }
 function listener () {
-    stop_btn.visible = true; 
+    stop_btn.visible = true;
     run_btn.visible = false;
-    
-    
+
+
 }
-    //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget. 
+    //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
 function listenerStop () {
-    stop_btn.visible = false; 
+    stop_btn.visible = false;
     run_btn.visible = true;
     player.reset(200, 300);
-    
+
 }
 
+
+function savePosition(sprite, pointer) {
+    dragStartPosition = sprite.position;
+}
+
+/*
+function commandLineRender () {
+    for (i = 0, i < com_line.length, i++) {
+        com_line[i].x = 20 + (70 * i);
+    }
+}
+*/
 
 
 </script>
