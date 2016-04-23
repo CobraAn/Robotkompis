@@ -295,24 +295,32 @@ function commandAdd(sprite, pointer) {
 
 
 }
+    //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play. 
 function listener () {
     stop_btn.visible = true;
     run_btn.visible = false;
-
-
+    //kollar igenom command_line, för tillfärllet flyttar den robboten 80px till höger när en walk kommer upp i arrayen. 
+    for (i = 0; i < command_line.length; i++) { 
+        if (command_line[i] == walk) {
+            player.reset((player.x + 80), player.y);
+            
+        }
+        
+    }
 }
-    //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
+    
+    //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
 function listenerStop () {
     stop_btn.visible = false;
     run_btn.visible = true;
     player.reset(200, 300);
-
 }
 
 
 function savePosition(sprite, pointer) {
     dragStartPosition = sprite.position;
 }
+
 
 /*
 function commandLineRender () {
