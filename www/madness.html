@@ -146,8 +146,14 @@ function create() {
     fly = game.add.sprite(850, game.world.height - 90, 'fly_com');
 
     // Menu buttons
+    
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
-    //stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
+    run_btn.inputEnabled = true;
+    
+    stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
+    stop_btn.inputEnabled = true;
+    stop_btn.visible = false;
+
     restart_btn = game.add.sprite(965, game.world.height - 350, 'restart_btn');
     home_btn = game.add.sprite(965, game.world.height - 590, 'home_btn');
     sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
@@ -156,6 +162,9 @@ function create() {
     // Some kind of way to get pointer action to work !
     // cursors = game.input.pointer;
     cursors = game.input.keyboard.createCursorKeys();
+    
+    run_btn.events.onInputDown.add(listener, this); 
+    stop_btn.events.onInputDown.add(listenerStop, this);
     
 }
 function update() {
@@ -194,6 +203,21 @@ function update() {
         player.body.velocity.y = 0;
         player.frame = 4;
     }
+    
+
+    
+}
+function listener () {
+    stop_btn.visible = true; 
+    run_btn.visible = false;
+    
+    
+}
+    //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget. 
+function listenerStop () {
+    stop_btn.visible = false; 
+    run_btn.visible = true;
+    player.reset(200, 300);
     
 }
 
