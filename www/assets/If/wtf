@@ -1,0 +1,46 @@
+Tilemancer 0.1.0
+
+Color 173 78 78
+PaletteSave1 
+PaletteSave2 
+FileSave1 \Users\Edvino\Documents\MVK\Bilder\karaktärsbilder\If
+FileSave2 wtf
+Indexed 0
+Size 32
+Camera 0 0
+Node {
+Name blend.lua
+Position 234.5 75.5
+Parameter 0 0 5 0
+Parameter 100 0 100 0
+}
+Node {
+Name lighting.lua
+Position 240 98.5
+Parameter -22 -1 -1 0
+Parameter 10 0 100 0
+}
+Node {
+Name lighting.lua
+Position 240 98.5
+Parameter -22 -1 -1 0
+Parameter 10 0 100 0
+}
+Node {
+Name lighting.lua
+Position 240 98.5
+Parameter -22 -1 -1 0
+Parameter 10 0 100 0
+}
+Node {
+Name lighting.lua
+Position 240 98.5
+Parameter -22 -1 -1 0
+Parameter 10 0 100 0
+}
+Node {
+Name lighting.lua
+Position 251.999 115.466
+Parameter -22 -1 -1 0
+Parameter 10 0 100 0
+}
