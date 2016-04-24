@@ -46,7 +46,7 @@ function preload() {
     // New Command Button
     game.load.image('new', 'assets/new.png');
 
-    //Command line :D 
+    //Command line :D
     game.load.image('com_line', 'assets/com_line.png');
 
     // Menu Buttons
@@ -71,8 +71,8 @@ var layer3;
 var player;
 
 var run_btn;
-var command_line = new Array(); // The command line is an empty array. 
-var walk; 
+var command_line = new Array(); // The command line is an empty array.
+var walk;
 var jump;
 var fly;
 var dragStartPosition;
@@ -82,7 +82,7 @@ function create() {
     // Later on used to create gravity. 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //game.physics.arcade.gravity.y = 200;
-    
+
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
     // ADD COMMAND LINE AND RUN LINE !
@@ -97,7 +97,7 @@ function create() {
     graphics.drawRect(30, 20, 950, 350);
     graphics.endFill();
     */
-    
+
     // Command Line
     /*
     graphics.lineStyle(0);
@@ -135,12 +135,12 @@ function create() {
     // Am having issues blitting rocks and sprite properly. Check LAYERS ! 
 
     // This thing is interesting for adding TilesetImages
-    // var images = game.cache.getKeys(Phaser.Cache.IMAGE); 
-    
+    // var images = game.cache.getKeys(Phaser.Cache.IMAGE);
+
     // Command_line: 820 x 80 px
     com_line = game.add.sprite(10, 500, 'com_line');
     //game.physics.arcade.enable(com_line);
-    
+
     //map.addTilesetImage('sky', 'sky');
     
     layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
@@ -149,7 +149,7 @@ function create() {
 
     player = game.add.sprite(200, game.world.height - 300, 'switch');
     game.physics.arcade.enable(player);
-    // Does this line below really do that much? I assume it stops the sprite from going outside the window. 
+    // Does this line below really do that much? I assume it stops the sprite from going outside the window.
     player.body.collideWorldBounds = true;
 
     layer3 = map.createLayer('Above');
@@ -174,10 +174,10 @@ function create() {
 
     walk.events.onDragStart.add(savePosition); // this
 
-    // sprite.savePosition ? 
-    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not. 
+    // sprite.savePosition ?
+    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not.
     walk.collideWorldBounds = true;
-    
+
     command_line.push(walk);
 
 
@@ -194,28 +194,37 @@ function create() {
     //fly.events.onDragStop.add(commandAdd(fly), this);
 
     //game.physics.enable([walk, jump, com_line, fly], Phaser.Physics.ARCADE);
-    //walk.collideWorldBounds = true; 
+    //walk.collideWorldBounds = true;
     //jump.collideWorldBounds = true;
     //fly.collideWorldBounds = true;
-    //com_line.immovable = true; 
+    //com_line.immovable = true;
 
     // game.physics.arcade.overlap(sprite, sprite2, function() {  // ... do something here});
 
 
     // Menu buttons
+
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
-    //stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
+    run_btn.inputEnabled = true;
+
+    stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
+    stop_btn.inputEnabled = true;
+    stop_btn.visible = false;
+
     restart_btn = game.add.sprite(965, game.world.height - 350, 'restart_btn');
     home_btn = game.add.sprite(965, game.world.height - 590, 'home_btn');
     sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
     help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
 
     //
-    
+
 
     // Pointer is active by default and does not need to be turned on by game.input :)
     cursors = game.input.keyboard.createCursorKeys();
     
+    run_btn.events.onInputDown.add(listener, this);
+    stop_btn.events.onInputDown.add(listenerStop, this);
+
 }
 function update() {
     /*
@@ -258,7 +267,7 @@ function update() {
         player.frame = 4;
     }
     
-}// Might be worth using a Phaser group instead of a Javascript Array. 
+}// Might be worth using a Phaser group instead of a Javascript Array.
 
 // AddAt
 
@@ -272,10 +281,10 @@ function commandAdd(sprite, pointer) {
             if (com_line[commandLineIndex] == sprite) {
                 command_line.splice(commandLineIndex, 1);
             }
-        }  
-        withoutOffset = command.position - 20; // Get the commands without offsets.  
+        }
+        withoutOffset = command.position - 20; // Get the commands without offsets.
         commandLineIndex = withoutOffset % 70; // Each command is 60 px wide, with 10 px between it to the next.
-        command_line.splice(commandLineIndex, 0, command); // splice. 
+        command_line.splice(commandLineIndex, 0, command); // splice.
         // RENDER ! commandLine
         commandLineRender();
     }
@@ -283,6 +292,21 @@ function commandAdd(sprite, pointer) {
         */
     sprite.position = dragStartPosition;
     //}
+
+
+}
+function listener () {
+    stop_btn.visible = true;
+    run_btn.visible = false;
+
+
+}
+    //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
+function listenerStop () {
+    stop_btn.visible = false;
+    run_btn.visible = true;
+    player.reset(200, 300);
+
 }
 
 
