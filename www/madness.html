@@ -45,6 +45,8 @@ function preload() {
 
     // New Command Button
     game.load.image('new', 'assets/new.png');
+    game.load.image('trash_100', 'assets/trash_100.png');
+    game.load.image('trash_50', 'assets/trash_50.png');
 
     //Command line :D
     game.load.image('com_line', 'assets/com_line.png');
@@ -86,6 +88,12 @@ var oldPosX; // oldPosY doesn't exist because it's always 510.
 var newPosX; 
 var commandLineIndex;
 
+var levelCommands = new Array();
+var newCommand;
+
+var new_btn;
+var trash_50;
+var trash_100;
 
 function create() {
     // Later on used to create gravity. 
@@ -96,13 +104,6 @@ function create() {
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
     graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity. 
-
-    // Block Library
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(840, 500, 170, 80);
-    graphics.endFill();
-    game.add.sprite(920, 500, 'new');
 
     map = game.add.tilemap('tilemap');
  // for item in the pack: Add tilesetimage! Must make sure the names are the same!
@@ -129,6 +130,19 @@ function create() {
     layer3 = map.createLayer('Above');
     layer0.resizeWorld();
     
+    // Block Library
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(840, 500, 170, 80);
+    graphics.endFill();
+
+    new_btn = game.add.sprite(920, 500, 'new');
+    new_btn.inputEnabled = true;
+    new_btn.events.onInputDown.add(newCycle, this);
+    trash_50 = game.add.sprite(965, 430, 'trash_50');
+    trash_100 = game.add.sprite(915, 380, 'trash_100');
+    trash_100.visible = false; 
+
     // Command_line dimensions: 820 x 80 px
     com_line = game.add.sprite(10, 500, 'com_line');
 
@@ -157,7 +171,10 @@ function create() {
     fly.input.enableDrag(true);
     fly.events.onDragStart.add(savePosition, this); // this
     fly.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
+    newCommand = fly;
 
+    // Add levelCommands and their SPRITE KEYS
+    levelCommands.push('walk_com', 'up_com', 'fly_com');
     // Menu buttons
 
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
@@ -221,6 +238,9 @@ function commandAdd(sprite, pointer) {
     if (pointer.y > 510 && pointer.y < 590) {
         if (oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
             command_line.splice(commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+        } 
+        else {
+            addNew(sprite.key);
         }
         var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire. 
         commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing). 
@@ -228,9 +248,35 @@ function commandAdd(sprite, pointer) {
         command_line.splice(commandLineIndex, 0, sprite); // Add command to commandLine
         commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
     }
+    // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
+    else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
+          //trash_100.visible = true;
+          //Some kind of timer. game.time.now
+        if (oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
+            command_line.splice(commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+        } else { // Add it back to new, you pleb!
+            addNew(sprite.key);
+        }
+        sprite.kill();
+    }
     else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
         sprite.reset(oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510. 
     }
+}
+function addNew(sprite_key) {
+    var sprite2 = game.add.sprite(850, 510, sprite_key);
+    sprite2.inputEnabled = true;
+    sprite2.input.enableDrag(true);
+    sprite2.events.onDragStart.add(savePosition, this); // this
+    sprite2.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
+    newCommand = sprite2;
+}
+
+function newCycle(sprite) {
+    var newSpriteKey = levelCommands.shift();
+    levelCommands.push(newSpriteKey);
+    newCommand.destroy(); // Kill the old new Command sprite.
+    addNew(newSpriteKey);
 }
 
 //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play. 
