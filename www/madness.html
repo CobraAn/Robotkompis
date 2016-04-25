@@ -286,18 +286,22 @@
 
             //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
             function listener () {
+                var noWalk = 0;
+                var noJump = 0;
                 console.log(command_line.length);
                 stop_btn.visible = true;
                 run_btn.visible = false;
                 tween = game.add.tween(player);
                 for (var i = 0; i <= command_line.length; i++) {
-                    if (command_line[i] == walk) {
-                        console.log("adding walk command to tween");
-                        tween.to({ x: player.x + 80}, 500, Phaser.Easing.Linear.None, true);
-                    }
-                    else if (command_line[i] == jump) {
-                        console.log("adding jump command to tween");
-                        tween.to({ y: player.y - 80}, 500, Phaser.Easing.Linear.None, true);
+                    if (typeof command_line[i] != 'undefined' ) {
+                        if (command_line[i].key === 'walk_com') {
+                            noWalk++;
+                            tween.to({x: player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, true);
+                        }
+                        else if (command_line[i].key === 'up_com') {
+                            noJump++;
+                            tween.to({y: player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, true);
+                        }
                     }
                 }
                 tween.start();
