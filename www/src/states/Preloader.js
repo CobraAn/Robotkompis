@@ -13,7 +13,7 @@ RobotKompis.Preloader.prototype = {
 		this.load.setPreloadSprite(this.preloadBar);
 		this.titleText = this.add.image(this.world.centerX, this.world.centerY - 220, 'titleimage');
 		this.titleText.anchor.setTo(0.5, 0.5);
-        
+        this.load.image('kalleButton', '/../../starta.png', 193, 71);
         this.load.image('titleScreen', '../../images/startBG.png');
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
 	},
