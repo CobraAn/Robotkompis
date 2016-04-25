@@ -77,9 +77,6 @@ var run_btn;
 // Command_line array which contains all the commands. 
 var command_line = new Array(); // The command line is an empty array.
 
-// Commands. Going to be built away later on. 
-var command_line = new Array(); // The command line is an empty array.
-
 var walk;
 var jump;
 var fly;
@@ -96,14 +93,29 @@ function create() {
 
     // ADD COMMAND LINE AND RUN LINE !
 
-    graphics = game.add.graphics(0, 0);
-
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
     graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity. 
 
-    // Command_line: 820 x 80 px
-    com_line = game.add.sprite(10, 500, 'com_line');
+    // Block Library
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(840, 500, 170, 80);
+    graphics.endFill();
+    game.add.sprite(920, 500, 'new');
+
+    map = game.add.tilemap('tilemap');
+ // for item in the pack: Add tilesetimage! Must make sure the names are the same!
+    // FORMAT // mad.addTilesetImage('json_name', 'name from load');
+    map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
+    map.addTilesetImage('Object_1', 'Object_1');
+    map.addTilesetImage('rocks', 'rocks');
+    map.addTilesetImage('ChestBlue', 'ChestBlue');
+    map.addTilesetImage('Tile_14', 'Tile_14');
+    map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
+    map.addTilesetImage('tree2-final', 'BigTree');
+    map.addTilesetImage('berry_bush', 'berryBush');
+    // Am having issues blitting rocks and sprite properly. Check LAYERS ! 
 
     layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
     layer1 = map.createLayer('Ground');
