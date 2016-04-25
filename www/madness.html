@@ -73,11 +73,15 @@ var player;
 
 // Button variables. 
 var run_btn;
+<<<<<<< HEAD
 
 // Command_line array which contains all the commands. 
 var command_line = new Array(); // The command line is an empty array.
 
 // Commands. Going to be built away later on. 
+=======
+var command_line = new Array(); // The command line is an empty array.
+>>>>>>> refs/remotes/origin/Sofia
 var walk;
 var jump;
 var fly;
@@ -93,10 +97,37 @@ function create() {
     // Later on used to create gravity. 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //game.physics.arcade.gravity.y = 200;
+<<<<<<< HEAD
+=======
 
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
+    // ADD COMMAND LINE AND RUN LINE !
+
+    graphics = game.add.graphics(0, 0);
+>>>>>>> refs/remotes/origin/Sofia
+
+    game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
+
+<<<<<<< HEAD
     graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity. 
+=======
+    // Run-file
+    /*
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(30, 20, 950, 350);
+    graphics.endFill();
+    */
+
+    // Command Line
+    /*
+    graphics.lineStyle(0);
+    graphics.beginFill(0xFFFF0B);
+    graphics.drawRect(10, 500, 820, 80);
+    graphics.endFill();
+    */
+>>>>>>> refs/remotes/origin/Sofia
 
     // Block Library
     graphics.lineStyle(0);
@@ -125,6 +156,15 @@ function create() {
 
     // This thing is interesting for adding TilesetImages
     // var images = game.cache.getKeys(Phaser.Cache.IMAGE);
+<<<<<<< HEAD
+=======
+
+    // Command_line: 820 x 80 px
+    com_line = game.add.sprite(10, 500, 'com_line');
+    //game.physics.arcade.enable(com_line);
+
+    //map.addTilesetImage('sky', 'sky');
+>>>>>>> refs/remotes/origin/Sofia
     
     layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
     layer1 = map.createLayer('Ground');
@@ -148,6 +188,7 @@ function create() {
     com_line = game.add.sprite(10, 500, 'com_line');
     //game.physics.arcade.enable(com_line);
 
+<<<<<<< HEAD
     // HARD-CODED COMMANDS //
     walk = game.add.sprite(20, 510, 'walk_com');
     walk.inputEnabled = true;
@@ -155,6 +196,14 @@ function create() {
     walk.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self. 
     walk.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
     walk.collideWorldBounds = true;
+=======
+    // sprite.savePosition ?
+    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not.
+    walk.collideWorldBounds = true;
+
+    command_line.push(walk);
+
+>>>>>>> refs/remotes/origin/Sofia
 
     jump = game.add.sprite(90, 510, 'up_com');
     jump.inputEnabled = true;
@@ -171,11 +220,24 @@ function create() {
     fly = game.add.sprite(850, 510, 'fly_com');
     fly.inputEnabled = true;
     fly.input.enableDrag(true);
+<<<<<<< HEAD
     fly.events.onDragStart.add(savePosition, this); // this
     fly.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
+=======
+    //fly.events.onDragStop.add(commandAdd(fly), this);
+
+    //game.physics.enable([walk, jump, com_line, fly], Phaser.Physics.ARCADE);
+    //walk.collideWorldBounds = true;
+    //jump.collideWorldBounds = true;
+    //fly.collideWorldBounds = true;
+    //com_line.immovable = true;
+
+    // game.physics.arcade.overlap(sprite, sprite2, function() {  // ... do something here});
+>>>>>>> refs/remotes/origin/Sofia
 
 
     // Menu buttons
+
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
     run_btn.inputEnabled = true;
 
@@ -188,10 +250,19 @@ function create() {
     sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
     help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
 
+<<<<<<< HEAD
     // Pointer is active by default and does not need to be turned on by game.input :)
     cursors = game.input.keyboard.createCursorKeys();
     
     // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.     
+=======
+    //
+
+
+    // Pointer is active by default and does not need to be turned on by game.input :)
+    cursors = game.input.keyboard.createCursorKeys();
+    
+>>>>>>> refs/remotes/origin/Sofia
     run_btn.events.onInputDown.add(listener, this);
     stop_btn.events.onInputDown.add(listenerStop, this);
 
@@ -219,6 +290,11 @@ function update() {// LET'S UPDATE !
         player.body.velocity.y = 0;
         player.frame = 4; // Don't ask me what this does xP 
     }
+<<<<<<< HEAD
+=======
+    
+}// Might be worth using a Phaser group instead of a Javascript Array.
+>>>>>>> refs/remotes/origin/Sofia
 
 }
 
@@ -232,6 +308,7 @@ function savePosition(sprite, pointer) {
 
 // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position. 
 function commandAdd(sprite, pointer) {
+<<<<<<< HEAD
     // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
     if (pointer.y > 510 && pointer.y < 590) {
         if (oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
@@ -246,6 +323,50 @@ function commandAdd(sprite, pointer) {
     else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
         sprite.reset(oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510. 
     }
+=======
+    /*
+    var commandLineIndex;
+    var withoutOffset;
+    if (command.overlap(com_line)) {
+        if (dragStartPosition.y == 510) {
+            commandLineIndex = (dragStartPosition - 20) % 70;
+            if (com_line[commandLineIndex] == sprite) {
+                command_line.splice(commandLineIndex, 1);
+            }
+        }
+        withoutOffset = command.position - 20; // Get the commands without offsets.
+        commandLineIndex = withoutOffset % 70; // Each command is 60 px wide, with 10 px between it to the next.
+        command_line.splice(commandLineIndex, 0, command); // splice.
+        // RENDER ! commandLine
+        commandLineRender();
+    }
+    else {
+        */
+    sprite.position = dragStartPosition;
+    //}
+
+
+}
+    //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play. 
+function listener () {
+    stop_btn.visible = true;
+    run_btn.visible = false;
+    //kollar igenom command_line, för tillfärllet flyttar den robboten 80px till höger när en walk kommer upp i arrayen. 
+    for (i = 0; i < command_line.length; i++) { 
+        if (command_line[i] == walk) {
+            player.reset((player.x + 80), player.y);
+            
+        }
+        
+    }
+}
+    
+    //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
+function listenerStop () {
+    stop_btn.visible = false;
+    run_btn.visible = true;
+    player.reset(200, 300);
+>>>>>>> refs/remotes/origin/Sofia
 }
 
 // Listens to the sound of run_btn being clicked. 
@@ -262,7 +383,12 @@ function listenerStop () {
 
 }
 
+<<<<<<< HEAD
 // I am a functions which re-renders all commands. Worship me, for I am beautiful. 
+=======
+
+/*
+>>>>>>> refs/remotes/origin/Sofia
 function commandLineRender () {
     for (i = 0; i < command_line.length; i++) {
         var comPosX = 20 + (70 * i); // Calculate the position. 
