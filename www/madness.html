@@ -59,24 +59,38 @@ function preload() {
 
     // Playable character
     game.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
-    
-
 }
 
+// Tilemap variables. 
 var map;
 var layer0;
 var layer1;
 var layer2;
 var layer3;
+
+// The robot player 
 var player;
 
+// Button variables. 
 var run_btn;
+
+// Command_line array which contains all the commands. 
 var command_line = new Array(); // The command line is an empty array.
+
+// Commands. Going to be built away later on. 
 var walk;
 var jump;
 var fly;
-var dragStartPosition;
-var currentCommand;
+
+
+// These two variables hold the original and new X position along with the curren commandLine index of the command being dragged. 
+var oldPosX; // oldPosY doesn't exist because it's always 510. 
+var newPosX; 
+var commandLineIndex;
+
+    
+var timeCheck;
+
 
 function create() {
     // Later on used to create gravity. 
@@ -85,26 +99,7 @@ function create() {
 
     game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
 
-    // ADD COMMAND LINE AND RUN LINE !
-
-    graphics = game.add.graphics(0, 0);
-
-
-    // Run-file
-    /*
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(30, 20, 950, 350);
-    graphics.endFill();
-    */
-
-    // Command Line
-    /*
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(10, 500, 820, 80);
-    graphics.endFill();
-    */
+    graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity. 
 
     // Block Library
     graphics.lineStyle(0);
@@ -113,13 +108,10 @@ function create() {
     graphics.endFill();
 
     game.add.sprite(920, 500, 'new');
-    
-    // SPRITES // 
 
     // I somehow want this: var test = game.add.group();
 
-    // Tilemap !
-
+    // Tilemap ! Made with the 3rd party software Tiled. 32x32 tiles, 15 tiles high, 30 tiles wide. Total dimensions: 960x480 px
     map = game.add.tilemap('tilemap');
 
     // for item in the pack: Add tilesetimage! Must make sure the names are the same!
@@ -136,12 +128,6 @@ function create() {
 
     // This thing is interesting for adding TilesetImages
     // var images = game.cache.getKeys(Phaser.Cache.IMAGE);
-
-    // Command_line: 820 x 80 px
-    com_line = game.add.sprite(10, 500, 'com_line');
-    //game.physics.arcade.enable(com_line);
-
-    //map.addTilesetImage('sky', 'sky');
     
     layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
     layer1 = map.createLayer('Ground');
@@ -154,56 +140,45 @@ function create() {
 
     layer3 = map.createLayer('Above');
     layer0.resizeWorld();
-    
-        // Blocks
-    // game.add.sprite(40, game.world.height - 100, 'block1');
-    /*
-    game.add.sprite(40, game.world.height - 330, 'block1');
-    game.add.sprite(40, game.world.height - 330, 'block1');
-    */
+
     // Sprites 
     
     //commandLine = game.add.group();
     //commandLibrary = game.add.group();
-    // PRE-LOADED COMMANDS !
     //commandLine.create(20, game.world.height-90, 'walk');
+
+    // Command_line dimensions: 820 x 80 px
+    com_line = game.add.sprite(10, 500, 'com_line');
+    //game.physics.arcade.enable(com_line);
+
+    // HARD-CODED COMMANDS //
     walk = game.add.sprite(20, 510, 'walk_com');
     walk.inputEnabled = true;
-    //  Allow dragging - the 'true' parameter will make the sprite snap to the center
-    walk.input.enableDrag(true);
-
-    walk.events.onDragStart.add(savePosition); // this
-
-    // sprite.savePosition ?
-    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not.
+    walk.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
+    walk.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self. 
+    walk.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
     walk.collideWorldBounds = true;
-
-    command_line.push(walk);
-
 
     jump = game.add.sprite(90, 510, 'up_com');
     jump.inputEnabled = true;
     jump.input.enableDrag(true);
-    //sprite.events.onDragStop.add(stopDrag, this);
+    jump.events.onDragStart.add(savePosition, this); // this
+    jump.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not (and at this point I'm afraid to ask).
+    //sprite.events.onDragStop.add(ListenerEvent [function without params], ListenerContext);
+    
+    // Push to commandLine ! 
+    command_line.push(walk);
     command_line.push(jump);
 
-
+    // The possible add command (from the Command Library).
     fly = game.add.sprite(850, 510, 'fly_com');
     fly.inputEnabled = true;
     fly.input.enableDrag(true);
-    //fly.events.onDragStop.add(commandAdd(fly), this);
-
-    //game.physics.enable([walk, jump, com_line, fly], Phaser.Physics.ARCADE);
-    //walk.collideWorldBounds = true;
-    //jump.collideWorldBounds = true;
-    //fly.collideWorldBounds = true;
-    //com_line.immovable = true;
-
-    // game.physics.arcade.overlap(sprite, sprite2, function() {  // ... do something here});
+    fly.events.onDragStart.add(savePosition, this); // this
+    fly.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
 
 
     // Menu buttons
-
     run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
     run_btn.inputEnabled = true;
 
@@ -216,122 +191,126 @@ function create() {
     sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
     help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
 
-    //
-
-
     // Pointer is active by default and does not need to be turned on by game.input :)
     cursors = game.input.keyboard.createCursorKeys();
     
+    // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.     
     run_btn.events.onInputDown.add(listener, this);
     stop_btn.events.onInputDown.add(listenerStop, this);
 
 }
-function update() {
-    /*
-    for (i = 0, i < command_line.length, i++) {
-        //Render command_line
+function update() {// LET'S UPDATE !
 
-    }
-    */
-    // LET'S UPDATE !
+    // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really. 
     player.body.velocity.x = 0;
     
-    if (cursors.left.isDown)
-    {
-        //  Move to the left
-        player.body.velocity.x = -150;
-
-        // player.animations.play('left');
+    if (cursors.left.isDown) { //  Move to the left
+        player.body.velocity.x = -150; 
     }
-    else if (cursors.right.isDown)
-    {
-        //  Move to the right
+    else if (cursors.right.isDown) {//  Move to the right
         player.body.velocity.x = 150;
 
-        // player.animations.play('right');
     }
-    //  Allow the player to jump if they are touching the ground.
-    else if (cursors.up.isDown)
-    {
+    else if (cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
         player.body.velocity.y = -150;
     }
-    else if (cursors.down.isDown){
+    else if (cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again. 
         player.body.velocity.y = 150;
     }
-    else
-    {
-        //  Stand still
-        // player.animations.stop();
+    else { //  Stand still
         player.body.velocity.x = 0;
         player.body.velocity.y = 0;
-        player.frame = 4;
+        player.frame = 4; // Don't ask me what this does xP 
     }
-    
-}// Might be worth using a Phaser group instead of a Javascript Array.
-
-// AddAt
-
-function commandAdd(sprite, pointer) {
-    /*
-    var commandLineIndex;
-    var withoutOffset;
-    if (command.overlap(com_line)) {
-        if (dragStartPosition.y == 510) {
-            commandLineIndex = (dragStartPosition - 20) % 70;
-            if (com_line[commandLineIndex] == sprite) {
-                command_line.splice(commandLineIndex, 1);
-            }
-        }
-        withoutOffset = command.position - 20; // Get the commands without offsets.
-        commandLineIndex = withoutOffset % 70; // Each command is 60 px wide, with 10 px between it to the next.
-        command_line.splice(commandLineIndex, 0, command); // splice.
-        // RENDER ! commandLine
-        commandLineRender();
-    }
-    else {
-        */
-    sprite.position = dragStartPosition;
-    //}
-
-
+   
 }
-    //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play. 
+
+// Used to save the initial position of commands (sprites) before they are dragged off to neverneverland. 
+function savePosition(sprite, pointer) {
+    // y is always 510. Both oldPosY and newPosY. 
+    var remainder = sprite.x % 70; // Cleanse the input from faulty values. 
+    commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start. 
+    oldPosX = 20 + (commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as savePosition being slightly delayed.)
+}
+
+// Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position. 
+function commandAdd(sprite, pointer) {
+    // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
+    if (pointer.y > 510 && pointer.y < 590) {
+        if (oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
+            command_line.splice(commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+        }
+        var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire. 
+        commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing). 
+        newPosX = 20 + (commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it. 
+        command_line.splice(commandLineIndex, 0, sprite); // Add command to commandLine
+        commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+    }
+    else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
+        sprite.reset(oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510. 
+    }
+}
+
+// Listens to the sound of run_btn being clicked. 
 function listener () {
     stop_btn.visible = true;
     run_btn.visible = false;
-    //kollar igenom command_line, för tillfärllet flyttar den robboten 80px till höger när en walk kommer upp i arrayen. 
-    for (i = 0; i < command_line.length; i++) { 
-        if (command_line[i] == walk) {
-            player.reset((player.x + 80), player.y);
-            
+    for (i = 0; i <= command_line.length; i++) {
+        if (i > 0){
+            if (game.time.now - timeCheck > 1000){//3 seconds have elapsed, so safe to do something
+                if (command_line[i] == walk) {
+                    player.reset(player.x + 80, player.y);
+                    myFunction();
+
+                }
+
+                else if (command_line[i] == jump){
+                    player.reset(player.x, player.y - 80);
+                    myFunction();
+
+                }    
+            }
+            else{//still waiting
+                //listener();
+            }
+        }
+        else{
+            if (command_line[i] == walk) {
+                    player.reset(player.x + 80, player.y);
+                    myFunction();
+
+                }
+
+                else if (command_line[i] == jump){
+                    player.reset(player.x, player.y - 80);
+                    myFunction();
+
+                }
         }
         
     }
+        
 }
-    
-    //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
+function myFunction() {
+    timeCheck = game.time.now;
+}
+//pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
 function listenerStop () {
     stop_btn.visible = false;
     run_btn.visible = true;
     player.reset(200, 300);
+
 }
 
-
-function savePosition(sprite, pointer) {
-    dragStartPosition = sprite.position;
-}
-
-
-/*
+// I am a functions which re-renders all commands. Worship me, for I am beautiful. 
 function commandLineRender () {
-    for (i = 0, i < com_line.length, i++) {
-        com_line[i].x = 20 + (70 * i);
+    for (i = 0; i < command_line.length; i++) {
+        var comPosX = 20 + (70 * i); // Calculate the position. 
+        command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is. 
     }
 }
-*/
 
 
 </script>
-
 </body>
 </html>
