@@ -1,0 +1,6 @@
+{
+    "jscodehints.detectedExclusions": [
+        "C:/Users/Schmi/OneDrive/Dokument/GitHub/Robotkompis/www/bower_components/jquery/src/css/support.js",
+        "C:/Users/Schmi/OneDrive/Dokument/GitHub/Robotkompis/www/bower_components/jquery/external/sizzle/dist/sizzle.js"
+    ]
+}
