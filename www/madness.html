@@ -197,7 +197,6 @@ function create() {
     // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.     
     run_btn.events.onInputDown.add(listener, this);
     stop_btn.events.onInputDown.add(listenerStop, this);
-
 }
 function update() {// LET'S UPDATE !
 
@@ -256,43 +255,15 @@ function listener () {
     stop_btn.visible = true;
     run_btn.visible = false;
     for (i = 0; i <= command_line.length; i++) {
-        if (i > 0){
-            if (game.time.now - timeCheck > 1000){//3 seconds have elapsed, so safe to do something
-                if (command_line[i] == walk) {
-                    player.reset(player.x + 80, player.y);
-                    myFunction();
-
-                }
-
-                else if (command_line[i] == jump){
-                    player.reset(player.x, player.y - 80);
-                    myFunction();
-
-                }    
-            }
-            else{//still waiting
-                //listener();
-            }
+        if (command_line[i] == walk) {                  
+            player.reset(player.x + 80, player.y);
         }
-        else{
-            if (command_line[i] == walk) {
-                    player.reset(player.x + 80, player.y);
-                    myFunction();
 
-                }
-
-                else if (command_line[i] == jump){
-                    player.reset(player.x, player.y - 80);
-                    myFunction();
-
-                }
+        else if (command_line[i] == jump){
+            player.reset(player.x, player.y - 80);   
         }
-        
     }
-        
-}
-function myFunction() {
-    timeCheck = game.time.now;
+     
 }
 //pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
 function listenerStop () {
