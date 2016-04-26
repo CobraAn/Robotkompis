@@ -31,7 +31,7 @@
                  //Map
                 game.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
                 //Title spritesheet
-                game.load.image('gameTiles', 'assets/newtiles/kennyspritesheet.png');
+                game.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
 
                 // Tilemap blocks
                 game.load.image('ChestBlue', 'assets/ChestBlue.png');
@@ -296,11 +296,11 @@
                     if (typeof command_line[i] != 'undefined' ) {
                         if (command_line[i].key === 'walk_com') {
                             noWalk++;
-                            tween.to({x: player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, true);
+                            tween.to({x: player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
                         }
                         else if (command_line[i].key === 'up_com') {
                             noJump++;
-                            tween.to({y: player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, true);
+                            tween.to({y: player.y - (noJump * 20)}, 500, Phaser.Easing.Linear.None, true);
                         }
                     }
                 }
