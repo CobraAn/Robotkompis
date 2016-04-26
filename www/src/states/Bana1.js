@@ -142,8 +142,6 @@ RobotKompis.Bana1.prototype = {
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
 
-        console.log(this.world.height);
-
         this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
