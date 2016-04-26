@@ -1,5 +1,7 @@
 <!doctype html> 
 <html lang="en"> 
+
+
     <head>
         <meta charset="UTF-8" />
         <title>Madness</title>
@@ -26,7 +28,10 @@
                 // Background
                 game.load.image('bg', 'assets/1024_600_bg.jpg');
 
-                game.load.tilemap('tilemap', 'assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
+                 //Map
+                game.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+                //Title spritesheet
+                game.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
 
                 // Tilemap blocks
                 game.load.image('ChestBlue', 'assets/ChestBlue.png');
@@ -105,25 +110,20 @@
                 // ADD COMMAND LINE AND RUN LINE !
 
                 game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
-
+                //Background for map1, temporary....
+                game.add.sprite(0, 0, 'background');
                 graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
                 map = game.add.tilemap('tilemap');
-             // for item in the pack: Add tilesetimage! Must make sure the names are the same!
-                // FORMAT // mad.addTilesetImage('json_name', 'name from load');
-                map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
-                map.addTilesetImage('Object_1', 'Object_1');
-                map.addTilesetImage('rocks', 'rocks');
-                map.addTilesetImage('ChestBlue', 'ChestBlue');
-                map.addTilesetImage('Tile_14', 'Tile_14');
-                map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
-                map.addTilesetImage('tree2-final', 'BigTree');
-                map.addTilesetImage('berry_bush', 'berryBush');
-                // Am having issues blitting rocks and sprite properly. Check LAYERS !
+                map.addTilesetImage('kennyspritesheet', 'gameTiles');   
+                //map.addTilesetImage('tiles', 'grassMid32');   
 
-                layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
-                layer1 = map.createLayer('Ground');
-                layer2 = map.createLayer('Objects');
+                layer0 = map.createLayer('waterLayer');
+                layer1 = map.createLayer('blockedLayer');
+                layer2 = map.createLayer('ladderLayer');
+
+                layer1.resizeWorld();
+                map.setCollisionBetween(1, 5000, true, 'blockedLayer');
 
                 player = game.add.sprite(200, game.world.height - 300, 'switch');
                 game.physics.arcade.enable(player);
@@ -131,8 +131,7 @@
                 player.body.collideWorldBounds = true;
                 player.body.moves = false;
 
-                layer3 = map.createLayer('Above');
-                layer0.resizeWorld();
+                
 
                 // Block Library
                 graphics.lineStyle(0);
@@ -204,6 +203,7 @@
 
             }
             function update() {// LET'S UPDATE !
+                game.physics.arcade.collide(player, layer1);
 
                 // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
                 player.body.velocity.x = 0;
@@ -298,11 +298,11 @@
                     if (typeof command_line[i] != 'undefined' ) {
                         if (command_line[i].key === 'walk_com') {
                             noWalk++;
-                            tween.to({x: player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, true);
+                            tween.to({x: player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
                         }
                         else if (command_line[i].key === 'up_com') {
                             noJump++;
-                            tween.to({y: player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, true);
+                            tween.to({y: player.y - (noJump * 20)}, 500, Phaser.Easing.Linear.None, true);
                         }
                     }
                 }
@@ -330,4 +330,5 @@
 
         </script>
     </body>
+
 </html>
