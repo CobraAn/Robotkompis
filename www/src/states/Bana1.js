@@ -48,14 +48,18 @@ RobotKompis.Bana1 = function (game) {
 RobotKompis.Bana1.prototype = {
     
     create: function () {
+        
+        this.physics.startSystem(Phaser.Physics.ARCADE);
+        
+        this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
         // Later on used to create gravity.
-        this.physics.startSystem(Phaser.Physics.ARCADE);
+        
 
         // ADD COMMAND LINE AND RUN LINE !
 
-        this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
+        
 
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 

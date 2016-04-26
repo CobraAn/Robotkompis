@@ -22,7 +22,7 @@ RobotKompis.Preloader.prototype = {
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
         
         //Bilder för StartMenu
-        this.load.spritesheet('startKnapp', '../../images/StartKnapp_spritesheet.png', 392, 165, 2);
+        this.load.spritesheet('startKnapp', '../../images/Startknapp_spritesheet.png', 392, 165, 2);
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
@@ -36,43 +36,43 @@ RobotKompis.Preloader.prototype = {
         //Preload för allt i madness
         // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
         // Background
-        this.load.image('bg', 'assets/1024_600_bg.jpg');
+        this.load.image('bg', '../../assets/1024_600_bg.jpg');
 
-        this.load.tilemap('tilemap', 'assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap', '../../assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
 
         // Tilemap blocks
-        this.load.image('ChestBlue', 'assets/ChestBlue.png');
-        this.load.image('rocks', 'assets/rocks.png');
-        this.load.image('berryBush', 'assets/qubodup-bush_berries_0.png');
-        this.load.image('BigTree', 'assets/tree2-final.png');
-        this.load.image('signpost-outsidestuff', 'assets/signpost-outsidestuff.png');
-        this.load.image('Tile_14', 'assets/PNG/Tile_14.png');
-        this.load.image('grassTiles', 'assets/grass_tiles.png');
-        this.load.image('Object_1', 'assets/PNG/Object_1.png');
+        this.load.image('ChestBlue', '../../assets/ChestBlue.png');
+        this.load.image('rocks', '../../assets/rocks.png');
+        this.load.image('berryBush', '../../assets/qubodup-bush_berries_0.png');
+        this.load.image('BigTree', '../../assets/tree2-final.png');
+        this.load.image('signpost-outsidestuff', '../../assets/signpost-outsidestuff.png');
+        this.load.image('Tile_14', '../../assets/PNG/Tile_14.png');
+        this.load.image('grassTiles', '../../assets/grass_tiles.png');
+        this.load.image('Object_1', '../../assets/PNG/Object_1.png');
 
         // Commands
-        this.load.image('up_com', 'assets/up_60.png');
-        this.load.image('walk_com', 'assets/walk_60.png');
-        this.load.image('fly_com', 'assets/fly.png');
+        this.load.image('up_com', '../../assets/up_60.png');
+        this.load.image('walk_com', '../../assets/walk_60.png');
+        this.load.image('fly_com', '../../assets/fly.png');
 
         // New Command Button
-        this.load.image('new', 'assets/new.png');
-        this.load.image('trash_100', 'assets/trash_100.png');
-        this.load.image('trash_50', 'assets/trash_50.png');
+        this.load.image('new', '../../assets/new.png');
+        this.load.image('trash_100', '../../assets/trash_100.png');
+        this.load.image('trash_50', '../../assets/trash_50.png');
 
         //Command line :D
-        this.load.image('com_line', 'assets/com_line.png');
+        this.load.image('com_line', '../../assets/com_line.png');
 
         // Menu Buttons
-        this.load.image('run_btn', 'assets/run_button.png');
-        this.load.image('stop_btn', 'assets/stop_50.png');
-        this.load.image('restart_btn', 'assets/restart_50.png');
-        this.load.image('sound_btn', 'assets/sound_50.png');
-        this.load.image('home_btn', 'assets/home_50.png');
-        this.load.image('help_btn', 'assets/help_50.png');
+        this.load.image('run_btn', '../../assets/run_button.png');
+        this.load.image('stop_btn', '../../assets/stop_50.png');
+        this.load.image('restart_btn', '../../assets/restart_50.png');
+        this.load.image('sound_btn', '../../assets/sound_50.png');
+        this.load.image('home_btn', '../../assets/home_50.png');
+        this.load.image('help_btn', '../../assets/help_50.png');
 
         // Playable character
-        this.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
+        this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
        
 	},
 	create: function () {

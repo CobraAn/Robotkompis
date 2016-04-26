@@ -1,48 +1,48 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Robotkompis</title>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=9">
-    
-    <!-- Load Phaser engine -->
-    <script src="lib/phaser.js"></script>
-    <!-- <script src="lib/phaser.min.js"></script> -->
+    <head>
+        <meta charset="utf-8">
+        <title>Robotkompis</title>
+        <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=9">
 
-    <link rel="stylesheet" href="css/stylesheet.css">
-    
-    <!-- Load jquery -->
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery.js"></script>
-    
-    <script src="src/states/Boot.js"></script>
-    <script src="src/states/Preloader.js"></script>
-    <script src="src/states/StartMenu.js"></script>
-    <script src="src/states/MapOverview.js"></script>'
-    <script src="src/states/Bana1.js"></script>
+        <!-- Load Phaser engine -->
+        <script src="lib/phaser.js"></script>
+        <!-- <script src="lib/phaser.min.js"></script> -->
 
-</head>
-<body>
-        
-    <!-- Main canvas for rendering game stage -->
-    <div id="gameContainer"></div>
-    <script type="text/javascript">
-        window.onload = function () {
-            'use strict';
-            var game = new Phaser.Game(1024, 600, Phaser.AUTO, 'gameContainer');
+        <link rel="stylesheet" href="css/stylesheet.css">
 
-            //Add states of the game
-            game.state.add('Boot', RobotKompis.Boot);
-            game.state.add('Preloader', RobotKompis.Preloader);
-            game.state.add('StartMenu', RobotKompis.StartMenu);
-            game.state.add('MapOverview', RobotKompis.MapOverview);
-            game.state.add('Bana1', RobotKompis.Bana1);
+        <!-- Load jquery -->
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery.js"></script>
 
-            //Start the boot state
-            game.state.start('Boot');
-    		
-        }
+        <script src="src/states/Boot.js"></script>
+        <script src="src/states/Preloader.js"></script>
+        <script src="src/states/StartMenu.js"></script>
+        <script src="src/states/MapOverview.js"></script>'
+        <script src="src/states/Bana1.js"></script>
 
-    </script>
-</body>
+    </head>
+    <body>
+
+        <!-- Main canvas for rendering game stage -->
+        <div id="gameContainer"></div>
+        <script type="text/javascript">
+            window.onload = function () {
+                'use strict';
+                var game = new Phaser.Game(1024, 600, Phaser.AUTO, 'gameContainer');
+
+                //Add states of the game
+                game.state.add('Boot', RobotKompis.Boot);
+                game.state.add('Preloader', RobotKompis.Preloader);
+                game.state.add('StartMenu', RobotKompis.StartMenu);
+                game.state.add('MapOverview', RobotKompis.MapOverview);
+                game.state.add('Bana1', RobotKompis.Bana1);
+
+                //Start the boot state
+                game.state.start('Boot');
+
+            }
+
+        </script>
+    </body>
 </html>
