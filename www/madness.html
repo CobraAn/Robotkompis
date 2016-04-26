@@ -112,6 +112,7 @@
             function create() {
                 // Later on used to create gravity.
                 game.physics.startSystem(Phaser.Physics.ARCADE);
+                
                 //  Set the world (global) gravity
                 game.physics.arcade.gravity.y = 2500;
                 // ADD COMMAND LINE AND RUN LINE !
@@ -122,21 +123,23 @@
                 graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
                 map = game.add.tilemap('tilemap');
-                map.addTilesetImage('kennyspritesheet', 'gameTiles');   
-                //map.addTilesetImage('tiles', 'grassMid32');   
+                map.addTilesetImage('kennyspritesheet', 'gameTiles');                     
 
                 layer0 = map.createLayer('waterLayer');
                 layer1 = map.createLayer('blockedLayer');
                 layer2 = map.createLayer('ladderLayer');
 
                 layer1.resizeWorld();
+                
+                //Collision 
                 map.setCollisionBetween(1, 5000, true, 'blockedLayer');
 
                 player = game.add.sprite(180, game.world.height - 400, 'switch');
                 game.physics.arcade.enable(player);
+                //Gravity
                 game.physics.enable( [ player ], Phaser.Physics.ARCADE);
         
-                // Does this line below really do that much? I assume it stops the sprite from going outside the window.
+                // Keeps player in screen, activates steering with keyboard and adds gravity. 
                 player.body.collideWorldBounds = true;
                 player.body.moves = true;
                 player.body.gravity.y = 1000;
@@ -155,7 +158,7 @@
 
                 new_btn = game.add.sprite(920, 500, 'new');
                 new_btn.inputEnabled = true;
-    //new_btn.events.onInputDown.add(newCycle, this);
+                new_btn.events.onInputDown.add(newCycle, this);
                 trash_50 = game.add.sprite(965, 430, 'trash_50');
                 trash_100 = game.add.sprite(915, 380, 'trash_100');
                 trash_100.visible = false;
@@ -225,6 +228,8 @@
 
             }
             function update() {// LET'S UPDATE !
+                
+                //Collision
                 game.physics.arcade.collide(player, layer1);
 
                 // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
