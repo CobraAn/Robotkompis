@@ -3,6 +3,7 @@ RobotKompis.StartMenu = function (game) {
     this.startBG;
     this.startPrompt;
     this.StartKnapp;
+    this.test;
 };
 
 RobotKompis.StartMenu.prototype = {
@@ -11,7 +12,8 @@ RobotKompis.StartMenu.prototype = {
         'use strict';
         this.startBG = this.add.image(0, 0, 'titleScreen');
         
-        this.StartKnapp = this.add.button(this.world.centerX - 190, this.world.centerY + 70, 'startKnapp', this.startGame, this, 0, 0, 1);
+        this.StartKnapp = this.add.button(this.world.centerX - 210, this.world.centerY + 30, 'startKnapp', this.startGame, this, 0, 0, 1);
+        
         
     },
     
