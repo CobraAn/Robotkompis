@@ -304,6 +304,7 @@
             //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
             function listener () {
                 var noWalk = 0;
+                var noWalkLeft = 0;
                 var noJump = 0;
                 console.log(command_line.length);
                 stop_btn.visible = true;
@@ -319,8 +320,9 @@
                         tween.to({y: player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, true);
                     }
                     else if (command_line[i].key === 'walk_left_com') {
-                        noWalk++;
-                        tween.to({x: player.x - (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
+                        noWalkLeft++;
+                        console.log(noWalkLeft);
+                        tween.to({x: player.x + ((noWalk * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, true);
                     }
                 }
                 tween.start();

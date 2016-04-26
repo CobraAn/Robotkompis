@@ -1302,7 +1302,7 @@ function Narrowphase(){
      * @example
      *
      *     // Allocate a few equations before starting the simulation.
-     *     // This way, no contact objects need to be created on the fly in the game loop.
+     *     // This way, no contact objects need to be created on the walkLeft in the game loop.
      *     world.narrowphase.contactEquationPool.resize(1024);
      *     world.narrowphase.frictionEquationPool.resize(1024);
      */
@@ -38222,7 +38222,7 @@ Phaser.Game = function (width, height, renderer, parent, state, transparent, ant
     this.fpsProblemNotifier = new Phaser.Signal();
 
     /**
-    * @property {boolean} forceSingleUpdate - Should the game loop force a logic update, regardless of the delta timer? Set to true if you know you need this. You can toggle it on the fly.
+    * @property {boolean} forceSingleUpdate - Should the game loop force a logic update, regardless of the delta timer? Set to true if you know you need this. You can toggle it on the walkLeft.
     */
     this.forceSingleUpdate = false;
 
@@ -46969,7 +46969,7 @@ Phaser.Component.Animation.prototype = {
     * If you need to reset an already running animation do so directly on the Animation object itself or via `AnimationManager.stop`.
     *
     * @method
-    * @param {string} name - The name of the animation to be played, e.g. "fire", "walk", "jump". Must have been previously created via 'AnimationManager.add'.
+    * @param {string} name - The name of the animation to be played, e.g. "fire", "walkRight", "jump". Must have been previously created via 'AnimationManager.add'.
     * @param {number} [frameRate=null] - The framerate to play the animation at. The speed is given in frames per second. If not provided the previously set frameRate of the Animation is used.
     * @param {boolean} [loop=false] - Should the animation be looped after playback. If not provided the previously set loop value of the Animation is used.
     * @param {boolean} [killOnComplete=false] - If set to true when the animation completes (only happens if loop=false) the parent Sprite will be killed.
@@ -67169,7 +67169,7 @@ Phaser.AnimationManager.prototype = {
     * Animations added in this way are played back with the play function.
     *
     * @method Phaser.AnimationManager#add
-    * @param {string} name - The unique (within this Sprite) name for the animation, i.e. "run", "fire", "walk".
+    * @param {string} name - The unique (within this Sprite) name for the animation, i.e. "run", "fire", "walkRight".
     * @param {Array} [frames=null] - An array of numbers/strings that correspond to the frames to add to this animation and in which order. e.g. [1, 2, 3] or ['run0', 'run1', run2]). If null then all frames will be used.
     * @param {number} [frameRate=60] - The speed at which the animation should play. The speed is given in frames per second.
     * @param {boolean} [loop=false] - Whether or not the animation is looped or just plays once.
@@ -67257,7 +67257,7 @@ Phaser.AnimationManager.prototype = {
     * If you need to reset an already running animation do so directly on the Animation object itself.
     *
     * @method Phaser.AnimationManager#play
-    * @param {string} name - The name of the animation to be played, e.g. "fire", "walk", "jump".
+    * @param {string} name - The name of the animation to be played, e.g. "fire", "walkRight", "jump".
     * @param {number} [frameRate=null] - The framerate to play the animation at. The speed is given in frames per second. If not provided the previously set frameRate of the Animation is used.
     * @param {boolean} [loop=false] - Should the animation be looped after playback. If not provided the previously set loop value of the Animation is used.
     * @param {boolean} [killOnComplete=false] - If set to true when the animation completes (only happens if loop=false) the parent Sprite will be killed.
@@ -81683,7 +81683,7 @@ Phaser.Physics.Arcade.Body = function (sprite) {
 
     /**
     * If you have a Body that is being moved around the world via a tween or a Group motion, but its local x/y position never
-    * actually changes, then you should set Body.moves = false. Otherwise it will most likely fly off the screen.
+    * actually changes, then you should set Body.moves = false. Otherwise it will most likely walkLeft off the screen.
     * If you want the physics system to move the body around, then set moves to true.
     * @property {boolean} moves - Set to true to allow the Physics system to move this Body, otherwise false to move it manually.
     * @default

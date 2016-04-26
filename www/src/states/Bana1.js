@@ -27,9 +27,9 @@ RobotKompis.Bana1 = function (game) {
     this.command_line = []; // The command line is an empty array.
     this.com_line;
 
-    this.walk;
+    this.walkRight;
     this.jump;
-    this.fly;
+    this.walkLeft;
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -95,12 +95,12 @@ RobotKompis.Bana1.prototype = {
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
         // HARD-CODED COMMANDS //
-        this.walk = this.add.sprite(20, 510, 'walk_com');
-        this.walk.inputEnabled = true;
-        this.walk.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
-        this.walk.events.onDragStart.add(this.savePosition, this); // this is a reference to EVERYTHING. Like python's self.
-        this.walk.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.walk.collideWorldBounds = true;
+        this.walkRight = this.add.sprite(20, 510, 'walk_right_com');
+        this.walkRight.inputEnabled = true;
+        this.walkRight.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
+        this.walkRight.events.onDragStart.add(this.savePosition, this); // this is a reference to EVERYTHING. Like python's self.
+        this.walkRight.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.walkRight.collideWorldBounds = true;
 
         this.jump = this.add.sprite(90, 510, 'up_com');
         this.jump.inputEnabled = true;
@@ -110,19 +110,19 @@ RobotKompis.Bana1.prototype = {
         //sprite.events.onDragStop.add(ListenerEvent [function without params], ListenerContext);
 
         // Push to commandLine !
-        this.command_line.push(this.walk);
+        this.command_line.push(this.walkRight);
         this.command_line.push(this.jump);
 
         // The possible add command (from the Command Library).
-        this.fly = this.add.sprite(850, 510, 'fly_com');
-        this.fly.inputEnabled = true;
-        this.fly.input.enableDrag(true);
-        this.fly.events.onDragStart.add(this.savePosition, this); // this
-        this.fly.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.newCommand = this.fly;
+        this.walkLeft = this.add.sprite(850, 510, 'walk_left_com');
+        this.walkLeft.inputEnabled = true;
+        this.walkLeft.input.enableDrag(true);
+        this.walkLeft.events.onDragStart.add(this.savePosition, this); // this
+        this.walkLeft.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand = this.walkLeft;
 
         // Add levelCommands and their SPRITE KEYS
-        this.levelCommands.push('fly_com', 'walk_com', 'up_com');
+        this.levelCommands.push(this.walkLeft.key, this.jump.key, this.walkRight.key);
         // Menu buttons
 
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
@@ -232,23 +232,28 @@ RobotKompis.Bana1.prototype = {
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
-        var noWalk = 0;
+        var noWalkRight = 0;
         var noJump = 0;
+        var noWalkLeft = 0;
         console.log(this.command_line.length);
         console.log(this.command_line[1]);
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         this.tween = this.add.tween(this.player);
         for (var i = 0; i < this.command_line.length; i++) {
-            if (this.command_line[i].key === 'walk_com') {
-                console.log('adding tween for walk CMD');
-                noWalk++;
-                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
+            if (this.command_line[i].key === 'walk_right_com') {
+                console.log('adding tween for walkRight CMD');
+                noWalkRight++;
+                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noJump++;
                 this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.command_line[i].key === 'walk_left_com') {
+                noWalkLeft++;
+                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
             }
         }
         this.tween.start();
