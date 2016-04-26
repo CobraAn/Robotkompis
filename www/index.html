@@ -18,7 +18,8 @@
     <script src="src/states/Boot.js"></script>
     <script src="src/states/Preloader.js"></script>
     <script src="src/states/StartMenu.js"></script>
-    <script src="src/states/MapOverview.js"></script>
+    <script src="src/states/MapOverview.js"></script>'
+    <script src="src/states/Bana1.js"></script>
 
 </head>
 <body>
@@ -28,13 +29,14 @@
     <script type="text/javascript">
         window.onload = function () {
             'use strict';
-            var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'gameContainer');
+            var game = new Phaser.Game(1024, 600, Phaser.AUTO, 'gameContainer');
 
             //Add states of the game
             game.state.add('Boot', RobotKompis.Boot);
             game.state.add('Preloader', RobotKompis.Preloader);
             game.state.add('StartMenu', RobotKompis.StartMenu);
             game.state.add('MapOverview', RobotKompis.MapOverview);
+            game.state.add('Bana1', RobotKompis.Bana1);
 
             //Start the boot state
             game.state.start('Boot');

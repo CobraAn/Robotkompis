@@ -1,11 +1,12 @@
 RobotKompis.MapOverview = function (game) {
     'use strict';
-    this.LevelOne;
-    this.LevelTwo;
-    this.LevelThree;
-    this.LevelFour;
-    this.LevelFive;
-    this.settingIcon;
+    this.title = null;
+    this.LevelOne = null;
+    this.LevelTwo = null;
+    this.LevelThree = null;
+    this.LevelFour = null;
+    this.LevelFive = null;
+    this.settingIcon = null;
 
 };
 
@@ -15,22 +16,25 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         
         //Knappar för att starta olika banor
-        this.LevelOne = this.add.button(200, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
-        this.LevelTwo = this.add.button(450, 190, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
-        this.LevelThree = this.add.button(700, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
-        this.LevelFour = this.add.button(325, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
-        this.LevelFive = this.add.button(585, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
+        this.LevelOne = this.add.button(200, 150, 'levelOne', this.startLevelOne, this, 0, 0, 1);
+        this.LevelTwo = this.add.button(400, 150, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
+        this.LevelThree = this.add.button(600, 150, 'levelThree', this.startLevelThree, this, 0, 0, 1);
+        this.LevelFour = this.add.button(275, 360, 'levelFour', this.startLevelFour, this, 0, 0, 1);
+        this.LevelFive = this.add.button(500, 360, 'levelFive', this.startLevelFive, this, 0, 0, 1);
         
-        //Gör om till knapp för inställningar
+        //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
+        
+        //titel
+        this.title = this.add.bitmapText(200, 40, 'startFont', 'Robotkompis', 100);
+   
     },
     
     
     //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
     startLevelOne: function () {
         'use strict';
-        alert('LEVEL 1 FINNS EJ ÄN');
-        //this.state.start('Bana1'); <-- Byter till det state med referens "Bana1"
+        this.state.start('Bana1');
     },
     
     startLevelTwo: function () {
