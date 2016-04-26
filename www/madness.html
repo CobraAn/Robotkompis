@@ -309,6 +309,9 @@
 
                 //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
             function listenerStop () {
+                for (var i in tween._manager._tweens) {
+                    tween._manager._tweens[i].stop();
+                }
                 stop_btn.visible = false;
                 run_btn.visible = true;
                 player.reset(200, 300);
