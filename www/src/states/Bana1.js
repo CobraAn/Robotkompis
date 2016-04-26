@@ -63,30 +63,20 @@ RobotKompis.Bana1.prototype = {
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
         this.map = this.add.tilemap('tilemap');
-     // for item in the pack: Add tilesetimage! Must make sure the names are the same!
-        // FORMAT // mad.addTilesetImage('json_name', 'name from load');
-        this.map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
-        this.map.addTilesetImage('Object_1', 'Object_1');
-        this.map.addTilesetImage('rocks', 'rocks');
-        this.map.addTilesetImage('ChestBlue', 'ChestBlue');
-        this.map.addTilesetImage('Tile_14', 'Tile_14');
-        this.map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
-        this.map.addTilesetImage('tree2-final', 'BigTree');
-        this.map.addTilesetImage('berry_bush', 'berryBush');
-        // Am having issues blitting rocks and sprite properly. Check LAYERS !
+        this.map.addTilesetImage('kennyspritesheet', 'gameTiles');
 
-        this.layer0 = this.map.createLayer('Below Ground'); // For collision purposes. // JSON
-        this.layer1 = this.map.createLayer('Ground');
-        this.layer2 = this.map.createLayer('Objects');
+        this.layer0 = this.map.createLayer('waterLayer');
+        this.layer1 = this.map.createLayer('blockedLayer');
+        this.layer2 = this.map.createLayer('ladderLayer');
 
-        this.player = this.add.sprite(200, this.world.height - 300, 'switch');
+        this.map.setCollisionBetween(1, 5000, true, 'blockedLayer');
+        
+        this.player = this.add.sprite(185, this.world.height - 280, 'switch');
         this.physics.arcade.enable(this.player);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
         this.player.body.moves = false;
 
-        this.layer3 = this.map.createLayer('Above');
-        //this.layer0.resizeWorld();;
 
         // Block Library
         graphics.lineStyle(0);
@@ -249,21 +239,18 @@ RobotKompis.Bana1.prototype = {
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         this.tween = this.add.tween(this.player);
-        for (var i = 0; i <= this.command_line.length; i++) {
-            if (typeof this.command_line[i] != 'undefined' ) {
+        for (var i = 0; i < this.command_line.length; i++) {
+            if (this.command_line[i].key === 'walk_com') {
                 console.log('adding tween for walk CMD');
-                if (this.command_line[i].key === 'walk_com') {
-                    noWalk++;
-                    this.tween.to({x: this.player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, false);
-                }
-                else if (this.command_line[i].key === 'up_com') {
-                    console.log('adding tween for jump cmd');
-                    noJump++;
-                    this.tween.to({y: this.player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, false);
-                }
+                noWalk++;
+                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.command_line[i].key === 'up_com') {
+                console.log('adding tween for jump cmd');
+                noJump++;
+                this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
             }
         }
-        console.log('tweenStart');
         this.tween.start();
     },
 
@@ -274,7 +261,7 @@ RobotKompis.Bana1.prototype = {
         }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(200, 300);
+        this.player.reset(185, 320);
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.

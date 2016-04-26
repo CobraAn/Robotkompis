@@ -34,14 +34,13 @@
                 game.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
 
                 // Tilemap blocks
-                game.load.image('ChestBlue', 'assets/ChestBlue.png');
+                /*game.load.image('ChestBlue', 'assets/ChestBlue.png');
                 game.load.image('rocks', 'assets/rocks.png');
-                game.load.image('berryBush', 'assets/qubodup-bush_berries_0.png');
                 game.load.image('BigTree', 'assets/tree2-final.png');
                 game.load.image('signpost-outsidestuff', 'assets/signpost-outsidestuff.png');
                 game.load.image('Tile_14', 'assets/PNG/Tile_14.png');
                 game.load.image('grassTiles', 'assets/grass_tiles.png');
-                game.load.image('Object_1', 'assets/PNG/Object_1.png');
+                game.load.image('Object_1', 'assets/PNG/Object_1.png');*/
 
                 // Commands
                 game.load.image('up_com', 'assets/up_60.png');
@@ -85,7 +84,7 @@
             var tween;
 
             // Command_line array which contains all the commands.
-            var command_line = new Array(); // The command line is an empty array.
+            var command_line = []; // The command line is an empty array.
 
             var walk;
             var jump;
@@ -96,7 +95,7 @@
             var newPosX;
             var commandLineIndex;
 
-            var levelCommands = new Array();
+            var levelCommands = [];
             var newCommand;
 
             var new_btn;
@@ -125,7 +124,7 @@
                 layer1.resizeWorld();
                 map.setCollisionBetween(1, 5000, true, 'blockedLayer');
 
-                player = game.add.sprite(200, game.world.height - 300, 'switch');
+                player = game.add.sprite(180, game.world.height - 280, 'switch');
                 game.physics.arcade.enable(player);
                 // Does this line below really do that much? I assume it stops the sprite from going outside the window.
                 player.body.collideWorldBounds = true;
@@ -294,16 +293,14 @@
                 stop_btn.visible = true;
                 run_btn.visible = false;
                 tween = game.add.tween(player);
-                for (var i = 0; i <= command_line.length; i++) {
-                    if (typeof command_line[i] != 'undefined' ) {
-                        if (command_line[i].key === 'walk_com') {
-                            noWalk++;
-                            tween.to({x: player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
-                        }
-                        else if (command_line[i].key === 'up_com') {
-                            noJump++;
-                            tween.to({y: player.y - (noJump * 20)}, 500, Phaser.Easing.Linear.None, true);
-                        }
+                for (var i = 0; i < command_line.length; i++) {
+                    if (command_line[i].key === 'walk_com') {
+                        noWalk++;
+                        tween.to({x: player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
+                    }
+                    else if (command_line[i].key === 'up_com') {
+                        noJump++;
+                        tween.to({y: player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, true);
                     }
                 }
                 tween.start();
@@ -316,7 +313,7 @@
                 }
                 stop_btn.visible = false;
                 run_btn.visible = true;
-                player.reset(200, 300);
+                player.reset(180, 320);
             }
 
             // I am a functions which re-renders all commands. Worship me, for I am beautiful.

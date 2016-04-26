@@ -38,7 +38,8 @@ RobotKompis.Preloader.prototype = {
         // Background
         this.load.image('bg', '../../assets/1024_600_bg.jpg');
 
-        this.load.tilemap('tilemap', '../../assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap', '../../assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('gameTiles', '../../assets/newTiles/kennyspritesheet.png');
 
         // Tilemap blocks
         this.load.image('ChestBlue', '../../assets/ChestBlue.png');
