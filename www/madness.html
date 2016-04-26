@@ -27,6 +27,7 @@
                 // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
                 // Background
                 game.load.image('bg', 'assets/1024_600_bg.jpg');
+                game.load.image('background', 'assets/backgrounds/desert_small.png');
 
                  //Map
                 game.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
@@ -43,9 +44,15 @@
                 game.load.image('Object_1', 'assets/PNG/Object_1.png');*/
 
                 // Commands
+                /*
                 game.load.image('up_com', 'assets/up_60.png');
                 game.load.image('walk_com', 'assets/walk_60.png');
-                game.load.image('fly_com', 'assets/fly.png');
+                game.load.image('fly_com', 'assets/walkLeft.png');
+                */
+
+                game.load.image('up_com', 'images/actionicons/uparrow_60.png');
+                game.load.image('walk_right_com', 'images/actionicons/Rightarrow_60.png');
+                game.load.image('walk_left_com', 'images/actionicons/leftarrow_60.png');
 
                 // New Command Button
                 game.load.image('new', 'assets/new.png');
@@ -86,9 +93,9 @@
             // Command_line array which contains all the commands.
             var command_line = []; // The command line is an empty array.
 
-            var walk;
+            var walk_right;
             var jump;
-            var fly;
+            var walk_left
 
             // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
             var oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -130,12 +137,16 @@
                 player.body.collideWorldBounds = true;
                 player.body.moves = false;
 
-                
 
                 // Block Library
                 graphics.lineStyle(0);
-                graphics.beginFill(0xFFFF0B);
+                graphics.beginFill(0x000000);
                 graphics.drawRect(840, 500, 170, 80);
+                graphics.endFill();
+                // White
+                graphics.lineStyle(0);
+                graphics.beginFill(0xFFFFFF);
+                graphics.drawRect(843, 503, 163, 73);
                 graphics.endFill();
 
                 new_btn = game.add.sprite(920, 500, 'new');
@@ -148,13 +159,18 @@
                 // Command_line dimensions: 820 x 80 px
                 com_line = game.add.sprite(10, 500, 'com_line');
 
+                /*
+                game.load.image('up_com', 'images/actionicons/uparrow_60.png');
+                game.load.image('walk_right_com', 'images/actionicons/Rightarrow_60.png');
+                game.load.image('walk_left_com', 'images/actionicons/leftarrow_60.png');
+                */
                 // HARD-CODED COMMANDS //
-                walk = game.add.sprite(20, 510, 'walk_com');
-                walk.inputEnabled = true;
-                walk.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
-                walk.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self.
-                walk.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
-                walk.collideWorldBounds = true;
+                walkRight = game.add.sprite(20, 510, 'walk_right_com');
+                walkRight.inputEnabled = true;
+                walkRight.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
+                walkRight.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self.
+                walkRight.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
+                walkRight.collideWorldBounds = true;
 
                 jump = game.add.sprite(90, 510, 'up_com');
                 jump.inputEnabled = true;
@@ -164,19 +180,19 @@
                 //sprite.events.onDragStop.add(ListenerEvent [function without params], ListenerContext);
 
                 // Push to commandLine !
-                command_line.push(walk);
+                command_line.push(walkRight);
                 command_line.push(jump);
 
                 // The possible add command (from the Command Library).
-                fly = game.add.sprite(850, 510, 'fly_com');
-                fly.inputEnabled = true;
-                fly.input.enableDrag(true);
-                fly.events.onDragStart.add(savePosition, this); // this
-                fly.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
-                newCommand = fly;
+                walkLeft = game.add.sprite(850, 510, 'walk_left_com');
+                walkLeft.inputEnabled = true;
+                walkLeft.input.enableDrag(true);
+                walkLeft.events.onDragStart.add(savePosition, this); // this
+                walkLeft.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
+                newCommand = walkLeft;
 
                 // Add levelCommands and their SPRITE KEYS
-                levelCommands.push('fly_com', 'walk_com', 'up_com');
+                levelCommands.push(walkLeft.key, jump.key, walkRight.key);
                 // Menu buttons
 
                 run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
@@ -294,13 +310,17 @@
                 run_btn.visible = false;
                 tween = game.add.tween(player);
                 for (var i = 0; i < command_line.length; i++) {
-                    if (command_line[i].key === 'walk_com') {
+                    if (command_line[i].key === 'walk_right_com') {
                         noWalk++;
                         tween.to({x: player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
                     }
                     else if (command_line[i].key === 'up_com') {
                         noJump++;
                         tween.to({y: player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, true);
+                    }
+                    else if (command_line[i].key === 'walk_left_com') {
+                        noWalk++;
+                        tween.to({x: player.x - (noWalk * 64)}, 500, Phaser.Easing.Linear.None, true);
                     }
                 }
                 tween.start();
