@@ -24,7 +24,7 @@ RobotKompis.Bana1 = function (game) {
     this.tween;
 
     // Command_line array which contains all the commands.
-    this.command_line = new Array(); // The command line is an empty array.
+    this.command_line = []; // The command line is an empty array.
     this.com_line;
 
     this.walk;
@@ -36,7 +36,7 @@ RobotKompis.Bana1 = function (game) {
     this.newPosX;
     this.commandLineIndex;
 
-    this.levelCommands = new Array();
+    this.levelCommands = [];
     this.newCommand;
 
     this.new_btn;
@@ -48,14 +48,13 @@ RobotKompis.Bana1 = function (game) {
 RobotKompis.Bana1.prototype = {
     
     create: function () {
-        
+
         this.physics.startSystem(Phaser.Physics.ARCADE);
         
         this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
         // Later on used to create gravity.
-        
 
         // ADD COMMAND LINE AND RUN LINE !
 
@@ -87,7 +86,7 @@ RobotKompis.Bana1.prototype = {
         this.player.body.moves = false;
 
         this.layer3 = this.map.createLayer('Above');
-        this.layer0.resizeWorld();
+        //this.layer0.resizeWorld();;
 
         // Block Library
         graphics.lineStyle(0);
@@ -142,6 +141,8 @@ RobotKompis.Bana1.prototype = {
         this.stop_btn = this.add.sprite(965, this.world.height - 410, 'stop_btn');
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
+
+        console.log(this.world.height);
 
         this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
@@ -255,12 +256,12 @@ RobotKompis.Bana1.prototype = {
                 console.log('adding tween for walk CMD');
                 if (this.command_line[i].key === 'walk_com') {
                     noWalk++;
-                    this.tween.to({x: this.player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, true);
+                    this.tween.to({x: this.player.x + (noWalk * 80)}, 500, Phaser.Easing.Linear.None, false);
                 }
                 else if (this.command_line[i].key === 'up_com') {
                     console.log('adding tween for jump cmd');
                     noJump++;
-                    this.tween.to({y: this.player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, true);
+                    this.tween.to({y: this.player.y - (noJump * 80)}, 500, Phaser.Easing.Linear.None, false);
                 }
             }
         }

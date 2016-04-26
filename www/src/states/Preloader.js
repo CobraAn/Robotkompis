@@ -22,7 +22,7 @@ RobotKompis.Preloader.prototype = {
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
         
         //Bilder för StartMenu
-        this.load.spritesheet('startKnapp', '../../images/Startknapp_spritesheet.png', 392, 165, 2);
+        this.load.spritesheet('startKnapp', '../../images/Startknapp_Spritesheet.png', 392, 165, 2);
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
