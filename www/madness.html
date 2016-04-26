@@ -1,410 +1,7 @@
 <!doctype html> 
 <html lang="en"> 
-<<<<<<< HEAD
-<head> 
-	<meta charset="UTF-8" />
-    <title>Madness</title>
-	<script type="text/javascript" src="js/phaser.min.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
 
-<script type="text/javascript">
 
-// This is a GAME OBJECT FACTORY. 
-var game = new Phaser.Game(1024, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-var graphics = new Phaser.Graphics(game, 0, 0);
- 
-// var player;
-
-// 1024x600
-function preload() {
-    // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600. 
-    // Background
-    game.load.image('bg', 'assets/1024_600_bg.jpg');
-
-    game.load.tilemap('tilemap', 'assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
-    
-    // Tilemap blocks
-    game.load.image('ChestBlue', 'assets/ChestBlue.png');
-    game.load.image('rocks', 'assets/rocks.png');
-    game.load.image('berryBush', 'assets/qubodup-bush_berries_0.png');
-    game.load.image('BigTree', 'assets/tree2-final.png');
-    game.load.image('signpost-outsidestuff', 'assets/signpost-outsidestuff.png');
-    game.load.image('Tile_14', 'assets/PNG/Tile_14.png');
-    game.load.image('grassTiles', 'assets/grass_tiles.png');
-    game.load.image('Object_1', 'assets/PNG/Object_1.png');
-    
-    // Commands 
-    game.load.image('up_com', 'assets/up_60.png');
-    game.load.image('walk_com', 'assets/walk_60.png');
-    game.load.image('fly_com', 'assets/fly.png');
-
-    // New Command Button
-    game.load.image('new', 'assets/new.png');
-
-    //Command line :D
-    game.load.image('com_line', 'assets/com_line.png');
-
-    // Menu Buttons
-    game.load.image('run_btn', 'assets/run_button.png');
-    game.load.image('stop_btn', 'assets/stop_50.png');
-    game.load.image('restart_btn', 'assets/restart_50.png');
-    game.load.image('sound_btn', 'assets/sound_50.png');
-    game.load.image('home_btn', 'assets/home_50.png');
-    game.load.image('help_btn', 'assets/help_50.png');
-
-    // Playable character
-    game.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
-}
-
-// Tilemap variables. 
-var map;
-var layer0;
-var layer1;
-var layer2;
-var layer3;
-
-// The robot player 
-var player;
-
-// Button variables. 
-var run_btn;
-<<<<<<< HEAD
-var command_line = new Array(); // The command line is an empty array.
-=======
-
-// Command_line array which contains all the commands. 
-var command_line = new Array(); // The command line is an empty array.
-
-// Commands. Going to be built away later on. 
->>>>>>> refs/remotes/origin/Madness
-var walk;
-var jump;
-var fly;
-
-
-// These two variables hold the original and new X position along with the curren commandLine index of the command being dragged. 
-var oldPosX; // oldPosY doesn't exist because it's always 510. 
-var newPosX; 
-var commandLineIndex;
-
-
-function create() {
-    // Later on used to create gravity. 
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    //game.physics.arcade.gravity.y = 200;
-<<<<<<< HEAD
-
-    game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
-
-    // ADD COMMAND LINE AND RUN LINE !
-
-    graphics = game.add.graphics(0, 0);
-=======
->>>>>>> refs/remotes/origin/Madness
-
-    game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer. 
-
-<<<<<<< HEAD
-    // Run-file
-    /*
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(30, 20, 950, 350);
-    graphics.endFill();
-    */
-
-    // Command Line
-    /*
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(10, 500, 820, 80);
-    graphics.endFill();
-    */
-=======
-    graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity. 
->>>>>>> refs/remotes/origin/Madness
-
-    // Block Library
-    graphics.lineStyle(0);
-    graphics.beginFill(0xFFFF0B);
-    graphics.drawRect(840, 500, 170, 80);
-    graphics.endFill();
-
-    game.add.sprite(920, 500, 'new');
-
-    // I somehow want this: var test = game.add.group();
-
-    // Tilemap ! Made with the 3rd party software Tiled. 32x32 tiles, 15 tiles high, 30 tiles wide. Total dimensions: 960x480 px
-    map = game.add.tilemap('tilemap');
-
-    // for item in the pack: Add tilesetimage! Must make sure the names are the same!
-    // FORMAT // mad.addTilesetImage('json_name', 'name from load');
-    map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
-    map.addTilesetImage('Object_1', 'Object_1');
-    map.addTilesetImage('rocks', 'rocks');
-    map.addTilesetImage('ChestBlue', 'ChestBlue');
-    map.addTilesetImage('Tile_14', 'Tile_14');
-    map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
-    map.addTilesetImage('tree2-final', 'BigTree');
-    map.addTilesetImage('berry_bush', 'berryBush');
-    // Am having issues blitting rocks and sprite properly. Check LAYERS ! 
-
-    // This thing is interesting for adding TilesetImages
-    // var images = game.cache.getKeys(Phaser.Cache.IMAGE);
-<<<<<<< HEAD
-
-    // Command_line: 820 x 80 px
-    com_line = game.add.sprite(10, 500, 'com_line');
-    //game.physics.arcade.enable(com_line);
-
-    //map.addTilesetImage('sky', 'sky');
-=======
->>>>>>> refs/remotes/origin/Madness
-    
-    layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
-    layer1 = map.createLayer('Ground');
-    layer2 = map.createLayer('Objects');
-
-    player = game.add.sprite(200, game.world.height - 300, 'switch');
-    game.physics.arcade.enable(player);
-    // Does this line below really do that much? I assume it stops the sprite from going outside the window.
-    player.body.collideWorldBounds = true;
-
-    layer3 = map.createLayer('Above');
-    layer0.resizeWorld();
-
-    // Sprites 
-    
-    //commandLine = game.add.group();
-    //commandLibrary = game.add.group();
-    //commandLine.create(20, game.world.height-90, 'walk');
-
-    // Command_line dimensions: 820 x 80 px
-    com_line = game.add.sprite(10, 500, 'com_line');
-    //game.physics.arcade.enable(com_line);
-
-<<<<<<< HEAD
-    // sprite.savePosition ?
-    walk.events.onDragStop.add(commandAdd);// Not sure if the last add part is needed or not.
-    walk.collideWorldBounds = true;
-
-    command_line.push(walk);
-
-=======
-    // HARD-CODED COMMANDS //
-    walk = game.add.sprite(20, 510, 'walk_com');
-    walk.inputEnabled = true;
-    walk.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
-    walk.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self. 
-    walk.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
-    walk.collideWorldBounds = true;
->>>>>>> refs/remotes/origin/Madness
-
-    jump = game.add.sprite(90, 510, 'up_com');
-    jump.inputEnabled = true;
-    jump.input.enableDrag(true);
-    jump.events.onDragStart.add(savePosition, this); // this
-    jump.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not (and at this point I'm afraid to ask).
-    //sprite.events.onDragStop.add(ListenerEvent [function without params], ListenerContext);
-    
-    // Push to commandLine ! 
-    command_line.push(walk);
-    command_line.push(jump);
-
-    // The possible add command (from the Command Library).
-    fly = game.add.sprite(850, 510, 'fly_com');
-    fly.inputEnabled = true;
-    fly.input.enableDrag(true);
-<<<<<<< HEAD
-    //fly.events.onDragStop.add(commandAdd(fly), this);
-
-    //game.physics.enable([walk, jump, com_line, fly], Phaser.Physics.ARCADE);
-    //walk.collideWorldBounds = true;
-    //jump.collideWorldBounds = true;
-    //fly.collideWorldBounds = true;
-    //com_line.immovable = true;
-
-    // game.physics.arcade.overlap(sprite, sprite2, function() {  // ... do something here});
-=======
-    fly.events.onDragStart.add(savePosition, this); // this
-    fly.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
->>>>>>> refs/remotes/origin/Madness
-
-
-    // Menu buttons
-
-    run_btn = game.add.sprite(965, game.world.height - 410, 'run_btn');
-    run_btn.inputEnabled = true;
-
-    stop_btn = game.add.sprite(965, game.world.height - 410, 'stop_btn');
-    stop_btn.inputEnabled = true;
-    stop_btn.visible = false;
-
-    restart_btn = game.add.sprite(965, game.world.height - 350, 'restart_btn');
-    home_btn = game.add.sprite(965, game.world.height - 590, 'home_btn');
-    sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
-    help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
-
-<<<<<<< HEAD
-    //
-
-
-    // Pointer is active by default and does not need to be turned on by game.input :)
-    cursors = game.input.keyboard.createCursorKeys();
-    
-=======
-    // Pointer is active by default and does not need to be turned on by game.input :)
-    cursors = game.input.keyboard.createCursorKeys();
-    
-    // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.     
->>>>>>> refs/remotes/origin/Madness
-    run_btn.events.onInputDown.add(listener, this);
-    stop_btn.events.onInputDown.add(listenerStop, this);
-
-}
-function update() {// LET'S UPDATE !
-
-    // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really. 
-    player.body.velocity.x = 0;
-    
-    if (cursors.left.isDown) { //  Move to the left
-        player.body.velocity.x = -150; 
-    }
-    else if (cursors.right.isDown) {//  Move to the right
-        player.body.velocity.x = 150;
-
-    }
-    else if (cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
-        player.body.velocity.y = -150;
-    }
-    else if (cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again. 
-        player.body.velocity.y = 150;
-    }
-    else { //  Stand still
-        player.body.velocity.x = 0;
-        player.body.velocity.y = 0;
-        player.frame = 4; // Don't ask me what this does xP 
-    }
-<<<<<<< HEAD
-    
-}// Might be worth using a Phaser group instead of a Javascript Array.
-=======
->>>>>>> refs/remotes/origin/Madness
-
-}
-
-// Used to save the initial position of commands (sprites) before they are dragged off to neverneverland. 
-function savePosition(sprite, pointer) {
-    // y is always 510. Both oldPosY and newPosY. 
-    var remainder = sprite.x % 70; // Cleanse the input from faulty values. 
-    commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start. 
-    oldPosX = 20 + (commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as savePosition being slightly delayed.)
-}
-
-// Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position. 
-function commandAdd(sprite, pointer) {
-<<<<<<< HEAD
-    /*
-    var commandLineIndex;
-    var withoutOffset;
-    if (command.overlap(com_line)) {
-        if (dragStartPosition.y == 510) {
-            commandLineIndex = (dragStartPosition - 20) % 70;
-            if (com_line[commandLineIndex] == sprite) {
-                command_line.splice(commandLineIndex, 1);
-            }
-        }
-        withoutOffset = command.position - 20; // Get the commands without offsets.
-        commandLineIndex = withoutOffset % 70; // Each command is 60 px wide, with 10 px between it to the next.
-        command_line.splice(commandLineIndex, 0, command); // splice.
-        // RENDER ! commandLine
-        commandLineRender();
-    }
-    else {
-        */
-    sprite.position = dragStartPosition;
-    //}
-
-
-}
-    //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play. 
-function listener () {
-    stop_btn.visible = true;
-    run_btn.visible = false;
-    //kollar igenom command_line, för tillfärllet flyttar den robboten 80px till höger när en walk kommer upp i arrayen. 
-    for (i = 0; i < command_line.length; i++) { 
-        if (command_line[i] == walk) {
-            player.reset((player.x + 80), player.y);
-            
-        }
-        
-    }
-}
-    
-    //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
-function listenerStop () {
-    stop_btn.visible = false;
-    run_btn.visible = true;
-    player.reset(200, 300);
-<<<<<<< HEAD
-
-=======
-    // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
-    if (pointer.y > 510 && pointer.y < 590) {
-        if (oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-            command_line.splice(commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
-        }
-        var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire. 
-        commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing). 
-        newPosX = 20 + (commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it. 
-        command_line.splice(commandLineIndex, 0, sprite); // Add command to commandLine
-        commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
-    }
-    else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
-        sprite.reset(oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510. 
-    }
->>>>>>> refs/remotes/origin/Madness
-=======
->>>>>>> refs/remotes/origin/Sofia
-}
-
-// Listens to the sound of run_btn being clicked. 
-function listener () {
-    stop_btn.visible = true;
-    run_btn.visible = false;
-}
-
-//pausar spelet/i nuläget stoppar den run och återställer player till ursprungsläget.
-function listenerStop () {
-    stop_btn.visible = false;
-    run_btn.visible = true;
-    player.reset(200, 300);
-
-}
-
-<<<<<<< HEAD
-// I am a functions which re-renders all commands. Worship me, for I am beautiful. 
-=======
-
-/*
->>>>>>> refs/remotes/origin/Sofia
-function commandLineRender () {
-    for (i = 0; i < command_line.length; i++) {
-        var comPosX = 20 + (70 * i); // Calculate the position. 
-        command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is. 
-    }
-}
-
-
-</script>
-</body>
-=======
     <head>
         <meta charset="UTF-8" />
         <title>Madness</title>
@@ -431,7 +28,10 @@ function commandLineRender () {
                 // Background
                 game.load.image('bg', 'assets/1024_600_bg.jpg');
 
-                game.load.tilemap('tilemap', 'assets/level0_pt2.json', null, Phaser.Tilemap.TILED_JSON);
+                 //Map
+                game.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+                //Title spritesheet
+                game.load.image('gameTiles', 'assets/newtiles/kennyspritesheet.png');
 
                 // Tilemap blocks
                 game.load.image('ChestBlue', 'assets/ChestBlue.png');
@@ -510,25 +110,20 @@ function commandLineRender () {
                 // ADD COMMAND LINE AND RUN LINE !
 
                 game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
-
+                //Background for map1, temporary....
+                game.add.sprite(0, 0, 'background');
                 graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
                 map = game.add.tilemap('tilemap');
-             // for item in the pack: Add tilesetimage! Must make sure the names are the same!
-                // FORMAT // mad.addTilesetImage('json_name', 'name from load');
-                map.addTilesetImage('grass-tiles-2-small', 'grassTiles');
-                map.addTilesetImage('Object_1', 'Object_1');
-                map.addTilesetImage('rocks', 'rocks');
-                map.addTilesetImage('ChestBlue', 'ChestBlue');
-                map.addTilesetImage('Tile_14', 'Tile_14');
-                map.addTilesetImage('signpost-outsidestuff', 'signpost-outsidestuff');
-                map.addTilesetImage('tree2-final', 'BigTree');
-                map.addTilesetImage('berry_bush', 'berryBush');
-                // Am having issues blitting rocks and sprite properly. Check LAYERS !
+                map.addTilesetImage('kennyspritesheet', 'gameTiles');   
+                //map.addTilesetImage('tiles', 'grassMid32');   
 
-                layer0 = map.createLayer('Below Ground'); // For collision purposes. // JSON
-                layer1 = map.createLayer('Ground');
-                layer2 = map.createLayer('Objects');
+                layer0 = map.createLayer('waterLayer');
+                layer1 = map.createLayer('blockedLayer');
+                layer2 = map.createLayer('ladderLayer');
+
+                layer1.resizeWorld();
+                map.setCollisionBetween(1, 5000, true, 'blockedLayer');
 
                 player = game.add.sprite(200, game.world.height - 300, 'switch');
                 game.physics.arcade.enable(player);
@@ -536,8 +131,7 @@ function commandLineRender () {
                 player.body.collideWorldBounds = true;
                 player.body.moves = false;
 
-                layer3 = map.createLayer('Above');
-                layer0.resizeWorld();
+                
 
                 // Block Library
                 graphics.lineStyle(0);
@@ -607,6 +201,7 @@ function commandLineRender () {
 
             }
             function update() {// LET'S UPDATE !
+                game.physics.arcade.collide(player, layer1);
 
                 // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
                 player.body.velocity.x = 0;
@@ -730,5 +325,5 @@ function commandLineRender () {
 
         </script>
     </body>
->>>>>>> refs/remotes/origin/Madness
+
 </html>
