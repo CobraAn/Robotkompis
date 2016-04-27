@@ -19,61 +19,68 @@ RobotKompis.Preloader.prototype = {
         //Här under laddar man in alla assets som ska användas, som t.ex bakgrundsbilder osv
         
         //Här laddas fonter om det behövs
-        this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
+        this.load.bitmapFont('startFont', 'fonts/startFont/font.png', 'fonts/startFont/font.fnt');
         
         //Bilder för StartMenu
-        this.load.spritesheet('startKnapp', '../../images/Startknapp_Spritesheet.png', 392, 165, 2);
-        this.load.image('titleScreen', '../../images/startBG600.png');
+        this.load.spritesheet('startKnapp', 'images/Startknapp_Spritesheet.png', 392, 165, 2);
+        this.load.image('titleScreen', 'images/startBG600.png');
         
         //Bilder för MapOverview
-        this.load.spritesheet('levelOne', '../../images/select_levelOne.png', 140, 140, 2);
-        this.load.spritesheet('levelTwo', '../../images/select_levelTwo.png', 140, 140, 2);
-        this.load.spritesheet('levelThree', '../../images/select_levelThree.png', 140, 140, 2);
-        this.load.spritesheet('levelFour', '../../images/select_levelFour.png', 140, 140, 2);
-        this.load.spritesheet('levelFive', '../../images/select_levelFive.png', 140, 140, 2);
-        this.load.image('settingsIcon', '../../images/settingIcon.png');
+        this.load.spritesheet('levelOne', 'images/select_levelOne.png', 140, 140, 2);
+        this.load.spritesheet('levelTwo', 'images/select_levelTwo.png', 140, 140, 2);
+        this.load.spritesheet('levelThree', 'images/select_levelThree.png', 140, 140, 2);
+        this.load.spritesheet('levelFour', 'images/select_levelFour.png', 140, 140, 2);
+        this.load.spritesheet('levelFive', 'images/select_levelFive.png', 140, 140, 2);
+        this.load.image('settingsIcon', 'images/settingIcon.png');
         
         //Preload för allt i madness
         // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
         // Background
-        this.load.image('bg', '../../assets/1024_600_bg.jpg');
-
-        this.load.tilemap('tilemap', '../../assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
-        this.load.image('gameTiles', '../../assets/newTiles/kennyspritesheet.png');
+        this.load.image('bg', 'assets/1024_600_bg.jpg');
+        
+        //Maps
+        //this.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);        
+        //this.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
+        //1.0
+        this.load.tilemap('1.0', 'assets/maps/1.0.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('ground', 'assets/kenney32/spritesheet_ground.png');
+        this.load.image('items', 'assets/kenney32/spritesheet_items.png');
+        this.load.image('tiles', 'assets/kenney32/spritesheet_tiles.png');
+        this.load.image('background', 'assets/backgrounds/newdesert.jpg');
 
         // Tilemap blocks
-        this.load.image('ChestBlue', '../../assets/ChestBlue.png');
-        this.load.image('rocks', '../../assets/rocks.png');
-        this.load.image('berryBush', '../../assets/qubodup-bush_berries_0.png');
-        this.load.image('BigTree', '../../assets/tree2-final.png');
-        this.load.image('signpost-outsidestuff', '../../assets/signpost-outsidestuff.png');
-        this.load.image('Tile_14', '../../assets/PNG/Tile_14.png');
-        this.load.image('grassTiles', '../../assets/grass_tiles.png');
-        this.load.image('Object_1', '../../assets/PNG/Object_1.png');
+        this.load.image('ChestBlue', 'assets/ChestBlue.png');
+        this.load.image('rocks', 'assets/rocks.png');
+        this.load.image('berryBush', 'assets/qubodup-bush_berries_0.png');
+        this.load.image('BigTree', 'assets/tree2-final.png');
+        this.load.image('signpost-outsidestuff', 'assets/signpost-outsidestuff.png');
+        this.load.image('Tile_14', 'assets/PNG/Tile_14.png');
+        this.load.image('grassTiles', 'assets/grass_tiles.png');
+        this.load.image('Object_1', 'assets/PNG/Object_1.png');
 
         // Commands
-        this.load.image('up_com', '../../assets/up_60.png');
-        this.load.image('walk_com', '../../assets/walk_60.png');
-        this.load.image('fly_com', '../../assets/fly.png');
+        this.load.image('up_com', 'assets/up_60.png');
+        this.load.image('walk_com', 'assets/walk_60.png');
+        this.load.image('fly_com', 'assets/fly.png');
 
         // New Command Button
-        this.load.image('new', '../../assets/new.png');
-        this.load.image('trash_100', '../../assets/trash_100.png');
-        this.load.image('trash_50', '../../assets/trash_50.png');
+        this.load.image('new', 'assets/new.png');
+        this.load.image('trash_100', 'assets/trash_100.png');
+        this.load.image('trash_50', 'assets/trash_50.png');
 
         //Command line :D
-        this.load.image('com_line', '../../assets/com_line.png');
+        this.load.image('com_line', 'assets/com_line.png');
 
         // Menu Buttons
-        this.load.image('run_btn', '../../assets/run_button.png');
-        this.load.image('stop_btn', '../../assets/stop_50.png');
-        this.load.image('restart_btn', '../../assets/restart_50.png');
-        this.load.image('sound_btn', '../../assets/sound_50.png');
-        this.load.image('home_btn', '../../assets/home_50.png');
-        this.load.image('help_btn', '../../assets/help_50.png');
+        this.load.image('run_btn', 'assets/run_button.png');
+        this.load.image('stop_btn', 'assets/stop_50.png');
+        this.load.image('restart_btn', 'assets/restart_50.png');
+        this.load.image('sound_btn', 'assets/sound_50.png');
+        this.load.image('home_btn', 'assets/home_50.png');
+        this.load.image('help_btn', 'assets/help_50.png');
 
         // Playable character
-        this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+        //this.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
        
 	},
 	create: function () {

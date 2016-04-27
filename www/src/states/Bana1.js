@@ -5,6 +5,8 @@ RobotKompis.Bana1 = function (game) {
     this.layer1;
     this.layer2;
     this.layer3;
+    this.layer4;
+    this.layer5;
 
     // The robot player
     this.player;
@@ -55,28 +57,41 @@ RobotKompis.Bana1.prototype = {
     
         var graphics = new Phaser.Graphics(this, 0, 0);
         // Later on used to create gravity.
-
+        
+        //  Set the world (global) gravity
+        this.physics.arcade.gravity.y = 2500;
+        //Gravity
+       
         // ADD COMMAND LINE AND RUN LINE !
 
         
 
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
-        this.map = this.add.tilemap('tilemap');
-        this.map.addTilesetImage('kennyspritesheet', 'gameTiles');
+        this.map = this.add.tilemap('1.0');
+        this.map.addTilesetImage('spritesheet_ground', 'ground');
+        this.map.addTilesetImage('spritesheet_items', 'items');
+        this.map.addTilesetImage('spritesheet_tiles', 'tiles');
+        this.map.addTilesetImage('newdesert', 'background');
 
-        this.layer0 = this.map.createLayer('waterLayer');
-        this.layer1 = this.map.createLayer('blockedLayer');
-        this.layer2 = this.map.createLayer('ladderLayer');
-
-        this.map.setCollisionBetween(1, 5000, true, 'blockedLayer');
+        this.layer0 = this.map.createLayer('background');
+        this.layer1 = this.map.createLayer('water');
+        this.layer2 = this.map.createLayer('blocked');
+        this.layer3 = this.map.createLayer('unblocked');
+        this.layer4 = this.map.createLayer('ladder');
+        this.layer5 = this.map.createLayer('door');
         
-        this.player = this.add.sprite(185, this.world.height - 280, 'switch');
+
+        this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        
+        this.player = this.add.sprite(185, this.world.height - 280, 'while');
         this.physics.arcade.enable(this.player);
+        this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
-        this.player.body.moves = false;
-
+        
+        this.player.body.moves = true;
+        this.player.body.gravity.y = 1000;
 
         // Block Library
         graphics.lineStyle(0);
@@ -147,7 +162,9 @@ RobotKompis.Bana1.prototype = {
     },
     
     update: function () {// LET'S UPDATE !
-
+        
+        //Collision
+        this.physics.arcade.collide(this.player, this.layer2);
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
 
