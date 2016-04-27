@@ -81,6 +81,7 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', 'assets/Switch1_small.png', 80, 105);
+        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
        
 	},
 	create: function () {
