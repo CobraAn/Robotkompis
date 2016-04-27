@@ -38,11 +38,18 @@ RobotKompis.Preloader.prototype = {
         // Background
         this.load.image('bg', '../../assets/1024_600_bg.jpg');
 
-        // Tilemaps (one for each level)
-        this.load.tilemap('tilemap1', '../../assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+        //Maps
+        //this.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);        
+        //this.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
+        //1.0
+        this.load.tilemap('tilemap1', 'assets/maps/1.0.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('ground', 'assets/kenney32/spritesheet_ground.png');
+        this.load.image('items', 'assets/kenney32/spritesheet_items.png');
+        this.load.image('tiles', 'assets/kenney32/spritesheet_tiles.png');
+        this.load.image('background', 'assets/backgrounds/newdesert.jpg');
 
         // Spritesheets
-        this.load.image('gameTiles', '../../assets/newTiles/kennyspritesheet.png');
+        //this.load.image('gameTiles', '../../assets/newTiles/kennyspritesheet.png');
 
         // Commands
         this.load.image('up_com', '../../images/actionicons/uparrow_60.png');
@@ -66,7 +73,8 @@ RobotKompis.Preloader.prototype = {
         this.load.image('help_btn', '../../assets/help_50.png');
 
         // Playable character
-        this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+        //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
        
 	},
 	create: function () {
