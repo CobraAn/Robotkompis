@@ -5,8 +5,6 @@ RobotKompis.Bana1 = function (game) {
     this.layer1;
     this.layer2;
     this.layer3;
-    this.layer4;
-    this.layer5;
 
     // The robot player
     this.player;
@@ -57,46 +55,38 @@ RobotKompis.Bana1.prototype = {
     
         var graphics = new Phaser.Graphics(this, 0, 0);
         // Later on used to create gravity.
-        
-        //  Set the world (global) gravity
-        this.physics.arcade.gravity.y = 2500;
-        //Gravity
-       
+
         // ADD COMMAND LINE AND RUN LINE !
 
         
 
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
-        this.map = this.add.tilemap('1.0');
-        this.map.addTilesetImage('spritesheet_ground', 'ground');
-        this.map.addTilesetImage('spritesheet_items', 'items');
-        this.map.addTilesetImage('spritesheet_tiles', 'tiles');
-        this.map.addTilesetImage('newdesert', 'background');
+        this.map = this.add.tilemap('tilemap');
+        this.map.addTilesetImage('kennyspritesheet', 'gameTiles');
 
-        this.layer0 = this.map.createLayer('background');
-        this.layer1 = this.map.createLayer('water');
-        this.layer2 = this.map.createLayer('blocked');
-        this.layer3 = this.map.createLayer('unblocked');
-        this.layer4 = this.map.createLayer('ladder');
-        this.layer5 = this.map.createLayer('door');
-        
+        this.layer0 = this.map.createLayer('waterLayer');
+        this.layer1 = this.map.createLayer('blockedLayer');
+        this.layer2 = this.map.createLayer('ladderLayer');
 
-        this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        this.map.setCollisionBetween(1, 5000, true, 'blockedLayer');
         
-        this.player = this.add.sprite(185, this.world.height - 280, 'while');
+        this.player = this.add.sprite(185, this.world.height - 280, 'switch');
         this.physics.arcade.enable(this.player);
-        this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
-        
-        this.player.body.moves = true;
-        this.player.body.gravity.y = 1000;
+        this.player.body.moves = false;
+
 
         // Block Library
         graphics.lineStyle(0);
-        graphics.beginFill(0xFFFF0B);
+        graphics.beginFill(0x000000);
         graphics.drawRect(840, 500, 170, 80);
+        graphics.endFill();
+        // White
+        graphics.lineStyle(0);
+        graphics.beginFill(0xFFFFFF);
+        graphics.drawRect(843, 503, 163, 73);
         graphics.endFill();
 
         this.new_btn = this.add.sprite(920, 500, 'new');
@@ -162,9 +152,8 @@ RobotKompis.Bana1.prototype = {
     },
     
     update: function () {// LET'S UPDATE !
-        
-        //Collision
-        this.physics.arcade.collide(this.player, this.layer2);
+        this.game.physics.arcade.collide(this.player, this.layer1);
+
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
 
@@ -249,9 +238,8 @@ RobotKompis.Bana1.prototype = {
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
-        var noWalkRight = 0;
+        var noWalk = 0;
         var noJump = 0;
-        var noWalkLeft = 0;
         console.log(this.command_line.length);
         console.log(this.command_line[1]);
         this.stop_btn.visible = true;
@@ -260,17 +248,13 @@ RobotKompis.Bana1.prototype = {
         for (var i = 0; i < this.command_line.length; i++) {
             if (this.command_line[i].key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
-                noWalkRight++;
-                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
+                noWalk++;
+                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noJump++;
                 this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_line[i].key === 'walk_left_com') {
-                noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
             }
         }
         this.tween.start();
