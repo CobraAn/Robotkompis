@@ -59,9 +59,15 @@ RobotKompis.Preloader.prototype = {
         this.load.image('Object_1', 'assets/PNG/Object_1.png');
 
         // Commands
+<<<<<<< HEAD
         this.load.image('up_com', 'assets/up_60.png');
         this.load.image('walk_com', 'assets/walk_60.png');
         this.load.image('fly_com', 'assets/fly.png');
+=======
+        this.load.image('up_com', '../../images/actionicons/uparrow_60.png');
+        this.load.image('walk_right_com', '../../images/actionicons/Rightarrow_60.png');
+        this.load.image('walk_left_com', '../../images/actionicons/leftarrow_60.png');
+>>>>>>> refs/remotes/origin/master
 
         // New Command Button
         this.load.image('new', 'assets/new.png');
