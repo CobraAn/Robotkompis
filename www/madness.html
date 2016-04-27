@@ -27,10 +27,10 @@
                 // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
                 // Background
                 game.load.image('bg', 'assets/1024_600_bg.jpg');
-                game.load.image('background', 'assets/backgrounds/desert_small.png');
+                game.load.image('background', 'assets/backgrounds/newdesert.jpg');
 
                  //Map
-                game.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+                game.load.tilemap('tilemap', 'assets/maps/mu2.json', null, Phaser.Tilemap.TILED_JSON);
                 //Title spritesheet
                 game.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
 
@@ -112,31 +112,38 @@
             function create() {
                 // Later on used to create gravity.
                 game.physics.startSystem(Phaser.Physics.ARCADE);
-
+                
+                //  Set the world (global) gravity
+                game.physics.arcade.gravity.y = 2500;
                 // ADD COMMAND LINE AND RUN LINE !
 
                 game.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
                 //Background for map1, temporary....
-                game.add.sprite(0, 0, 'background');
+                //game.add.sprite(0, 0, 'background');
                 graphics = game.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
 
                 map = game.add.tilemap('tilemap');
-                map.addTilesetImage('kennyspritesheet', 'gameTiles');   
-                //map.addTilesetImage('tiles', 'grassMid32');   
+                map.addTilesetImage('kennyspritesheet', 'gameTiles');                     
 
                 layer0 = map.createLayer('waterLayer');
                 layer1 = map.createLayer('blockedLayer');
                 layer2 = map.createLayer('ladderLayer');
 
                 layer1.resizeWorld();
+                
+                //Collision 
                 map.setCollisionBetween(1, 5000, true, 'blockedLayer');
 
-                player = game.add.sprite(180, game.world.height - 280, 'switch');
+                player = game.add.sprite(180, game.world.height - 400, 'switch');
                 game.physics.arcade.enable(player);
-                // Does this line below really do that much? I assume it stops the sprite from going outside the window.
+                //Gravity
+                game.physics.enable( [ player ], Phaser.Physics.ARCADE);
+        
+                // Keeps player in screen, activates steering with keyboard and adds gravity. 
                 player.body.collideWorldBounds = true;
-                player.body.moves = false;
-
+                player.body.moves = true;
+                player.body.gravity.y = 1000;
+        
 
                 // Block Library
                 graphics.lineStyle(0);
@@ -164,14 +171,14 @@
                 game.load.image('walk_right_com', 'images/actionicons/Rightarrow_60.png');
                 game.load.image('walk_left_com', 'images/actionicons/leftarrow_60.png');
                 */
-                // HARD-CODED COMMANDS //
+     // HARD-CODED COMMANDS //
                 walkRight = game.add.sprite(20, 510, 'walk_right_com');
                 walkRight.inputEnabled = true;
                 walkRight.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
                 walkRight.events.onDragStart.add(savePosition, this); // this is a reference to EVERYTHING. Like python's self.
                 walkRight.events.onDragStop.add(commandAdd, this);// Not sure if the last add part is needed or not.
                 walkRight.collideWorldBounds = true;
-
+   
                 jump = game.add.sprite(90, 510, 'up_com');
                 jump.inputEnabled = true;
                 jump.input.enableDrag(true);
@@ -208,16 +215,21 @@
                 home_btn = game.add.sprite(965, game.world.height - 590, 'home_btn');
                 sound_btn = game.add.sprite(965, game.world.height - 530, 'sound_btn');
                 help_btn = game.add.sprite(965, game.world.height - 470, 'help_btn');
-
-                // Pointer is active by default and does not need to be turned on by game.input :)
-                cursors = game.input.keyboard.createCursorKeys();
-
+                
+                
                 // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
                 run_btn.events.onInputDown.add(listener, this);
                 stop_btn.events.onInputDown.add(listenerStop, this);
+     
+                // Pointer is active by default and does not need to be turned on by game.input :)
+                cursors = game.input.keyboard.createCursorKeys();
+
+                
 
             }
             function update() {// LET'S UPDATE !
+                
+                //Collision
                 game.physics.arcade.collide(player, layer1);
 
                 // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
@@ -241,9 +253,10 @@
                     player.body.velocity.y = 0;
                     player.frame = 4; // Don't ask me what this does xP
                 }
+                 }
 
 
-            }// Might be worth using a Phaser group instead of a Javascript Array.
+           // Might be worth using a Phaser group instead of a Javascript Array.
 
             // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
             function savePosition(sprite, pointer) {
