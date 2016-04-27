@@ -8,6 +8,9 @@ RobotKompis.MapOverview = function (game) {
     this.LevelFive = null;
     this.settingIcon = null;
 
+    this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
+    this.commandKeys = null; // The commands which are available on a certain level. 
+
 };
 
 RobotKompis.MapOverview.prototype = {
@@ -34,7 +37,9 @@ RobotKompis.MapOverview.prototype = {
     //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
     startLevelOne: function () {
         'use strict';
-        this.state.start('Bana1');
+        this.state.states['Level'].tilemapKey = 'tilemap1';
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
+        this.state.start('Level');
     },
     
     startLevelTwo: function () {

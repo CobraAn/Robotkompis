@@ -38,7 +38,10 @@ RobotKompis.Preloader.prototype = {
         // Background
         this.load.image('bg', '../../assets/1024_600_bg.jpg');
 
-        this.load.tilemap('tilemap', '../../assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+        // Tilemaps (one for each level)
+        this.load.tilemap('tilemap1', '../../assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);
+
+        // Spritesheets
         this.load.image('gameTiles', '../../assets/newTiles/kennyspritesheet.png');
 
         // Commands
