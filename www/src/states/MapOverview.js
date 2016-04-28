@@ -38,7 +38,8 @@ RobotKompis.MapOverview.prototype = {
     startLevelOne: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap1';
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
         this.state.start('Level');
     },
     

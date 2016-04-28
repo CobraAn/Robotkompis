@@ -56,6 +56,12 @@ RobotKompis.Preloader.prototype = {
         this.load.image('walk_right_com', '../../images/actionicons/Rightarrow_60.png');
         this.load.image('walk_left_com', '../../images/actionicons/leftarrow_60.png');
 
+        this.load.image('down_com', '../../images/actionicons/downarrow_60.png');
+        this.load.image('hop_left_com', '../../images/actionicons/hop_left_60.png');
+        this.load.image('hop_right_com', '../../images/actionicons/hop_right_60.png');
+        this.load.image('ladder_com', '../../images/actionicons/ladder_60.png');
+        this.load.image('key_com', '../../images/actionicons/key_60.png');
+
         // New Command Button
         this.load.image('new', '../../assets/new.png');
         this.load.image('trash_100', '../../assets/trash_100.png');
