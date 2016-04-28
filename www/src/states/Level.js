@@ -81,7 +81,7 @@ RobotKompis.Level.prototype = {
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
-        this.player = this.add.sprite(185, this.world.height - 280, 'while');
+        this.player = this.add.sprite(160, this.world.height - 280, 'while');
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
@@ -234,41 +234,73 @@ RobotKompis.Level.prototype = {
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
-        var noWalk = 0;
-        var noJump = 0;
+        var noWalkRight = 0;
+        var noWalkLeft= 0;
+        var noWalkUp = 0;
+        var noWalkDown = 0;
+        var noHopLeft = 0;
+        var noHopRight = 0;
+        var noLadder;
+        var noKey;
         console.log(this.command_line.length);
         console.log(this.command_line[1]);
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         this.tween = this.add.tween(this.player);
         for (var i = 0; i < this.command_line.length; i++) {
+            //TODO
+            //Change to switch-statement
             if (this.command_line[i].key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
-                noWalk++;
-                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
+                noWalkRight++;
+                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
-                noJump++;
-                this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
+                noWalkUp++;
+                this.tween.to({y: this.player.y - (noWalkUp * 35)}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.command_line[i].key === 'walk_left_com') {
+                console.log('adding tween for walkLeft cmd');
+                noWalkLeft++;
+                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.command_line[i].key === 'down_com') {
+                noWalkDown++;
+                this.tween.to({y: this.player.y + ((noWalkUp * 35) - (noWalkDown * 35))}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.command_line[i].key === 'hop_left_com') {
+
+            }
+            else if (this.command_line[i].key === 'hop_right_com') {
+
+            }
+            else if (this.command_line[i].key === 'ladder_com') {
+
+            }
+            else if (this.command_line[i].key === 'key_com') {
+
             }
         }
         this.tween.start();
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
-    listenerStop: function () { // Need to put in something that checks whether or not the tween manager is defined. Seems silly to get an error. 
-        for (var i in this.tween._manager._tweens) {
-           this.tween._manager._tweens[i].stop();
+    listenerStop: function () {
+        if (typeof this.tween._manager !== 'undefined') {
+            for (var i in this.tween._manager._tweens) {
+                this.tween._manager._tweens[i].stop();
+            }
         }
+
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(185, 320);
+        this.player.reset(160, 320);
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
     commandLineRender: function () {
-        for (i = 0; i < this.command_line.length; i++) {
+        for (var i = 0; i < this.command_line.length; i++) {
             var comPosX = 20 + (70 * i); // Calculate the position.
             this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
@@ -276,7 +308,7 @@ RobotKompis.Level.prototype = {
 
     // What do you think it does?
     clearCommandLine: function() {
-        for (i = 0; i < this.command_line.length; i++) {
+        for (var i = 0; i < this.command_line.length; i++) {
             console.log('i value');
             console.log(i);
             this.command_line[i].kill(); // Kill the sprite
