@@ -31,7 +31,7 @@ RobotKompis.Level = function (game) {
 
     // Command_line array which contains all the commands.
     this.command_line = []; // The command line is an empty array.
-    this.com_line;
+    this.com_line; // This is just a graphics object. Kept to render things.  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -41,6 +41,7 @@ RobotKompis.Level = function (game) {
     this.newCommand;
 
     this.new_btn;
+    this.clear_btn;
     this.trash_50;
     this.trash_100;
     
@@ -105,9 +106,15 @@ RobotKompis.Level.prototype = {
         this.new_btn = this.add.sprite(920, 500, 'new');
         this.new_btn.inputEnabled = true;
         this.new_btn.events.onInputDown.add(this.newCycle, this);
+
+        this.clear_btn = this.add.sprite(970, 370, 'clear_btn'); // Not entirely square so it has some offset to make it seem like it. 
+        this.clear_btn.inputEnabled = true;
+        this.clear_btn.events.onInputDown.add(this.clearCommandLine, this);
+        
         this.trash_50 = this.add.sprite(965, 430, 'trash_50');
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
+
 
         // Command_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
@@ -126,7 +133,7 @@ RobotKompis.Level.prototype = {
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
 
-        this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
+        //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
@@ -250,7 +257,7 @@ RobotKompis.Level.prototype = {
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
-    listenerStop: function () {
+    listenerStop: function () { // Need to put in something that checks whether or not the tween manager is defined. Seems silly to get an error. 
         for (var i in this.tween._manager._tweens) {
            this.tween._manager._tweens[i].stop();
         }
@@ -265,6 +272,16 @@ RobotKompis.Level.prototype = {
             var comPosX = 20 + (70 * i); // Calculate the position.
             this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
+    },
+
+    // What do you think it does?
+    clearCommandLine: function() {
+        for (i = 0; i < this.command_line.length; i++) {
+            console.log('i value');
+            console.log(i);
+            this.command_line[i].kill(); // Kill the sprite
+        }
+        this.command_line = []; 
     }
 };
 

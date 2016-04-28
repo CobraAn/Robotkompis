@@ -64,6 +64,7 @@ RobotKompis.Preloader.prototype = {
 
         // New Command Button
         this.load.image('new', '../../assets/new.png');
+        this.load.image('clear_btn', '../../assets/clear_50.png');
         this.load.image('trash_100', '../../assets/trash_100.png');
         this.load.image('trash_50', '../../assets/trash_50.png');
 
@@ -73,7 +74,7 @@ RobotKompis.Preloader.prototype = {
         // Menu Buttons
         this.load.image('run_btn', '../../assets/run_button.png');
         this.load.image('stop_btn', '../../assets/stop_50.png');
-        this.load.image('restart_btn', '../../assets/restart_50.png');
+        // this.load.image('restart_btn', '../../assets/restart_50.png'); // Not currently used. Kind-of-ish replaced by clear_btn.
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
