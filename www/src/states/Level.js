@@ -122,8 +122,8 @@ RobotKompis.Level.prototype = {
         this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
         this.newCommand.inputEnabled = true;
         this.newCommand.input.enableDrag(true);
-        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
-        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
+        this.newCommand.events.onDragStop.add(this.commandDragStop, this);// Not sure if the last add part is needed or not.
         this.newCommand.collideWorldBounds = true;
 
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
@@ -176,19 +176,24 @@ RobotKompis.Level.prototype = {
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
-    savePosition: function(sprite, pointer) {
+    commandDragStart: function(sprite, pointer) {
         // y is always 510. Both oldPosY and newPosY.
-        var remainder = sprite.x % 70; // Cleanse the input from faulty values.
-        this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
-        this.oldPosX = 20 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as savePosition being slightly delayed.)
+        if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
+            this.oldPosX = 850; // Same dimensions as when newCommand is created.
+        }
+        else {
+            var remainder = sprite.x % 70; // Cleanse the input from faulty values.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
+            this.oldPosX = 20 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+        }
     },
 
     // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position.
-    commandAdd: function(sprite, pointer) {
+    commandDragStop: function(sprite, pointer) {
         // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
         if (pointer.y > 510 && pointer.y < 590) {
             if (this.oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in commandDragStart.
             }
             else {
                 this.addNew();
@@ -204,7 +209,7 @@ RobotKompis.Level.prototype = {
               //trash_100.visible = true;
               //Some kind of timer. game.time.now
             if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in commandDragStart.
             } else { // Add it back to new, you pleb!
                 this.addNew();
             }
@@ -212,7 +217,7 @@ RobotKompis.Level.prototype = {
             this.commandLineRender();
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
-            sprite.reset(this.oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
+            sprite.reset(this.oldPosX, 510); // oldPosX gotten from commandDragStart. Commands are ALWAYS at y = 510.
         }
     },
     
@@ -220,8 +225,8 @@ RobotKompis.Level.prototype = {
         this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
         this.newCommand.inputEnabled = true;
         this.newCommand.input.enableDrag(true);
-        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
-        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
+        this.newCommand.events.onDragStop.add(this.commandDragStop, this);// Not sure if the last add part is needed or not.
         this.newCommand.collideWorldBounds = true;
     },
 
@@ -234,6 +239,14 @@ RobotKompis.Level.prototype = {
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
+        // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
+        for (i = 0; i < this.command_line.length; i++) {
+            this.command_line[i].input.draggable = false;
+        }
+        this.newCommand.input.draggable = false;
+        this.new_btn.input.enabled = false; 
+        this.clear_btn.input.enabled = false;
+        // Start moving the sprite along the commands
         var noWalkRight = 0;
         var noWalkLeft= 0;
         var noWalkUp = 0;
@@ -277,7 +290,7 @@ RobotKompis.Level.prototype = {
             }
             else if (this.command_line[i].key === 'ladder_com') {
 
-            }
+             }
             else if (this.command_line[i].key === 'key_com') {
 
             }
@@ -287,6 +300,15 @@ RobotKompis.Level.prototype = {
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
+        // Re-activate commands and their input related functionality. 
+        for (i = 0; i < this.command_line.length; i++) {
+            this.command_line[i].input.draggable = true;
+        }
+        this.newCommand.input.draggable = true;
+        this.new_btn.input.enabled = true; 
+        this.clear_btn.input.enabled = true;
+
+        // Something else
         if (typeof this.tween._manager !== 'undefined') {
             for (var i in this.tween._manager._tweens) {
                 this.tween._manager._tweens[i].stop();
@@ -316,8 +338,28 @@ RobotKompis.Level.prototype = {
         this.command_line = []; 
     }
 };
+/*
+// MAD NOTES
+Logging command bugs + improvements
+
+BUGS / PRIORITIZED FEATURES
+FIXED /// Commands cannot be added as the for loop is in action
+FIXED /// The NEW command moves too much to the left (follows the command count thing)
+FIXED /// Change the name of commandAdd to something like commandDragStop (with savePosition being re-named to commandDragStart)
+The command line allows blitting past its area. It needs some sort of scroll functionality.
+Commands should only take another's place when passed more than 1/3 / 1/2 of the left (previous) command's position. Same with right.
+Weird drag drop thing in the middle between New and commandLine
+New stops making new commands (when and why?). When then clicking new command, the one you placed disappears. Only to re-appear when you add another command to the commandLine
 
 
-          
+IMPROVEMENTS
+Trash can gets bigger when hoovered over with a command
+Commands light up / move as they are being executed (put in for loop).
+Make some way to access ALL the commands and choose one
+Change the NEW button to something less advertisement-like
+Add a small loop of 2 commands showing in the NEW stack
+Commands make a little action when hoovered over. Something to describe their function.           
+Re-name com_line to commandLine
+Put in command stack (up to 5)
 
-            
+*/            

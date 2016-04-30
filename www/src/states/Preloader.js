@@ -64,9 +64,9 @@ RobotKompis.Preloader.prototype = {
 
         // New Command Button
         this.load.image('new', '../../assets/new.png');
-        this.load.image('clear_btn', '../../assets/clear_50.png');
+        this.load.image('clear_btn', '../../assets/clear_50.png'); // CC0 License
         this.load.image('trash_100', '../../assets/trash_100.png');
-        this.load.image('trash_50', '../../assets/trash_50.png');
+        this.load.image('trash_50', '../../assets/trash_50.png'); // CC0 license
 
         //Command line :D
         this.load.image('com_line', '../../assets/com_line.png');
