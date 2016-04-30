@@ -134,7 +134,7 @@ RobotKompis.Level.prototype = {
         this.stop_btn.visible = false;
 
         //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
-        this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
+        this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
 
@@ -336,6 +336,11 @@ RobotKompis.Level.prototype = {
             this.command_line[i].kill(); // Kill the sprite
         }
         this.command_line = []; 
+    },
+    
+    //Home button function
+    homeFunction: function() {
+        this.state.start('MapOverview');
     }
 };
 /*
