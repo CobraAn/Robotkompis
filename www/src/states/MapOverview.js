@@ -19,17 +19,17 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         
         //Knappar för att starta olika banor
-        this.LevelOne = this.add.button(200, 150, 'levelOne', this.startLevelOne, this, 0, 0, 1);
-        this.LevelTwo = this.add.button(400, 150, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
-        this.LevelThree = this.add.button(600, 150, 'levelThree', this.startLevelThree, this, 0, 0, 1);
-        this.LevelFour = this.add.button(275, 360, 'levelFour', this.startLevelFour, this, 0, 0, 1);
-        this.LevelFive = this.add.button(500, 360, 'levelFive', this.startLevelFive, this, 0, 0, 1);
+        this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
+        this.LevelTwo = this.add.button(440, 190, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
+        this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
+        this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
+        this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
         
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
         
         //titel
-        this.title = this.add.bitmapText(200, 40, 'startFont', 'Robotkompis', 100);
+        this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis!', 110);
    
     },
     

@@ -11,15 +11,16 @@ RobotKompis.Preloader.prototype = {
         //Saker som visas medan allt laddas
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
 		this.preloadBar.anchor.setTo(0.5, 0.5);
-		this.load.setPreloadSprite(this.preloadBar);
-		this.titleText = this.add.image(this.world.centerX, this.world.centerY - 220, 'titleimage');
+		this.load.setPreloadSprite(this.preloadBar, 0);
+		this.titleText = this.add.bitmapText(this.world.centerX, this.world.centerY - 200, 'titleFont', 'Robotkompis!', 110);
 		this.titleText.anchor.setTo(0.5, 0.5);
         
-        
+    
         //Här under laddar man in alla assets som ska användas, som t.ex bakgrundsbilder osv
         
         //Här laddas fonter om det behövs
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
+        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titlefont.png', '../../fonts/titleFont/titlefont.fnt');
         
         //Bilder för StartMenu
         this.load.spritesheet('startKnapp', '../../images/Startknapp_Spritesheet.png', 392, 165, 2);
@@ -81,7 +82,7 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
+        this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
        
 	},
 	create: function () {
@@ -90,6 +91,7 @@ RobotKompis.Preloader.prototype = {
 	},
 	update: function () {
         'use strict';
+        
 		this.ready = true;
         this.state.start('StartMenu');
 	}
