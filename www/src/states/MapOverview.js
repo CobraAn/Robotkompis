@@ -26,7 +26,7 @@ RobotKompis.MapOverview.prototype = {
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
         
         //Gör om denna till knapp för inställningar
-        this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
+        this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
         
         //titel
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis!', 110);
@@ -41,6 +41,11 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
                                                 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
         this.state.start('Level');
+    },
+    
+    startSettings: function () {
+        'use strict';
+        this.state.start('Settings');
     },
     
     startLevelTwo: function () {
