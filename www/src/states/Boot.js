@@ -8,7 +8,7 @@ RobotKompis.Boot.prototype = {
 	preload: function () {
         'use strict';
 		this.load.image('preloadBar', '../../images/loader_bar.png');
-		this.load.image('titleimage', '../../images/titleImage.png');
+        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titlefont.png', '../../fonts/titleFont/titlefont.fnt');
 	},
 
 	create: function () {
@@ -19,7 +19,7 @@ RobotKompis.Boot.prototype = {
 		this.stage.forceLandscape = true;
 
 		this.input.addPointer();
-		this.stage.backgroundColor = '#bffeff';
+		this.stage.backgroundColor = '#cb3535';
 
 		this.state.start('Preloader');
 	}

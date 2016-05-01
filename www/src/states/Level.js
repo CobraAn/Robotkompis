@@ -1,4 +1,4 @@
-RobotKompis.Bana1 = function (game) {
+RobotKompis.Level = function (game) {
     // Tilemap variables.
     this.map;
     this.layer0;
@@ -25,29 +25,29 @@ RobotKompis.Bana1 = function (game) {
     // Tween for animations
     this.tween;
 
+    // HI GUYS! We have two little adoptees from MapOverview.js:
+    //this.commandKeys
+    //this.tilemapKey
+
     // Command_line array which contains all the commands.
     this.command_line = []; // The command line is an empty array.
-    this.com_line;
-
-    this.walkRight;
-    this.jump;
-    this.walkLeft;
+    this.com_line; // This is just a graphics object. Kept to render things.  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
     this.newPosX;
     this.commandLineIndex;
 
-    this.levelCommands = [];
     this.newCommand;
 
     this.new_btn;
+    this.clear_btn;
     this.trash_50;
     this.trash_100;
     
 };
 
-RobotKompis.Bana1.prototype = {
+RobotKompis.Level.prototype = {
     
     create: function () {
 
@@ -56,19 +56,16 @@ RobotKompis.Bana1.prototype = {
         this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
-        // Later on used to create gravity.
-        
+
         //  Set the world (global) gravity
         this.physics.arcade.gravity.y = 2500;
-        //Gravity
-       
+
         // ADD COMMAND LINE AND RUN LINE !
 
-        
-
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
+        this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
 
-        this.map = this.add.tilemap('1.0');
+        // Tilesets
         this.map.addTilesetImage('spritesheet_ground', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
@@ -80,7 +77,7 @@ RobotKompis.Bana1.prototype = {
         this.layer3 = this.map.createLayer('unblocked');
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
-        
+    
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
@@ -93,52 +90,41 @@ RobotKompis.Bana1.prototype = {
         this.player.body.moves = true;
         this.player.body.gravity.y = 1000;
 
+
         // Block Library
         graphics.lineStyle(0);
-        graphics.beginFill(0xFFFF0B);
+        graphics.beginFill(0x000000);
         graphics.drawRect(840, 500, 170, 80);
         graphics.endFill();
+        // White
+        graphics.lineStyle(0);
+        graphics.beginFill(0xFFFFFF);
+        graphics.drawRect(843, 503, 163, 73);
+        graphics.endFill();
 
+        // New and trash. 
         this.new_btn = this.add.sprite(920, 500, 'new');
         this.new_btn.inputEnabled = true;
         this.new_btn.events.onInputDown.add(this.newCycle, this);
+
+        this.clear_btn = this.add.sprite(970, 370, 'clear_btn'); // Not entirely square so it has some offset to make it seem like it. 
+        this.clear_btn.inputEnabled = true;
+        this.clear_btn.events.onInputDown.add(this.clearCommandLine, this);
+        
         this.trash_50 = this.add.sprite(965, 430, 'trash_50');
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
+
         // Command_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
-        // HARD-CODED COMMANDS //
-        this.walkRight = this.add.sprite(20, 510, 'walk_right_com');
-        this.walkRight.inputEnabled = true;
-        this.walkRight.input.enableDrag(true); //  Allow dragging - the 'true' parameter will make the sprite snap to the center
-        this.walkRight.events.onDragStart.add(this.savePosition, this); // this is a reference to EVERYTHING. Like python's self.
-        this.walkRight.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.walkRight.collideWorldBounds = true;
-
-        this.jump = this.add.sprite(90, 510, 'up_com');
-        this.jump.inputEnabled = true;
-        this.jump.input.enableDrag(true);
-        this.jump.events.onDragStart.add(this.savePosition, this); // this
-        this.jump.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not (and at this point I'm afraid to ask).
-        //sprite.events.onDragStop.add(ListenerEvent [function without params], ListenerContext);
-
-        // Push to commandLine !
-        this.command_line.push(this.walkRight);
-        this.command_line.push(this.jump);
-
-        // The possible add command (from the Command Library).
-        this.walkLeft = this.add.sprite(850, 510, 'walk_left_com');
-        this.walkLeft.inputEnabled = true;
-        this.walkLeft.input.enableDrag(true);
-        this.walkLeft.events.onDragStart.add(this.savePosition, this); // this
-        this.walkLeft.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.newCommand = this.walkLeft;
-
-        // Add levelCommands and their SPRITE KEYS
-        this.levelCommands.push(this.walkLeft.key, this.jump.key, this.walkRight.key);
-        // Menu buttons
+        this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
+        this.newCommand.inputEnabled = true;
+        this.newCommand.input.enableDrag(true);
+        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
+        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand.collideWorldBounds = true;
 
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
         this.run_btn.inputEnabled = true;
@@ -147,7 +133,7 @@ RobotKompis.Bana1.prototype = {
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
 
-        this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
+        //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
@@ -162,9 +148,8 @@ RobotKompis.Bana1.prototype = {
     },
     
     update: function () {// LET'S UPDATE !
-        
-        //Collision
-        this.physics.arcade.collide(this.player, this.layer2);
+        this.game.physics.arcade.collide(this.player, this.layer2);
+
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
 
@@ -232,26 +217,25 @@ RobotKompis.Bana1.prototype = {
     },
     
     addNew: function () {
-        var sprite2 = this.add.sprite(850, 510, this.levelCommands[0]);
-        sprite2.inputEnabled = true;
-        sprite2.input.enableDrag(true);
-        sprite2.events.onDragStart.add(this.savePosition, this); // this
-        sprite2.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.newCommand = sprite2;
+        this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
+        this.newCommand.inputEnabled = true;
+        this.newCommand.input.enableDrag(true);
+        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
+        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand.collideWorldBounds = true;
     },
 
     newCycle: function(sprite) {
-        var newSpriteKey = this.levelCommands.shift();
-        this.levelCommands.push(newSpriteKey);
+        var newSpriteKey = this.commandKeys.shift();
+        this.commandKeys.push(newSpriteKey);
         this.newCommand.kill(); // Kill the old new Command sprite.
         this.addNew();
     },
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
-        var noWalkRight = 0;
+        var noWalk = 0;
         var noJump = 0;
-        var noWalkLeft = 0;
         console.log(this.command_line.length);
         console.log(this.command_line[1]);
         this.stop_btn.visible = true;
@@ -260,24 +244,20 @@ RobotKompis.Bana1.prototype = {
         for (var i = 0; i < this.command_line.length; i++) {
             if (this.command_line[i].key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
-                noWalkRight++;
-                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
+                noWalk++;
+                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noJump++;
                 this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'walk_left_com') {
-                noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
-            }
         }
         this.tween.start();
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
-    listenerStop: function () {
+    listenerStop: function () { // Need to put in something that checks whether or not the tween manager is defined. Seems silly to get an error. 
         for (var i in this.tween._manager._tweens) {
            this.tween._manager._tweens[i].stop();
         }
@@ -292,6 +272,16 @@ RobotKompis.Bana1.prototype = {
             var comPosX = 20 + (70 * i); // Calculate the position.
             this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
+    },
+
+    // What do you think it does?
+    clearCommandLine: function() {
+        for (i = 0; i < this.command_line.length; i++) {
+            console.log('i value');
+            console.log(i);
+            this.command_line[i].kill(); // Kill the sprite
+        }
+        this.command_line = []; 
     }
 };
 

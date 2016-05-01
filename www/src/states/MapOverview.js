@@ -8,6 +8,9 @@ RobotKompis.MapOverview = function (game) {
     this.LevelFive = null;
     this.settingIcon = null;
 
+    this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
+    this.commandKeys = null; // The commands which are available on a certain level. 
+
 };
 
 RobotKompis.MapOverview.prototype = {
@@ -16,17 +19,17 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         
         //Knappar för att starta olika banor
-        this.LevelOne = this.add.button(200, 150, 'levelOne', this.startLevelOne, this, 0, 0, 1);
-        this.LevelTwo = this.add.button(400, 150, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
-        this.LevelThree = this.add.button(600, 150, 'levelThree', this.startLevelThree, this, 0, 0, 1);
-        this.LevelFour = this.add.button(275, 360, 'levelFour', this.startLevelFour, this, 0, 0, 1);
-        this.LevelFive = this.add.button(500, 360, 'levelFive', this.startLevelFive, this, 0, 0, 1);
+        this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
+        this.LevelTwo = this.add.button(440, 190, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
+        this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
+        this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
+        this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
         
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
         
         //titel
-        this.title = this.add.bitmapText(200, 40, 'startFont', 'Robotkompis', 100);
+        this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis!', 110);
    
     },
     
@@ -34,7 +37,10 @@ RobotKompis.MapOverview.prototype = {
     //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
     startLevelOne: function () {
         'use strict';
-        this.state.start('Bana1');
+        this.state.states['Level'].tilemapKey = 'tilemap1';
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     },
     
     startLevelTwo: function () {
