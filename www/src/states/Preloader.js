@@ -65,9 +65,9 @@ RobotKompis.Preloader.prototype = {
 
         // New Command Button
         this.load.image('new', '../../assets/new.png');
-        this.load.image('clear_btn', '../../assets/clear_50.png');
+        this.load.image('clear_btn', '../../assets/clear_50.png'); // CC0 License
         this.load.image('trash_100', '../../assets/trash_100.png');
-        this.load.image('trash_50', '../../assets/trash_50.png');
+        this.load.image('trash_50', '../../assets/trash_50.png'); // CC0 license
 
         //Command line :D
         this.load.image('com_line', '../../assets/com_line.png');
@@ -82,8 +82,16 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+<<<<<<< HEAD
         this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
        
+=======
+        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
+        
+        this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
+        this.load.image('cloud','../../assets/favx_cloud1.png');       
+        this.load.image('cloud','../../assets/favx_cloud1.png');       
+>>>>>>> refs/remotes/origin/Dev-code-branch
 	},
 	create: function () {
         'use strict';
