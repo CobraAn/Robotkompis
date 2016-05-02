@@ -165,7 +165,7 @@ RobotKompis.Level.prototype = {
         this.stop_btn.visible = false;
 
         //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
-        this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
+        this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
 
@@ -314,6 +314,7 @@ RobotKompis.Level.prototype = {
         }
         this.command_line = []; 
     },
+<<<<<<< HEAD
 
     // OWN FUNCTION: clock on "I <3 f(x)"-button 
     favxOnClick: function() { 
@@ -362,6 +363,13 @@ RobotKompis.Level.prototype = {
     //         this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
     //     }
     // }
+=======
+    
+    //Home button function
+    homeFunction: function() {
+        this.state.start('MapOverview');
+    }
+>>>>>>> origin/Dev-code-branch
 };
 
 
