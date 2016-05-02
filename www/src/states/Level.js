@@ -25,8 +25,11 @@ RobotKompis.Level = function (game) {
     // Making own functions
     this.func_btn; // Function button
     this.cloud;    // Cloud-window
-    this.favx_cloud = []; // Temporary command line. 
-    this.func_global; 
+    this.func_image_array = ['f1','f2','f3','f4','f5','f6'];
+    this.func_sprite_array = []; // Function sprite array;
+    this.func_global = 0;
+    this.func_i_global = 235;
+    this.func_j_global = 160; 
 
     //Oklar
     this.cursors;
@@ -132,15 +135,15 @@ RobotKompis.Level.prototype = {
         this.func_delete = this.add.button(376, 400 , 'func_delete', this.newOnClick, this, 2, 1, 0);
         this.func_edit = this.add.button(200, 340 , 'func_edit', this.newOnClick, this, 2, 1, 0);
         this.func_create = this.add.button(200, 400 , 'func_create', this.createOnClick, this, 2, 1, 0);
-        this.favx_cloud[1]=this.add.sprite(235, 160, 'f1');
-        this.favx_cloud[2]=this.add.sprite(335, 160, 'f2');
-        this.favx_cloud[3]=this.add.sprite(435, 160, 'f3');
-        this.favx_cloud[4]=this.add.sprite(235, 260, 'f4');
-        this.favx_cloud[5]=this.add.sprite(335, 260, 'f5');
-        this.favx_cloud[6]=this.add.sprite(435, 260, 'f6');
-        for (var i = 1; i < 7; i++) {
-            this.favx_cloud[i].visible = false;
-        }
+        // this.func_sprite_array[1]=this.add.sprite(235, 160, 'f1');
+        // this.func_sprite_array[2]=this.add.sprite(335, 160, 'f2');
+        // this.func_sprite_array[3]=this.add.sprite(435, 160, 'f3');
+        // this.func_sprite_array[4]=this.add.sprite(235, 260, 'f4');
+        // this.func_sprite_array[5]=this.add.sprite(335, 260, 'f5');
+        // this.func_sprite_array[6]=this.add.sprite(435, 260, 'f6');
+        // for (var i = 1; i < 7; i++) {
+        //     this.favx_cloud[i].visible = false;
+        // }
         this.cloud.visible = false; 
         this.func_new.visible = false; 
         this.func_delete.visible = false;
@@ -325,6 +328,12 @@ RobotKompis.Level.prototype = {
             this.func_new.visible = true;
             this.func_edit.visible = true;
             this.func_delete.visible = true; 
+            for (var i = 1; i < 7; i++) {
+                if (this.func_sprite_array[i]!=null){
+                    this.func_sprite_array[i].visible = true;    
+                }
+                this.func_sprite_array[i].visible = false;
+            }
         }
         else { 
             this.func_new.visible = false;
@@ -333,7 +342,10 @@ RobotKompis.Level.prototype = {
             this.func_delete.visible = false;
             this.cloud.visible = false;
             for (var i = 1; i < 7; i++) {
-            this.favx_cloud[i].visible = false;
+                if (this.func_sprite_array[i]!=null){
+
+                }
+                this.func_sprite_array[i].visible = false;
             }
 
         }    
@@ -347,14 +359,27 @@ RobotKompis.Level.prototype = {
     }, 
     // OWN FUNCTION: click on "SKAPA"
     createOnClick: function() {
-        this.func_global++; 
+        this.func_global++; // Felhantering behövs 
+        if(this.func_i_global<=435 && this.func_j_global<=260){
+            this.func_i_global+=100;
+        }  
+        else if (this.func_i_global>435 && this.func_j_global<=260){
+            this.func_i_global=335;
+            this.func_j_global+=100;
+        } 
+        else { // Temporary else 
+            this.func_i_global=235;
+            this.func_j_global=160;   
+        }     
         this.func_create.visible = false;    
         this.func_new.visible = true;
         this.func_delete.visible = true;
         this.func_edit.visible = true;
-        for (var i = 1; i < 7; i++) {
-            this.favx_cloud[i].visible = true;
-        }
+        this.func_sprite_array[this.func_global] = this.add.sprite(this.func_i_global-100, this.func_j_global, this.func_image_array[this.func_global-1]);
+
+        // for (var i = 1; i < 7; i++) {
+        //     this.func_sprite_array[i].visible = true;
+        // }
 
 
    
