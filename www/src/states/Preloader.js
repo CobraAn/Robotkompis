@@ -83,9 +83,20 @@ RobotKompis.Preloader.prototype = {
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
         this.load.spritesheet('while', 'assets/while1.png', 30, 64);
         
-        this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
-        this.load.image('cloud','../../assets/favx_cloud1.png');       
-        this.load.image('cloud','../../assets/favx_cloud1.png');       
+        // Own-defined FUNCTIONS !!!!!!!!!!!!!!!!!!!!!
+        this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
+        this.load.spritesheet('func_delete', '../../assets/function/sheet_func_delete.png', 160, 50, 2);
+        this.load.spritesheet('func_create', '../../assets/function/sheet_func_create.png', 160, 50, 2);
+        this.load.spritesheet('func_new', '../../assets/function/sheet_func_new.png', 160, 50, 2);
+        this.load.spritesheet('func_edit', '../../assets/function/sheet_func_change.png', 160, 50, 2);
+        this.load.image('f1', '../../assets/function/f1.png');
+        this.load.image('f2', '../../assets/function/f2.png');
+        this.load.image('f3', '../../assets/function/f3.png');
+        this.load.image('f4', '../../assets/function/f4.png');
+        this.load.image('f5', '../../assets/function/f5.png');
+        this.load.image('f6', '../../assets/function/f6.png');
+        this.load.image('cloud','../../assets/function/func_cloud3.png');       
+        //this.load.image('cloud','../../assets/favx_cloud1.png');       
 	},
 	create: function () {
         'use strict';
