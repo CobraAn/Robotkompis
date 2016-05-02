@@ -127,13 +127,16 @@ RobotKompis.Level.prototype = {
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
+        
+
+
+
+
         // OWN FUNCTION DEFINING STUFF
 
         this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
         this.func_new = this.add.button(200, 400 , 'func_new', this.newOnClick, this, 2, 1, 0);
-        this.func_delete = this.add.button(376, 400 , 'func_delete', this.newOnClick, this, 2, 1, 0);
-        this.func_edit = this.add.button(200, 340 , 'func_edit', this.newOnClick, this, 2, 1, 0);
         this.func_create = this.add.button(200, 400 , 'func_create', this.createOnClick, this, 2, 1, 0);
         // this.func_sprite_array[1]=this.add.sprite(235, 160, 'f1');
         // this.func_sprite_array[2]=this.add.sprite(335, 160, 'f2');
@@ -146,8 +149,7 @@ RobotKompis.Level.prototype = {
         // }
         this.cloud.visible = false; 
         this.func_new.visible = false; 
-        this.func_delete.visible = false;
-        this.func_edit.visible = false; 
+
         this.func_create.visible = false;  
 
         // Command_line dimensions: 820 x 80 px
@@ -326,8 +328,8 @@ RobotKompis.Level.prototype = {
         if (this.cloud.visible==false) { 
             this.cloud.visible = true;
             this.func_new.visible = true;
-            this.func_edit.visible = true;
-            this.func_delete.visible = true; 
+            // this.func_edit.visible = true;
+            // this.func_delete.visible = true; 
             for (var i = 1; i < 7; i++) {
                 if (this.func_sprite_array[i]!=null){
                     this.func_sprite_array[i].visible = true;    
@@ -353,8 +355,8 @@ RobotKompis.Level.prototype = {
     // OWN FUNCTION: click on "NY FUNK"
     newOnClick: function() {  
         this.func_new.visible = false;
-        this.func_delete.visible = false;
-        this.func_edit.visible = false;
+        // this.func_delete.visible = false;
+        // this.func_edit.visible = false;
         this.func_create.visible = true;       
     }, 
     // OWN FUNCTION: click on "SKAPA"
@@ -373,17 +375,33 @@ RobotKompis.Level.prototype = {
         }     
         this.func_create.visible = false;    
         this.func_new.visible = true;
-        this.func_delete.visible = true;
-        this.func_edit.visible = true;
-        this.func_sprite_array[this.func_global] = this.add.sprite(this.func_i_global-100, this.func_j_global, this.func_image_array[this.func_global-1]);
+        // this.func_delete.visible = true;
+        // this.func_edit.visible = true;
+        this.func_sprite_array[this.func_global] = this.add.sprite(this.func_i_global-100, this.func_j_global, this.func_image_array[this.func_global-1]);        
+        this.func_sprite_array[this.func_global].inputEnabled = true;
+        this.func_sprite_array[this.func_global].input.useHandCursor = true;
+        this.func_sprite_array[this.func_global].input.enableDrag();
+        this.func_sprite_array[this.func_global].events.onInputDown.add(this.funcSpriteOnClick, this);
 
-        // for (var i = 1; i < 7; i++) {
-        //     this.func_sprite_array[i].visible = true;
-        // }
-
-
-   
     }, 
+    funcSpriteOnClick: function(sprite) {
+        this.func_delete = this.add.button(376, 400 , 'func_delete', this.deleteFunctionBlockOnClick, this, 2, 1, 0);
+        this.func_edit = this.add.button(200, 340 , 'func_edit', this.newOnClick, this, 2, 1, 0);
+        // this.func_edit.visible = true;
+        // this.func_delete.visible = true;
+
+       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
+    //this.sprite.visible = false;
+    },
+    deleteFunctionBlockOnClick: function(sprite) {
+       this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
+       this.func_delete.kill();
+        // this.func_edit.visible = true;
+        // this.func_delete.visible = true;
+       //this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
+       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
+    //this.sprite.visible = false;
+    },     
 
     // funcWindowRender: function () {
     //     for (i = 0; i < this.cloud.length; i++) {
