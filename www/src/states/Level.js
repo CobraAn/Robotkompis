@@ -81,7 +81,8 @@ RobotKompis.Level.prototype = {
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
-        this.player = this.add.sprite(185, this.world.height - 280, 'while');
+        this.player = this.add.sprite(185, this.world.height - 280, 'switchAni');
+      
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
@@ -89,7 +90,12 @@ RobotKompis.Level.prototype = {
         
         this.player.body.moves = true;
         this.player.body.gravity.y = 1000;
-
+        
+        //animation
+        this.player.animations.add('jump', [1, 0], 1, false);
+        this.player.animations.add('cheer', [2, 3, 4], 3, true);
+        this.player.animations.add('climb', [5], 10, true);
+        
 
         // Block Library
         graphics.lineStyle(0);
@@ -154,14 +160,18 @@ RobotKompis.Level.prototype = {
         this.player.body.velocity.x = 0;
 
         if (this.cursors.left.isDown) { //  Move to the left
+            this.player.animations.stop('cheer');
             this.player.body.velocity.x = -150;
         }
         else if (this.cursors.right.isDown) {//  Move to the right
+            this.player.animations.stop('cheer');
             this.player.body.velocity.x = 150;
 
         }
         else if (this.cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
             this.player.body.velocity.y = -150;
+            this.player.animations.stop('jump');
+            this.player.animations.play('jump');
         }
         else if (this.cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again.
             this.player.body.velocity.y = 150;
@@ -169,7 +179,9 @@ RobotKompis.Level.prototype = {
         else { //  Stand still
             this.player.body.velocity.x = 0;
             this.player.body.velocity.y = 0;
-            this.player.frame = 4; // Don't ask me what this does xP
+            this.player.animations.play('cheer');
+            //this.player.frame = 4; // Don't ask me what this does xP
+            
         }
 
 

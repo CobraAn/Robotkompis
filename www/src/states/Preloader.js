@@ -27,7 +27,7 @@ RobotKompis.Preloader.prototype = {
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
-        this.load.spritesheet('levelOne', '../../images/select_levelOne.png', 140, 140, 2);
+        this.load.spritesheet('levelOne', '../../assets/level_select_buttons/select_level.png', 137, 140, 3);
         this.load.spritesheet('levelTwo', '../../images/select_levelTwo.png', 140, 140, 2);
         this.load.spritesheet('levelThree', '../../images/select_levelThree.png', 140, 140, 2);
         this.load.spritesheet('levelFour', '../../images/select_levelFour.png', 140, 140, 2);
@@ -89,8 +89,11 @@ RobotKompis.Preloader.prototype = {
         this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 45);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 50);
         this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 60);
-        this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 42);
+        this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 37);
         this.load.spritesheet('while', '../../assets/robotsResized/while1.png', 30, 40);
+        
+        //spritesheet for switch med animation för att hoppa
+        this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheet.png', 30, 37);
        
 	},
 	create: function () {
