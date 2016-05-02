@@ -86,7 +86,11 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-        this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
+        this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 45);
+        this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 50);
+        this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 60);
+        this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 42);
+        this.load.spritesheet('while', '../../assets/robotsResized/while1.png', 30, 40);
        
 	},
 	create: function () {
