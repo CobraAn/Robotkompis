@@ -314,7 +314,7 @@ RobotKompis.Level.prototype = {
         }
         this.command_line = []; 
     },
-<<<<<<< HEAD
+
 
     // OWN FUNCTION: clock on "I <3 f(x)"-button 
     favxOnClick: function() { 
@@ -332,6 +332,9 @@ RobotKompis.Level.prototype = {
             this.func_edit.visible = false; 
             this.func_delete.visible = false;
             this.cloud.visible = false;
+            for (var i = 1; i < 7; i++) {
+            this.favx_cloud[i].visible = false;
+            }
 
         }    
     },
@@ -363,13 +366,13 @@ RobotKompis.Level.prototype = {
     //         this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
     //     }
     // }
-=======
+
     
     //Home button function
     homeFunction: function() {
         this.state.start('MapOverview');
     }
->>>>>>> origin/Dev-code-branch
+
 };
 
 
