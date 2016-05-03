@@ -18,7 +18,19 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
-    
+
+
+
+
+    // Making own functions
+    this.func_btn; // Function button
+    this.cloud;    // Cloud-window
+    this.func_image_array = ['f1','f2','f3','f4','f5','f6'];
+    this.func_sprite_array = []; // Function sprite array;
+    this.func_global = 0;
+    this.func_i_global = 235;
+    this.func_j_global = 160; 
+
     //Oklar
     this.cursors;
 
@@ -85,7 +97,7 @@ RobotKompis.Level.prototype = {
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
-        this.player = this.add.sprite(160, this.world.height - 280, 'while');
+        this.player = this.add.sprite(185, this.world.height - 280, 'while');
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
@@ -121,9 +133,34 @@ RobotKompis.Level.prototype = {
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
+        
+
+
+
+
+        // OWN FUNCTION DEFINING STUFF
+
+        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+        this.func_new = this.add.button(200, 400 , 'func_new', this.newOnClick, this, 2, 1, 0);
+        this.func_create = this.add.button(200, 400 , 'func_create', this.createOnClick, this, 2, 1, 0);
+        // this.func_sprite_array[1]=this.add.sprite(235, 160, 'f1');
+        // this.func_sprite_array[2]=this.add.sprite(335, 160, 'f2');
+        // this.func_sprite_array[3]=this.add.sprite(435, 160, 'f3');
+        // this.func_sprite_array[4]=this.add.sprite(235, 260, 'f4');
+        // this.func_sprite_array[5]=this.add.sprite(335, 260, 'f5');
+        // this.func_sprite_array[6]=this.add.sprite(435, 260, 'f6');
+        // for (var i = 1; i < 7; i++) {
+        //     this.favx_cloud[i].visible = false;
+        // }
+        this.cloud.visible = false; 
+        this.func_new.visible = false; 
+
+        this.func_create.visible = false;  
 
         // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
+
         this.commandGroup = this.add.group(); // To house all the command children. And eventually hit (test) them. And kill them. 
         this.physics.arcade.enable(this.commandGroup);
         this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
@@ -160,7 +197,7 @@ RobotKompis.Level.prototype = {
         this.stop_btn.visible = false;
 
         //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
-        this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
+        this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
 
@@ -265,7 +302,7 @@ RobotKompis.Level.prototype = {
             }
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
-            sprite.reset(this.oldPosX, 510); // oldPosX gotten from commandDragStart. Commands are ALWAYS at y = 510.
+            sprite.reset(this.oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
         }
     },
     
@@ -300,14 +337,10 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = false; 
         this.clear_btn.input.enabled = false;
         // Start moving the sprite along the commands
-        var noWalkRight = 0;
-        var noWalkLeft= 0;
-        var noWalkUp = 0;
-        var noWalkDown = 0;
-        var noHopLeft = 0;
-        var noHopRight = 0;
-        var noLadder;
-        var noKey;
+        var noWalk = 0;
+        var noJump = 0;
+        var noLadder; // Might be removed?
+        var noKey; // Might be removed?
         console.log(this.commandGroup.length);
         console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
@@ -318,21 +351,22 @@ RobotKompis.Level.prototype = {
             //Change to switch-statement
             if (this.commandGroup.getAt(i).key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
-                noWalkRight++;
-                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
+                noWalk++;
+                this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.commandGroup.getAt(i).key === 'up_com') {
                 console.log('adding tween for jump cmd');
-                noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 35)}, 500, Phaser.Easing.Linear.None, false);
+                noJump++;
+                this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.commandGroup.getAt(i).key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
-                noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
+                noWalk++;
+                this.tween.to({x: this.player.x - (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
+            /*
             else if (this.commandGroup.getAt(i).key === 'down_com') {
-                noWalkDown++;
+                noWalk++;
                 this.tween.to({y: this.player.y + ((noWalkUp * 35) - (noWalkDown * 35))}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.commandGroup.getAt(i).key === 'hop_left_com') {
@@ -345,8 +379,8 @@ RobotKompis.Level.prototype = {
 
              }
             else if (this.commandGroup.getAt(i).key === 'key_com') {
-
             }
+            */
         }
         this.tween.start();
     },
@@ -370,10 +404,9 @@ RobotKompis.Level.prototype = {
                 this.tween._manager._tweens[i].stop();
             }
         }
-
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(160, 320);
+        this.player.reset(185, 320);
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
@@ -396,10 +429,100 @@ RobotKompis.Level.prototype = {
             sprite.kill(); // Kill the sprite
         }
     },
-    moveCommandGroupRight: function() {
-        this.commandGroup.setAll('body.velocity.x', -50);
+
+    // OWN FUNCTION: clock on "I <3 f(x)"-button 
+    favxOnClick: function() { 
+        //this.cloud.visible =! this.cloud.visible;  
+        //this.func_new.visible = true;
+        if (this.cloud.visible==false) { 
+            this.cloud.visible = true;
+            this.func_new.visible = true;
+            // this.func_edit.visible = true;
+            // this.func_delete.visible = true; 
+            for (var i = 1; i < 7; i++) {
+                if (this.func_sprite_array[i]!=null){
+                    this.func_sprite_array[i].visible = true;    
+                }
+                this.func_sprite_array[i].visible = false;
+            }
+        }
+        else { 
+            this.func_new.visible = false;
+            this.func_create.visible = false;
+            this.func_edit.visible = false; 
+            this.func_delete.visible = false;
+            this.cloud.visible = false;
+            for (var i = 1; i < 7; i++) {
+                if (this.func_sprite_array[i]!=null){
+
+                }
+                this.func_sprite_array[i].visible = false;
+            }
+
+        }    
     },
-    moveCommandGroupLeft: function() {
-        this.commandGroup.setAll('body.velocity.x', -50);
+    // OWN FUNCTION: click on "NY FUNK"
+    newOnClick: function() {  
+        this.func_new.visible = false;
+        // this.func_delete.visible = false;
+        // this.func_edit.visible = false;
+        this.func_create.visible = true;       
+    }, 
+    // OWN FUNCTION: click on "SKAPA"
+    createOnClick: function() {
+        this.func_global++; // Felhantering behövs 
+        if(this.func_i_global<=435 && this.func_j_global<=260){
+            this.func_i_global+=100;
+        }  
+        else if (this.func_i_global>435 && this.func_j_global<=260){
+            this.func_i_global=335;
+            this.func_j_global+=100;
+        } 
+        else { // Temporary else 
+            this.func_i_global=235;
+            this.func_j_global=160;   
+        }     
+        this.func_create.visible = false;    
+        this.func_new.visible = true;
+        // this.func_delete.visible = true;
+        // this.func_edit.visible = true;
+        this.func_sprite_array[this.func_global] = this.add.sprite(this.func_i_global-100, this.func_j_global, this.func_image_array[this.func_global-1]);        
+        this.func_sprite_array[this.func_global].inputEnabled = true;
+        this.func_sprite_array[this.func_global].input.useHandCursor = true;
+        this.func_sprite_array[this.func_global].input.enableDrag();
+        this.func_sprite_array[this.func_global].events.onInputDown.add(this.funcSpriteOnClick, this);
+
+    }, 
+    funcSpriteOnClick: function(sprite) {
+        this.func_delete = this.add.button(376, 400 , 'func_delete', this.deleteFunctionBlockOnClick, this, 2, 1, 0);
+        this.func_edit = this.add.button(200, 340 , 'func_edit', this.newOnClick, this, 2, 1, 0);
+        // this.func_edit.visible = true;
+        // this.func_delete.visible = true;
+
+       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
+    //this.sprite.visible = false;
+    },
+    deleteFunctionBlockOnClick: function(sprite) {
+       this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
+       this.func_delete.kill();
+        // this.func_edit.visible = true;
+        // this.func_delete.visible = true;
+       //this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
+       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
+    //this.sprite.visible = false;
+    },     
+
+    // funcWindowRender: function () {
+    //     for (i = 0; i < this.cloud.length; i++) {
+    //         var comPosX = 20 + (70 * i); // Calculate the position.
+    //         this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+    //     }
+    // }
+
+    
+    //Home button function
+    homeFunction: function() {
+        this.state.start('MapOverview');
     }
+
 };
