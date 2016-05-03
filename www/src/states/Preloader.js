@@ -82,16 +82,14 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-<<<<<<< HEAD
+
         this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
-       
-=======
-        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
+
         
         this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
         this.load.image('cloud','../../assets/favx_cloud1.png');       
         this.load.image('cloud','../../assets/favx_cloud1.png');       
->>>>>>> refs/remotes/origin/Dev-code-branch
+
 	},
 	create: function () {
         'use strict';
