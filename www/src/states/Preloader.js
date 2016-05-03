@@ -35,8 +35,12 @@ RobotKompis.Preloader.prototype = {
         
         //Preload för allt i madness
         // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
+
         // Background
-        this.load.image('bg', '../../assets/1024_600_bg.jpg');
+        //this.load.image('bg', '../../assets/1024_600_bg.jpg');
+        //this.load.image('bg', '../../assets/wires_1050.png');
+        //this.load.image('bg', '../../assets/backgrounds/desert.jpg');
+        this.load.image('bg', '../../images/startBG600.png');
 
         //Maps
         //this.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);        
@@ -63,13 +67,16 @@ RobotKompis.Preloader.prototype = {
         this.load.image('key_com', '../../images/actionicons/key_60.png');
 
         // New Command Button
-        this.load.image('new', '../../assets/new.png');
+        this.load.image('new', '../../assets/restart_60.png');
         this.load.image('clear_btn', '../../assets/clear_50.png'); // CC0 License
         this.load.image('trash_100', '../../assets/trash_100.png');
         this.load.image('trash_50', '../../assets/trash_50.png'); // CC0 license
 
         //Command line :D
         this.load.image('com_line', '../../assets/com_line.png');
+
+        this.load.image('right20', '../../assets/right_arrow_20.png');
+        this.load.image('left20', '../../assets/left_arrow_20.png');
 
         // Menu Buttons
         this.load.image('run_btn', '../../assets/run_button.png');

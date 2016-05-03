@@ -26,12 +26,16 @@ RobotKompis.Level = function (game) {
     this.tween;
 
     // HI GUYS! We have two little adoptees from MapOverview.js:
-    //this.commandKeys
-    //this.tilemapKey
+    // this.commandKeys // Automatically imported, just written down for clarity. 
+    // this.tilemapKey
 
     // Command_line array which contains all the commands.
-    this.command_line = []; // The command line is an empty array.
-    this.com_line; // This is just a graphics object. Kept to render things.  
+    //this.command_line = []; // The command line is an empty array.
+    this.com_line; // This is just a graphics object. Kept to render things.
+    this.commandGroup;
+    this.currentSpriteGroup; // BECAUSE YEAH, PHASER WANTS IT THAT WAY *HURR DURR DURR* (it's to be able to place sprites above the commandGroup)
+    this.rightArrow20;
+    this.leftArrow20;  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -53,8 +57,8 @@ RobotKompis.Level.prototype = {
 
         this.physics.startSystem(Phaser.Physics.ARCADE);
         
-        this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
-    
+        this.add.image(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
+        
         var graphics = new Phaser.Graphics(this, 0, 0);
 
         //  Set the world (global) gravity
@@ -96,14 +100,16 @@ RobotKompis.Level.prototype = {
         graphics.beginFill(0x000000);
         graphics.drawRect(840, 500, 170, 80);
         graphics.endFill();
+        
         // White
         graphics.lineStyle(0);
         graphics.beginFill(0xFFFFFF);
         graphics.drawRect(843, 503, 163, 73);
         graphics.endFill();
+        
 
         // New and trash. 
-        this.new_btn = this.add.sprite(920, 500, 'new');
+        this.new_btn = this.add.sprite(930, 510, 'new');
         this.new_btn.inputEnabled = true;
         this.new_btn.events.onInputDown.add(this.newCycle, this);
 
@@ -116,15 +122,35 @@ RobotKompis.Level.prototype = {
         this.trash_100.visible = false;
 
 
-        // Command_line dimensions: 820 x 80 px
+        // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
+        this.commandGroup = this.add.group(); // To house all the command children. And eventually hit (test) them. And kill them. 
+        this.physics.arcade.enable(this.commandGroup);
+        this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
+        //this.game.physics.arcade.enableBody(this);
+        this.commandGroup.allowGravity = false; 
+        this.commandGroup.immovable = true;
+        //this.body.allowGravity = false;
+        //this.body.immovable = true;
+        //  A mask is a Graphics object
+        var mask = this.game.add.graphics(0, 0);
 
-        this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
-        this.newCommand.inputEnabled = true;
-        this.newCommand.input.enableDrag(true);
-        this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
-        this.newCommand.events.onDragStop.add(this.commandDragStop, this);// Not sure if the last add part is needed or not.
-        this.newCommand.collideWorldBounds = true;
+        //  Shapes drawn to the Graphics object must be filled.
+        mask.beginFill(0xffffff);
+
+        //  Here we'll draw a circle
+        mask.drawRect(10, 500, 800, 80);
+        this.commandGroup.mask = mask; // MASK :D :D :D (This took me half of my saturday to find...)
+
+
+        this.rightArrow20 = this.add.sprite(13, 500, 'left20');
+        this.rightArrow20.inputEnabled = true;
+        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
+        this.leftArrow20 = this.add.sprite(805,500, 'right20');
+        this.leftArrow20.inputEnabled = true;
+        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
+
+        this.addNew(); // Add the newCommand variable sprite. 
 
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
         this.run_btn.inputEnabled = true;
@@ -144,11 +170,23 @@ RobotKompis.Level.prototype = {
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
+        this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
     },
     
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
+
+        if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
+        // pointer is down and is over our sprite, so do something here  
+            this.commandGroup.setAll('body.velocity.x', -120);
+        } else if (this.game.input.activePointer.isDown && this.leftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
+            this.commandGroup.setAll('body.velocity.x', +120);
+        } else {
+            this.commandGroup.setAll('body.velocity.x', 0);
+        }
+        // Fix so it can't move beyond its parameters. 
+        // When a new command is added to it, it snaps back :(
 
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
@@ -177,6 +215,8 @@ RobotKompis.Level.prototype = {
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
+
+        // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE! 
         // y is always 510. Both oldPosY and newPosY.
         if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
             this.oldPosX = 850; // Same dimensions as when newCommand is created.
@@ -184,37 +224,45 @@ RobotKompis.Level.prototype = {
         else {
             var remainder = sprite.x % 70; // Cleanse the input from faulty values.
             this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
-            this.oldPosX = 20 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+            this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+            this.commandGroup.remove(sprite); // It's no longer allowed to be in this group!
+            this.currentSpriteGroup.add(sprite);
         }
     },
 
-    // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position.
+    // Hello! Someone has stopped dragging the command around. Try to add it to commandGroup if possible, and always adjust position.
     commandDragStop: function(sprite, pointer) {
-        // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
-        if (pointer.y > 510 && pointer.y < 590) {
-            if (this.oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in commandDragStart.
-            }
-            else {
+        // If the pointer drops it inside of the com_line square IN HEIGHT (relevant for the Library buttons)
+        if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
+            if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
             var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
             this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
-            this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-            this.command_line.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
-            this.commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            sprite.reset(this.newPosX, 510);
+            if (this.commandLineIndex <= this.commandGroup.length) {
+                this.commandGroup.addAt(sprite, this.commandLineIndex);
+            } else {
+                this.commandGroup.add(sprite);
+            }
+            this.currentSpriteGroup.remove(sprite);
+            this.commandGroupRender();
         }
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
               //trash_100.visible = true;
               //Some kind of timer. game.time.now
             if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in commandDragStart.
+                // It works but there's quite a delay?
+                this.commandGroup.remove(sprite, true);// IS the true necessary when we also have to kill it?
+                //this.commandGroup.kill(sprite);
+                sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
+                this.commandGroupRender();
             } else { // Add it back to new, you pleb!
                 this.addNew();
+                sprite.kill();
             }
-            sprite.kill();
-            this.commandLineRender();
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
             sprite.reset(this.oldPosX, 510); // oldPosX gotten from commandDragStart. Commands are ALWAYS at y = 510.
@@ -223,6 +271,9 @@ RobotKompis.Level.prototype = {
     
     addNew: function () {
         this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
+        this.physics.arcade.enable(this.newCommand);
+        this.newCommand.body.allowGravity = false; 
+        //this.newCommand.immovable = true; // Immovable necessary?
         this.newCommand.inputEnabled = true;
         this.newCommand.input.enableDrag(true);
         this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
@@ -240,9 +291,11 @@ RobotKompis.Level.prototype = {
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
-        for (i = 0; i < this.command_line.length; i++) {
-            this.command_line[i].input.draggable = false;
+        for (i = 0; i < this.commandGroup.length; i++) {
+            this.commandGroup.getAt(i).input.draggable = false;
         }
+        this.rightArrow20.input.enabled = false;
+        this.leftArrow20.input.enabled = false;
         this.newCommand.input.draggable = false;
         this.new_btn.input.enabled = false; 
         this.clear_btn.input.enabled = false;
@@ -255,43 +308,43 @@ RobotKompis.Level.prototype = {
         var noHopRight = 0;
         var noLadder;
         var noKey;
-        console.log(this.command_line.length);
-        console.log(this.command_line[1]);
+        console.log(this.commandGroup.length);
+        console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         this.tween = this.add.tween(this.player);
-        for (var i = 0; i < this.command_line.length; i++) {
+        for (var i = 0; i < this.commandGroup.length; i++) {
             //TODO
             //Change to switch-statement
-            if (this.command_line[i].key === 'walk_right_com') {
+            if (this.commandGroup.getAt(i).key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
                 noWalkRight++;
                 this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'up_com') {
+            else if (this.commandGroup.getAt(i).key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
                 this.tween.to({y: this.player.y - (noWalkUp * 35)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'walk_left_com') {
+            else if (this.commandGroup.getAt(i).key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
                 noWalkLeft++;
                 this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'down_com') {
+            else if (this.commandGroup.getAt(i).key === 'down_com') {
                 noWalkDown++;
                 this.tween.to({y: this.player.y + ((noWalkUp * 35) - (noWalkDown * 35))}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'hop_left_com') {
+            else if (this.commandGroup.getAt(i).key === 'hop_left_com') {
 
             }
-            else if (this.command_line[i].key === 'hop_right_com') {
+            else if (this.commandGroup.getAt(i).key === 'hop_right_com') {
 
             }
-            else if (this.command_line[i].key === 'ladder_com') {
+            else if (this.commandGroup.getAt(i).key === 'ladder_com') {
 
              }
-            else if (this.command_line[i].key === 'key_com') {
+            else if (this.commandGroup.getAt(i).key === 'key_com') {
 
             }
         }
@@ -301,12 +354,15 @@ RobotKompis.Level.prototype = {
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
         // Re-activate commands and their input related functionality. 
-        for (i = 0; i < this.command_line.length; i++) {
-            this.command_line[i].input.draggable = true;
+        for (i = 0; i < this.commandGroup.getAt(i).length; i++) {
+            this.commandGroup.getAt(i).input.draggable = true;
         }
+        this.rightArrow20.input.enabled = true;
+        this.leftArrow20.input.enabled = true;
         this.newCommand.input.draggable = true;
         this.new_btn.input.enabled = true; 
         this.clear_btn.input.enabled = true;
+
 
         // Something else
         if (typeof this.tween._manager !== 'undefined') {
@@ -321,45 +377,29 @@ RobotKompis.Level.prototype = {
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
-    commandLineRender: function () {
-        for (var i = 0; i < this.command_line.length; i++) {
-            var comPosX = 20 + (70 * i); // Calculate the position.
-            this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+    commandGroupRender: function () { // What happens if the commandGroup is empty?
+        for (var i = 0; i < this.commandGroup.length; i++) {
+            var comPosX = 40 + (70 * i); // Calculate the position.
+            this.commandGroup.getAt(i).reset(comPosX, 510);
+            //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
 
+    
+
     // What do you think it does?
     clearCommandLine: function() {
-        for (var i = 0; i < this.command_line.length; i++) {
-            console.log('i value');
-            console.log(i);
-            this.command_line[i].kill(); // Kill the sprite
+        //for (var i = 0; i <= this.commandGroup.length; i++) {
+        while (this.commandGroup.length != 0) {
+            var sprite = this.commandGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
+            this.commandGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
+            sprite.kill(); // Kill the sprite
         }
-        this.command_line = []; 
+    },
+    moveCommandGroupRight: function() {
+        this.commandGroup.setAll('body.velocity.x', -50);
+    },
+    moveCommandGroupLeft: function() {
+        this.commandGroup.setAll('body.velocity.x', -50);
     }
 };
-/*
-// MAD NOTES
-Logging command bugs + improvements
-
-BUGS / PRIORITIZED FEATURES
-FIXED /// Commands cannot be added as the for loop is in action
-FIXED /// The NEW command moves too much to the left (follows the command count thing)
-FIXED /// Change the name of commandAdd to something like commandDragStop (with savePosition being re-named to commandDragStart)
-The command line allows blitting past its area. It needs some sort of scroll functionality.
-Commands should only take another's place when passed more than 1/3 / 1/2 of the left (previous) command's position. Same with right.
-Weird drag drop thing in the middle between New and commandLine
-New stops making new commands (when and why?). When then clicking new command, the one you placed disappears. Only to re-appear when you add another command to the commandLine
-
-
-IMPROVEMENTS
-Trash can gets bigger when hoovered over with a command
-Commands light up / move as they are being executed (put in for loop).
-Make some way to access ALL the commands and choose one
-Change the NEW button to something less advertisement-like
-Add a small loop of 2 commands showing in the NEW stack
-Commands make a little action when hoovered over. Something to describe their function.           
-Re-name com_line to commandLine
-Put in command stack (up to 5)
-
-*/            
