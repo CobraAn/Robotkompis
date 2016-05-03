@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-
+    this.robot;
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -48,6 +48,10 @@ RobotKompis.Level = function (game) {
 };
 
 RobotKompis.Level.prototype = {
+    init: function (character){
+        this.robot = character;
+        console.log(this.robot)
+    },
     
     create: function () {
 
@@ -80,8 +84,8 @@ RobotKompis.Level.prototype = {
     
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
-        
-        this.player = this.add.sprite(160, this.world.height - 280, 'while');
+        console.log(this.robot)
+        this.player = this.add.sprite(160, this.world.height - 280, this.robot);
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
