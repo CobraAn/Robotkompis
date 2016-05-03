@@ -65,9 +65,9 @@ RobotKompis.Preloader.prototype = {
 
         // New Command Button
         this.load.image('new', '../../assets/new.png');
-        this.load.image('clear_btn', '../../assets/clear_50.png');
+        this.load.image('clear_btn', '../../assets/clear_50.png'); // CC0 License
         this.load.image('trash_100', '../../assets/trash_100.png');
-        this.load.image('trash_50', '../../assets/trash_50.png');
+        this.load.image('trash_50', '../../assets/trash_50.png'); // CC0 license
 
         //Command line :D
         this.load.image('com_line', '../../assets/com_line.png');
@@ -86,6 +86,7 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+
         this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 45);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 50);
         this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 60);
