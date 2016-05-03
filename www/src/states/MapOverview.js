@@ -26,38 +26,7 @@ RobotKompis.MapOverview.prototype = {
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
         
-        //this.levelButtonGroup = this.add.group();
-        //for(var l = 0; l < pages; l++){
-		// horizontal offset to have level thumbnails horizontally centered in the page
-		//var offsetX = (game.width-levelLength)/2+game.width*l;
-		// I am not interested in having level thumbnails vertically centered in the page, but
-		// if you are, simple replace my "20" with
-		// (game.height-levelHeight)/2
-		//var offsetY = 20;
-		// looping through each level thumbnails
-	    // for(var i = 0; i < thumbRows; i ++){
-	   //  	for(var j = 0; j < thumbCols; j ++){  
-	   //  		// which level does the thumbnail refer?
-		//		var levelNumber = i*thumbCols+j+l*(thumbRows*thumbCols);
-		//		// adding the thumbnail, as a button which will call thumbClicked function if clicked   		
-		//		// shwoing proper frame
-		//		levelThumb.frame=starsArray[levelNumber];
-		//		// custom attribute 
-		//		levelThumb.levelNumber = levelNumber+1;
-		//		levelThumbsGroup.add(levelThumb);
-		//		// if the level is playable, also write level number
-		//		if(starsArray[levelNumber]<4){
-		//			var style = {
-		//				font: "18px Arial",
-		//				fill: "#ffffff"
-		//			};
-		//			var levelText = game.add.text(levelThumb.x+5,levelThumb.y+5,levelNumber+1,style);
-		//			levelText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 1);
-		//			levelThumbsGroup.add(levelText);
-		//		}
-		//	}
-		//}
-	
+     
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
         
