@@ -455,8 +455,3 @@ RobotKompis.Level.prototype = {
     }
 
 };
-
-
-          
-
-            
