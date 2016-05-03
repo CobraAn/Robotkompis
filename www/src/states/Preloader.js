@@ -86,16 +86,7 @@ RobotKompis.Preloader.prototype = {
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-<<<<<<< HEAD
 
-        this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
-
-        
-        this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
-        this.load.image('cloud','../../assets/favx_cloud1.png');       
-        this.load.image('cloud','../../assets/favx_cloud1.png');       
-
-=======
         this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 45);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 50);
         this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 60);
@@ -105,7 +96,6 @@ RobotKompis.Preloader.prototype = {
         //spritesheet for switch med animation för att hoppa
         this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheet.png', 30, 37);
        
->>>>>>> refs/remotes/origin/Dev-graphics-branch
 	},
 	create: function () {
         'use strict';
