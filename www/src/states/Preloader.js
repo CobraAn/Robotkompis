@@ -43,8 +43,8 @@ RobotKompis.Preloader.prototype = {
         //this.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);        
         //this.load.image('gameTiles', 'assets/newTiles/kennyspritesheet.png');
         //1.0
-        this.load.tilemap('tilemap1', 'assets/maps/1.0.json', null, Phaser.Tilemap.TILED_JSON);
-        this.load.image('ground', 'assets/kenney32/spritesheet_ground.png');
+        this.load.tilemap('tilemap1', 'assets/maps/1.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('ground', 'assets/kenney32/spritesheet_ground2.png');
         this.load.image('items', 'assets/kenney32/spritesheet_items.png');
         this.load.image('tiles', 'assets/kenney32/spritesheet_tiles.png');
         this.load.image('background', 'assets/backgrounds/newdesert.jpg');
