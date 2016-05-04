@@ -20,6 +20,8 @@
         <script src="src/states/StartMenu.js"></script>
         <script src="src/states/MapOverview.js"></script>'
         <script src="src/states/Level.js"></script>
+        <script src="src/states/Settings.js"></script>
+        
 
     </head>
     <body>
@@ -37,6 +39,7 @@
                 game.state.add('StartMenu', RobotKompis.StartMenu);
                 game.state.add('MapOverview', RobotKompis.MapOverview);
                 game.state.add('Level', RobotKompis.Level);
+                game.state.add('Settings', RobotKompis.Settings);
 
                 //Start the boot state
                 game.state.start('Boot');
