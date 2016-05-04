@@ -315,8 +315,9 @@ RobotKompis.Level.prototype = {
 
     // OWN FUNCTION: click on "I <3 f(x)"-button. Opens and closes the funktion making window.
     favxOnClick: function() {         
-        if (this.cloud.visible==false) { 
+        if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
+            // Everything what is supposed to be opened is opened, other stuff is closed
             for (var i = 1; i < 7; i++) {
                 if (this.func_sprite_array[i]!=null){
                     this.func_sprite_array[i].visible = true; 
@@ -327,8 +328,8 @@ RobotKompis.Level.prototype = {
                 }          
             }
         }
-        else { 
-
+        else { //...*** and closes if opened ;)
+            // Close everything except for the chosen function. 
             for (var i = 1; i < 7; i++) {
                 this.func_create_array[i].visible = false;
 
@@ -341,10 +342,11 @@ RobotKompis.Level.prototype = {
                     }
                       
                 }
-            } 
+            }
+            // To be sure that everything is closed (bugging without the following 4 guys).
             if(this.func_edit){this.func_edit.visible = false}
-            if(this.func_save){this.func_save.visible = false}
             if(this.func_delete){this.func_delete.visible = false}
+            if(this.func_save){this.func_save.visible = false}
             if(this.func_cancel){this.func_cancel.visible = false}          
             this.cloud.visible = false;
 
@@ -353,6 +355,7 @@ RobotKompis.Level.prototype = {
 
     // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
     createSixTransparrent: function() {
+
         var xCoord = 235;
         var yCoord = 160;
         for(var i=1; i<7; i++){
@@ -379,9 +382,11 @@ RobotKompis.Level.prototype = {
     // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
     // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
     makeNewFuncOnClick: function(index) {
-        for (var i = 1; i < 7; i++) {
+        // Closing the transparrent guys and everything...
+        for (var i=1; i<7; i++) {
             this.func_create_array[i].visible = false;    
-            if (this.func_sprite_array[i]!=null){               
+            if (this.func_sprite_array[i]!=null){  
+                //...except for the chosen functions.              
                 if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
                     this.func_sprite_array[i].visible = true;  
                 }
@@ -413,6 +418,7 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array[index].events.onDragStart.add(this.savePosition, this); // this
         this.func_sprite_array[index].events.onDragStop.add(this.commandFunctionAdd, this);
         this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
+        // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
@@ -422,12 +428,12 @@ RobotKompis.Level.prototype = {
                 this.func_create_array[i].visible = true;    
             } 
         }
-
     },
     // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
     cancelCreateFunctionOnClick: function() {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
+        // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
@@ -439,9 +445,11 @@ RobotKompis.Level.prototype = {
         }
     },
 
-    // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position.
+    // Just stole this beautiful function from its author and modified it... 
+    // Adjusts the position of function sprites after drag&dropping it in accordance with the place of dropping. 
     commandFunctionAdd: function(sprite, pointer) {
         var index = this.func_sprite_array.indexOf(sprite);
+        // Counting the original position of the function sprite when created. 
         var xCoord = 235;
         var yCoord = 160;
         if(index<4){
@@ -453,12 +461,6 @@ RobotKompis.Level.prototype = {
         }
         // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
         if (pointer.y > 510 && pointer.y < 590) {
-            // if (this.oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-            //     this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
-            // }
-            // else {
-            //     this.addNew();
-            // }
             var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
             this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
             this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
@@ -467,13 +469,6 @@ RobotKompis.Level.prototype = {
         }
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
-              //trash_100.visible = true;
-              //Some kind of timer. game.time.now
-            // if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-            //     this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
-            // } else { // Add it back to new, you pleb!
-            //     this.addNew();
-            // }
             this.func_edit.kill();  
             this.func_delete.kill();
             this.func_create_array[index].visible = true;
@@ -489,6 +484,10 @@ RobotKompis.Level.prototype = {
     // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
     // You may in that case eather edit you or function or delete the sprite.  
     funcSpriteOnClick: function(sprite) {
+        // The following two lines saved me!!! Thanx to them! :)) 
+        if(this.func_edit){this.func_edit.visible = false}
+        if(this.func_delete){this.func_delete.visible = false}
+
         this.func_delete = this.add.sprite(376, 400 , 'func_delete');
         this.func_delete.inputEnabled = true;
         this.func_delete.input.useHandCursor = true;        
