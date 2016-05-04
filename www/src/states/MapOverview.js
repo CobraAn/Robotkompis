@@ -45,6 +45,7 @@ RobotKompis.MapOverview.prototype = {
         this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
         
         //for the robot-choosing-popup-menu
+        //have to fix that the sprite sheet remembers its last frame so it chows the right chosen robot.
         this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
         
         //the background of the popup
