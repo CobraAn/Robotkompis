@@ -11,22 +11,24 @@ RobotKompis.Preloader.prototype = {
         //Saker som visas medan allt laddas
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
 		this.preloadBar.anchor.setTo(0.5, 0.5);
-		this.load.setPreloadSprite(this.preloadBar);
-		this.titleText = this.add.image(this.world.centerX, this.world.centerY - 220, 'titleimage');
+		this.load.setPreloadSprite(this.preloadBar, 0);
+		this.titleText = this.add.bitmapText(this.world.centerX, this.world.centerY - 200, 'titleFont', 'Robotkompis!', 110);
 		this.titleText.anchor.setTo(0.5, 0.5);
         
-        
+    
         //Här under laddar man in alla assets som ska användas, som t.ex bakgrundsbilder osv
         
         //Här laddas fonter om det behövs
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
+        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titlefont.png', '../../fonts/titleFont/titlefont.fnt');
         
         //Bilder för StartMenu
         this.load.spritesheet('startKnapp', '../../images/Startknapp_Spritesheet.png', 392, 165, 2);
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
-        this.load.spritesheet('levelOne', '../../images/select_levelOne.png', 140, 140, 2);
+        this.load.spritesheet('levelOne', '../../assets/level_select_buttons/select_level.png', 137, 140, 3);
+        //this.load.spritesheet('levelOne', '../../images/select_levelOne.png', 140, 140, 2):
         this.load.spritesheet('levelTwo', '../../images/select_levelTwo.png', 140, 140, 2);
         this.load.spritesheet('levelThree', '../../images/select_levelThree.png', 140, 140, 2);
         this.load.spritesheet('levelFour', '../../images/select_levelFour.png', 140, 140, 2);
@@ -85,11 +87,21 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
+        this.load.image('backButton', '../../images/goback.png');
+        this.load.image('muteButton', '../../images/mute.png');
+        
+        
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
+
+        this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 45);
+        this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 50);
+        this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 60);
+        this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 37);
+        this.load.spritesheet('while', '../../assets/robotsResized/while1.png', 30, 40);
         
+
         // Own-defined FUNCTIONS !!!!!!!!!!!!!!!!!!!!!
         this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
         this.load.spritesheet('func_delete', '../../assets/function/sheet_func_delete.png', 160, 50, 2);
@@ -104,6 +116,10 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f6', '../../assets/function/f6.png');
         this.load.image('cloud','../../assets/function/func_cloud3.png');       
         //this.load.image('cloud','../../assets/favx_cloud1.png');       
+
+        //spritesheet for switch med animation för att hoppa
+        this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheet.png', 30, 37);
+
 	},
 	create: function () {
         'use strict';
@@ -111,6 +127,7 @@ RobotKompis.Preloader.prototype = {
 	},
 	update: function () {
         'use strict';
+        
 		this.ready = true;
         this.state.start('StartMenu');
 	}
