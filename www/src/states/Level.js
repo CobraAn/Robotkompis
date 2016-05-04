@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-    this.robot;
+    //this.robot;
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -39,8 +39,12 @@ RobotKompis.Level = function (game) {
     //this.tilemapKey
 
     // Command_line array which contains all the commands.
-    this.command_line = []; // The command line is an empty array.
-    this.com_line; // This is just a graphics object. Kept to render things.  
+    //this.command_line = []; // The command line is an empty array.
+    this.com_line; // This is just a graphics object. Kept to render things.
+    this.commandGroup;
+    this.currentSpriteGroup; // BECAUSE YEAH, PHASER WANTS IT THAT WAY *HURR DURR DURR* (it's to be able to place sprites above the commandGroup)
+    this.rightArrow20;
+    this.leftArrow20;  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -66,7 +70,7 @@ RobotKompis.Level.prototype = {
 
         this.physics.startSystem(Phaser.Physics.ARCADE);
         
-        this.add.sprite(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
+        this.add.image(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
 
@@ -94,9 +98,9 @@ RobotKompis.Level.prototype = {
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
 
-        //this.player = this.add.sprite(185, this.world.height - 280, 'switchAni');
+        this.player = this.add.sprite(185, this.world.height - 280, 'switchAni');
       
-        this.player = this.add.sprite(185, this.world.height - 280, this.robot);
+        //this.player = this.add.sprite(185, this.world.height - 280, this.robot);
 
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
@@ -117,6 +121,7 @@ RobotKompis.Level.prototype = {
         graphics.beginFill(0x000000);
         graphics.drawRect(840, 500, 170, 80);
         graphics.endFill();
+
         // White
         graphics.lineStyle(0);
         graphics.beginFill(0xFFFFFF);
@@ -124,7 +129,7 @@ RobotKompis.Level.prototype = {
         graphics.endFill();
 
         // New and trash. 
-        this.new_btn = this.add.sprite(920, 500, 'new');
+        this.new_btn = this.add.sprite(930, 510, 'new');
         this.new_btn.inputEnabled = true;
         this.new_btn.events.onInputDown.add(this.newCycle, this);
 
@@ -141,20 +146,41 @@ RobotKompis.Level.prototype = {
 
         this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
-
         this.cloud.visible = false; 
         this.createSixTransparrent();
 
 
-        // Command_line dimensions: 820 x 80 px
+        // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
-        this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
-        this.newCommand.inputEnabled = true;
-        this.newCommand.input.enableDrag(true);
-        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
-        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
-        this.newCommand.collideWorldBounds = true;
+        this.commandGroup = this.add.group(); // To house all the command children. And eventually hit (test) them. And kill them. 
+        this.physics.arcade.enable(this.commandGroup);
+        this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
+        //this.game.physics.arcade.enableBody(this);
+        this.commandGroup.allowGravity = false; 
+        this.commandGroup.immovable = true;
+        //this.body.allowGravity = false;
+        //this.body.immovable = true;
+        //  A mask is a Graphics object
+        var mask = this.game.add.graphics(0, 0);
+
+        //  Shapes drawn to the Graphics object must be filled.
+        mask.beginFill(0xffffff);
+
+        //  Here we'll draw a circle
+        mask.drawRect(10, 500, 800, 80);
+        this.commandGroup.mask = mask; // MASK :D :D :D (This took me half of my saturday to find...)
+
+
+        this.rightArrow20 = this.add.sprite(13, 500, 'left20');
+        this.rightArrow20.inputEnabled = true;
+        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
+        this.leftArrow20 = this.add.sprite(805,500, 'right20');
+        this.leftArrow20.inputEnabled = true;
+        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
+
+        this.addNew(); // Add the newCommand variable sprite. 
+
 
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
         this.run_btn.inputEnabled = true;
@@ -174,11 +200,22 @@ RobotKompis.Level.prototype = {
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
-
+        this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
     },
     
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
+
+        if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
+        // pointer is down and is over our sprite, so do something here  
+            this.commandGroup.setAll('body.velocity.x', -120);
+        } else if (this.game.input.activePointer.isDown && this.leftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
+            this.commandGroup.setAll('body.velocity.x', +120);
+        } else {
+            this.commandGroup.setAll('body.velocity.x', 0);
+        }
+        // Fix so it can't move beyond its parameters. 
+        // When a new command is added to it, it snaps back :(
 
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
@@ -212,41 +249,53 @@ RobotKompis.Level.prototype = {
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
-    savePosition: function(sprite, pointer) {
-
+    commandDragStart: function(sprite, pointer) {
+        // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
         // y is always 510. Both oldPosY and newPosY.
-        var remainder = sprite.x % 70; // Cleanse the input from faulty values.
-        this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
-        this.oldPosX = 20 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as savePosition being slightly delayed.)
+        if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
+            this.oldPosX = 850; // Same dimensions as when newCommand is created.
+        }
+        else {
+            var remainder = sprite.x % 70; // Cleanse the input from faulty values.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
+            this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+            this.commandGroup.remove(sprite); // It's no longer allowed to be in this group!
+            this.currentSpriteGroup.add(sprite);
+        }
     },
 
-    // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position.
-    commandAdd: function(sprite, pointer) {
-        // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
-        if (pointer.y > 510 && pointer.y < 590) {
-            if (this.oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
-            }
-            else {
+    // Hello! Someone has stopped dragging the command around. Try to add it to commandGroup if possible, and always adjust position.
+    commandDragStop: function(sprite, pointer) {
+        // If the pointer drops it inside of the com_line square IN HEIGHT (relevant for the Library buttons)
+        if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
+            if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
             var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
-            this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-            this.command_line.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
-            this.commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            sprite.reset(this.newPosX, 510);
+            if (this.commandLineIndex <= this.commandGroup.length) {
+                this.commandGroup.addAt(sprite, this.commandLineIndex);
+            } else {
+                this.commandGroup.add(sprite);
+            }
+            this.currentSpriteGroup.remove(sprite);
+            this.commandGroupRender();
         }
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
               //trash_100.visible = true;
               //Some kind of timer. game.time.now
             if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
-                this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+                // It works but there's quite a delay?
+                this.commandGroup.remove(sprite, true);// IS the true necessary when we also have to kill it?
+                //this.commandGroup.kill(sprite);
+                sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
+                this.commandGroupRender();
             } else { // Add it back to new, you pleb!
                 this.addNew();
+                sprite.kill();
             }
-            sprite.kill();
-            this.commandLineRender();
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
             sprite.reset(this.oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
@@ -255,10 +304,13 @@ RobotKompis.Level.prototype = {
     
     addNew: function () {
         this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
+        this.physics.arcade.enable(this.newCommand);
+        this.newCommand.body.allowGravity = false; 
+        //this.newCommand.immovable = true; // Immovable necessary?        
         this.newCommand.inputEnabled = true;
         this.newCommand.input.enableDrag(true);
-        this.newCommand.events.onDragStart.add(this.savePosition, this); // this
-        this.newCommand.events.onDragStop.add(this.commandAdd, this);// Not sure if the last add part is needed or not.
+        this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
+        this.newCommand.events.onDragStop.add(this.commandDragStop, this);// Not sure if the last add part is needed or not.
         this.newCommand.collideWorldBounds = true;
     },
 
@@ -271,62 +323,114 @@ RobotKompis.Level.prototype = {
 
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     listener: function () {
+        // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
+        for (i = 0; i < this.commandGroup.length; i++) {
+            this.commandGroup.getAt(i).input.draggable = false;
+        }
+        this.rightArrow20.input.enabled = false;
+        this.leftArrow20.input.enabled = false;
+        this.newCommand.input.draggable = false;
+        this.new_btn.input.enabled = false; 
+        this.clear_btn.input.enabled = false;
+        // Start moving the sprite along the commands
         var noWalk = 0;
         var noJump = 0;
-        console.log(this.command_line.length);
-        console.log(this.command_line[1]);
+        var noLadder; // Might be removed?
+        var noKey; // Might be removed?
+        console.log(this.commandGroup.length);
+        console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         this.tween = this.add.tween(this.player);
-        for (var i = 0; i < this.command_line.length; i++) {
-            if (this.command_line[i].key === 'walk_right_com') {
+        for (var i = 0; i < this.commandGroup.length; i++) {
+            //TODO
+            //Change to switch-statement
+            if (this.commandGroup.getAt(i).key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
                 noWalk++;
                 this.tween.to({x: this.player.x + (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'up_com') {
+            else if (this.commandGroup.getAt(i).key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noJump++;
                 this.tween.to({y: this.player.y - (noJump * 35)}, 500, Phaser.Easing.Linear.None, false);
             }
+            else if (this.commandGroup.getAt(i).key === 'walk_left_com') {
+                console.log('adding tween for walkLeft cmd');
+                noWalk++;
+                this.tween.to({x: this.player.x - (noWalk * 64)}, 500, Phaser.Easing.Linear.None, false);
+            }
+            /*
+            else if (this.commandGroup.getAt(i).key === 'down_com') {
+                noWalk++;
+                this.tween.to({y: this.player.y + ((noWalkUp * 35) - (noWalkDown * 35))}, 500, Phaser.Easing.Linear.None, false);
+            }
+            else if (this.commandGroup.getAt(i).key === 'hop_left_com') {
+
+            }
+            else if (this.commandGroup.getAt(i).key === 'hop_right_com') {
+
+            }
+            else if (this.commandGroup.getAt(i).key === 'ladder_com') {
+
+             }
+            else if (this.commandGroup.getAt(i).key === 'key_com') {
+            }
+            */
         }
         this.tween.start();
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
-    listenerStop: function () { // Need to put in something that checks whether or not the tween manager is defined. Seems silly to get an error. 
-        for (var i in this.tween._manager._tweens) {
-           this.tween._manager._tweens[i].stop();
+    listenerStop: function () {
+        // Re-activate commands and their input related functionality. 
+        for (i = 0; i < this.commandGroup.getAt(i).length; i++) {
+            this.commandGroup.getAt(i).input.draggable = true;
+        }
+        this.rightArrow20.input.enabled = true;
+        this.leftArrow20.input.enabled = true;
+        this.newCommand.input.draggable = true;
+        this.new_btn.input.enabled = true; 
+        this.clear_btn.input.enabled = true;
+
+
+        // Something else
+        if (typeof this.tween._manager !== 'undefined') {
+            for (var i in this.tween._manager._tweens) {
+                this.tween._manager._tweens[i].stop();
+            }
         }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
         this.player.reset(185, 320);
     },
 
-    // I am a function which re-renders all commands. Worship me, for I am beautiful.
-    commandLineRender: function () {
-        for (i = 0; i < this.command_line.length; i++) {
-            var comPosX = 20 + (70 * i); // Calculate the position.
-            this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+    // I am a functions which re-renders all commands. Worship me, for I am beautiful.
+    commandGroupRender: function () { // What happens if the commandGroup is empty?
+        for (var i = 0; i < this.commandGroup.length; i++) {
+            var comPosX = 40 + (70 * i); // Calculate the position.
+            this.commandGroup.getAt(i).reset(comPosX, 510);
+            //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
 
     // What do you think it does?
     clearCommandLine: function() {
-        for (i = 0; i < this.command_line.length; i++) {
-            console.log('i value');
-            console.log(i);
-            this.command_line[i].kill(); // Kill the sprite
+        //for (var i = 0; i <= this.commandGroup.length; i++) {
+        while (this.commandGroup.length != 0) {
+            var sprite = this.commandGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
+            this.commandGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
+            sprite.kill(); // Kill the sprite
         }
-        this.command_line = []; 
     },
 
 
 
     // OWN FUNCTION: click on "I <3 f(x)"-button. Opens and closes the funktion making window.
-    favxOnClick: function() {         
-        if (this.cloud.visible==false) { 
+      favxOnClick: function() {         
+        if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
+            // Everything what is supposed to be opened is opened, other stuff is closed
             for (var i = 1; i < 7; i++) {
                 if (this.func_sprite_array[i]!=null){
                     this.func_sprite_array[i].visible = true; 
@@ -337,25 +441,34 @@ RobotKompis.Level.prototype = {
                 }          
             }
         }
-        else { 
-            this.func_create_array[2].kill();
+        else { //...*** and closes if opened ;)
+            // Close everything except for the chosen function. 
             for (var i = 1; i < 7; i++) {
-                this.func_create_array[i].visible = false;                
-                if (this.func_sprite_array[i]!=null){
-                   this.func_sprite_array[i].visible = false;    
-                }
-            }            
-            this.cloud.visible = false;
-            
+                this.func_create_array[i].visible = false;
+  
+                if (this.func_sprite_array[i]!=null){               
+                    if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                        this.func_sprite_array[i].visible = true;  
+                    }
+                    else{
+                        this.func_sprite_array[i].visible = false; 
+                    }                        
+                } 
+            }
+            // To be sure that everything is closed (bugging without the following 4 guys).
             if(this.func_edit){this.func_edit.visible = false}
             if(this.func_save){this.func_save.visible = false}
             if(this.func_delete){this.func_delete.visible = false}
-            if(this.func_cancel){this.func_cancel.visible = false}
-        }    
+            if(this.func_save){this.func_save.visible = false}
+            if(this.func_cancel){this.func_cancel.visible = false}          
+            this.cloud.visible = false;
+  
+         }    
     },
 
     // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
-    createSixTransparrent: function() {
+     createSixTransparrent: function() {
+
         var xCoord = 235;
         var yCoord = 160;
         for(var i=1; i<7; i++){
@@ -381,11 +494,19 @@ RobotKompis.Level.prototype = {
 
     // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
     // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
-    makeNewFuncOnClick: function(index) {
-        for (var i = 1; i < 7; i++) {
-            this.func_create_array[i].visible = false;    
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = false;    
+     makeNewFuncOnClick: function(index) {
+        // Closing the transparrent guys and everything...
+        for (var i=1; i<7; i++) {
+              this.func_create_array[i].visible = false;                   
+            if (this.func_sprite_array[i]!=null){  
+                //...except for the chosen functions.              
+                if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                    this.func_sprite_array[i].visible = true;  
+                }
+                else{
+                    this.func_sprite_array[i].visible = false; 
+                }
+                       
             }
         }  
         this.func_save = this.add.sprite(200, 400 , 'func_save');
@@ -396,20 +517,21 @@ RobotKompis.Level.prototype = {
         this.func_cancel.inputEnabled = true;
         this.func_cancel.input.useHandCursor = true;
         this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this);               
-    }, 
+    },  
 
     // OWN FUNCTION: click on "SPARA" and save the function. 
     saveFunctionOnClick: function(index) {
         this.func_save.visible = false;  
         this.func_cancel.visible = false;  
-
+ 
         this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);        
         this.func_sprite_array[index].inputEnabled = true;
         this.func_sprite_array[index].input.useHandCursor = true;
         this.func_sprite_array[index].input.enableDrag();
-        //this.func_sprite_array[this.func_global].events.onDragStart.add(this.savePosition, this); // this
-        //this.func_sprite_array[this.func_global].events.onDragStop.add(this.commandAdd, this);
+        this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
+        this.func_sprite_array[index].events.onDragStop.add(this.commandFunctionAdd, this);
         this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
+        // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
@@ -419,12 +541,12 @@ RobotKompis.Level.prototype = {
                 this.func_create_array[i].visible = true;    
             } 
         }
-
     },
     // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
     cancelCreateFunctionOnClick: function() {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
+        // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
@@ -433,12 +555,52 @@ RobotKompis.Level.prototype = {
             else {
                 this.func_create_array[i].visible = true;    
             } 
+        }
+    },
+
+    // Just stole this beautiful function from its author and modified it... 
+    // Adjusts the position of function sprites after drag&dropping it in accordance with the place of dropping. 
+    commandFunctionAdd: function(sprite, pointer) {
+        var index = this.func_sprite_array.indexOf(sprite);
+        // Counting the original position of the function sprite when created. 
+        var xCoord = 235;
+        var yCoord = 160;
+        if(index<4){
+            xCoord+=(index%4-1)*100;
+        }
+        else {
+            xCoord+=index%4*100;
+            yCoord=260;
+        }
+        // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
+        if (pointer.y > 510 && pointer.y < 590) {
+            var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
+            this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            this.command_line.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
+            this.commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+        }
+        // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
+        else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
+            this.func_edit.kill();  
+            this.func_delete.kill();
+            this.func_create_array[index].visible = true;
+            this.func_sprite_array[index].kill();
+            this.func_sprite_array[index] = null;
+            this.commandLineRender();
+        }
+        else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !  
+            sprite.reset(xCoord, yCoord); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
         }
     },
 
     // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
     // You may in that case eather edit you or function or delete the sprite.  
     funcSpriteOnClick: function(sprite) {
+        // The following two lines saved me!!! Thanx to them! :)) 
+        if(this.func_edit){this.func_edit.visible = false}
+        if(this.func_delete){this.func_delete.visible = false}
+
         this.func_delete = this.add.sprite(376, 400 , 'func_delete');
         this.func_delete.inputEnabled = true;
         this.func_delete.input.useHandCursor = true;        
