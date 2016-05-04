@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-
+    this.robot;
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -18,7 +18,15 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
-    this.func_btn; 
+
+
+
+    // Making own functions
+    this.func_btn; // Function button
+    this.cloud;    // Cloud-window
+    this.func_create_array = [];
+    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
+    this.func_sprite_array = []; // Function sprite array;
 
     //Oklar
     this.cursors;
@@ -32,7 +40,6 @@ RobotKompis.Level = function (game) {
 
     // Command_line array which contains all the commands.
     this.command_line = []; // The command line is an empty array.
-    this.cloud = []; // Temporary command line. 
     this.com_line; // This is just a graphics object. Kept to render things.  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
@@ -50,6 +57,10 @@ RobotKompis.Level = function (game) {
 };
 
 RobotKompis.Level.prototype = {
+    init: function (character){
+        this.robot = character;
+        console.log(this.robot)
+    },
     
     create: function () {
 
@@ -82,8 +93,9 @@ RobotKompis.Level.prototype = {
     
 
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
-        
-        this.player = this.add.sprite(185, this.world.height - 280, 'while');
+
+        this.player = this.add.sprite(185, this.world.height - 280, this.robot);
+
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
@@ -117,15 +129,16 @@ RobotKompis.Level.prototype = {
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
-        // Left Menu buttons
-        //this.func_btn = this.add.sprite(10, 430, 'func_btn');
-        //this.func_btn1 = this.add.sprite(10, 430, 'func_btn1');
-        //this.func_btn1.inputEnabled = true; 
-        //this.func_btn1.visible = false;
-        this.func_btn = this.add.button(30, 450 , 'func_button', this.funcWindow, this, 2, 1, 0);
-        //this.cloud = this.add.sprite(70,300, 'cloud');
-        //this.func_btn.name = 'background';
-        //this.func_btn.anchor.setTo(0.5, 0.5);
+        
+        // OWN FUNCTION DEFINING STUFF
+
+        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+
+        this.cloud.visible = false; 
+        this.createSixTransparrent();
+
+
         // Command_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
@@ -144,7 +157,7 @@ RobotKompis.Level.prototype = {
         this.stop_btn.visible = false;
 
         //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
-        this.home_btn = this.add.sprite(965, this.world.height - 590, 'home_btn');
+        this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
 
@@ -187,6 +200,7 @@ RobotKompis.Level.prototype = {
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     savePosition: function(sprite, pointer) {
+
         // y is always 510. Both oldPosY and newPosY.
         var remainder = sprite.x % 70; // Cleanse the input from faulty values.
         this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
@@ -276,7 +290,7 @@ RobotKompis.Level.prototype = {
         this.player.reset(185, 320);
     },
 
-    // I am a functions which re-renders all commands. Worship me, for I am beautiful.
+    // I am a function which re-renders all commands. Worship me, for I am beautiful.
     commandLineRender: function () {
         for (i = 0; i < this.command_line.length; i++) {
             var comPosX = 20 + (70 * i); // Calculate the position.
@@ -293,20 +307,161 @@ RobotKompis.Level.prototype = {
         }
         this.command_line = []; 
     },
-    funcWindow: function(button) {
-        //this.background.loadTexture(button.name);
-        this.cloud = this.add.sprite(0, 100, 'cloud');        
-    },
-    
-    funcWindowRender: function () {
-        for (i = 0; i < this.cloud.length; i++) {
-            var comPosX = 20 + (70 * i); // Calculate the position.
-            this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+
+
+
+    // OWN FUNCTION: click on "I <3 f(x)"-button. Opens and closes the funktion making window.
+    favxOnClick: function() {         
+        if (this.cloud.visible==false) { 
+            this.cloud.visible = true; 
+            for (var i = 1; i < 7; i++) {
+                if (this.func_sprite_array[i]!=null){
+                    this.func_sprite_array[i].visible = true; 
+                    this.func_create_array[i].visible = false;   
+                } 
+                else {
+                    this.func_create_array[i].visible = true;
+                }          
+            }
         }
-    }
-};
-
-
-          
-
+        else { 
+            this.func_create_array[2].kill();
+            for (var i = 1; i < 7; i++) {
+                this.func_create_array[i].visible = false;                
+                if (this.func_sprite_array[i]!=null){
+                   this.func_sprite_array[i].visible = false;    
+                }
+            }            
+            this.cloud.visible = false;
             
+            if(this.func_edit){this.func_edit.visible = false}
+            if(this.func_save){this.func_save.visible = false}
+            if(this.func_delete){this.func_delete.visible = false}
+            if(this.func_cancel){this.func_cancel.visible = false}
+        }    
+    },
+
+    // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
+    createSixTransparrent: function() {
+        var xCoord = 235;
+        var yCoord = 160;
+        for(var i=1; i<7; i++){
+            if(xCoord==535){
+                xCoord=235;
+                yCoord=260;
+            }
+            this.func_create_array[i] = this.add.sprite(xCoord, yCoord, 'func_make');        
+            this.func_create_array[i].inputEnabled = true;
+            this.func_create_array[i].input.useHandCursor = true;
+            this.func_create_array[i].alpha = 0.3; // Makes them transparrent
+            this.func_create_array[i].visible=false; 
+            xCoord+=100;
+        }
+            // OnClick sends the Index parameter to the Listener makeNewFuncOnClick.
+            this.func_create_array[1].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[1]))}, this);
+            this.func_create_array[2].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[2]))}, this);
+            this.func_create_array[3].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[3]))}, this);
+            this.func_create_array[4].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[4]))}, this);
+            this.func_create_array[5].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[5]))}, this);
+            this.func_create_array[6].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[6]))}, this);
+    },
+
+    // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
+    // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
+    makeNewFuncOnClick: function(index) {
+        for (var i = 1; i < 7; i++) {
+            this.func_create_array[i].visible = false;    
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = false;    
+            }
+        }  
+        this.func_save = this.add.sprite(200, 400 , 'func_save');
+        this.func_save.inputEnabled = true;
+        this.func_save.input.useHandCursor = true;
+        this.func_save.events.onInputDown.add(function() {this.saveFunctionOnClick(index)}, this);  
+        this.func_cancel = this.add.sprite(376, 400, 'func_cancel');
+        this.func_cancel.inputEnabled = true;
+        this.func_cancel.input.useHandCursor = true;
+        this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this);               
+    }, 
+
+    // OWN FUNCTION: click on "SPARA" and save the function. 
+    saveFunctionOnClick: function(index) {
+        this.func_save.visible = false;  
+        this.func_cancel.visible = false;  
+
+        this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);        
+        this.func_sprite_array[index].inputEnabled = true;
+        this.func_sprite_array[index].input.useHandCursor = true;
+        this.func_sprite_array[index].input.enableDrag();
+        //this.func_sprite_array[this.func_global].events.onDragStart.add(this.savePosition, this); // this
+        //this.func_sprite_array[this.func_global].events.onDragStop.add(this.commandAdd, this);
+        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+
+    },
+    // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
+    cancelCreateFunctionOnClick: function() {
+        this.func_save.visible = false;
+        this.func_cancel.visible = false;
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+    },
+
+    // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
+    // You may in that case eather edit you or function or delete the sprite.  
+    funcSpriteOnClick: function(sprite) {
+        this.func_delete = this.add.sprite(376, 400 , 'func_delete');
+        this.func_delete.inputEnabled = true;
+        this.func_delete.input.useHandCursor = true;        
+        this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+        this.func_edit = this.add.sprite(200, 400 , 'func_edit');
+        this.func_edit.inputEnabled = true;
+        this.func_edit.input.useHandCursor = true;        
+        this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+    },
+
+    // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
+    deleteFunctionBlockOnClick: function(index) {        
+        this.func_sprite_array[index].kill();
+        this.func_sprite_array[index] = null;
+        this.func_create_array[index].visible = true; 
+        this.func_delete.visible = false;
+        this.func_edit.visible = false;
+    },
+    // OWN FUNCTION: click on "ÄNDRA" and edit the current function.
+    editFunctionBlockOnClick: function(index) {        
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+        this.func_delete.visible = false;
+        this.func_edit.visible = false;
+    },      
+    
+    //Home button function
+    homeFunction: function() {
+        this.state.start('MapOverview');
+    }
+
+};

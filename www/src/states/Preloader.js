@@ -35,8 +35,12 @@ RobotKompis.Preloader.prototype = {
         
         //Preload för allt i madness
         // FIRST: Figure out how to re-size the screen. Also blit it on a bigger format than 800 x 600.
+
         // Background
-        this.load.image('bg', '../../assets/1024_600_bg.jpg');
+        //this.load.image('bg', '../../assets/1024_600_bg.jpg');
+        //this.load.image('bg', '../../assets/wires_1050.png');
+        //this.load.image('bg', '../../assets/backgrounds/desert.jpg');
+        this.load.image('bg', '../../images/startBG600.png');
 
         //Maps
         //this.load.tilemap('tilemap', 'assets/maps/mu.json', null, Phaser.Tilemap.TILED_JSON);        
@@ -63,13 +67,16 @@ RobotKompis.Preloader.prototype = {
         this.load.image('key_com', '../../images/actionicons/key_60.png');
 
         // New Command Button
-        this.load.image('new', '../../assets/new.png');
-        this.load.image('clear_btn', '../../assets/clear_50.png');
+        this.load.image('new', '../../assets/restart_60.png');
+        this.load.image('clear_btn', '../../assets/clear_50.png'); // CC0 License
         this.load.image('trash_100', '../../assets/trash_100.png');
-        this.load.image('trash_50', '../../assets/trash_50.png');
+        this.load.image('trash_50', '../../assets/trash_50.png'); // CC0 license
 
         //Command line :D
         this.load.image('com_line', '../../assets/com_line.png');
+
+        this.load.image('right20', '../../assets/right_arrow_20.png');
+        this.load.image('left20', '../../assets/left_arrow_20.png');
 
         // Menu Buttons
         this.load.image('run_btn', '../../assets/run_button.png');
@@ -78,15 +85,39 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
-        //this.load.image('func_btn', '../../assets/favx50_.png');
-        //this.load.image('func_btn1', '../../assets/favx50_1.png');
-        this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
-        this.load.image('cloud','../../assets/favx_cloud1.png');
+        this.load.spritesheet('robotButton', '../../assets/robotar/robotar.png', 130, 190);
 
         // Playable character
-        //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
-        this.load.spritesheet('while', 'assets/while1.png', 30, 64);
-       
+        this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
+        this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
+        
+        //for the robot-choosing-popup-meny
+        this.load.image('closeButton', '../../assets/close.png');
+        this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
+        this.load.image('whileChoise', '../../assets/robotar/while.png');
+        this.load.image('gotoChoise', '../../assets/robotar/goto.png');
+        this.load.image('ifChoise', '../../assets/robotar/if.png');
+        this.load.image('switchChoise', '../../assets/robotar/switch.png');
+        this.load.image('elseChoise', '../../assets/robotar/else.png');
+        
+        // Own-defined FUNCTIONS !!!!!!!!!!!!!!!!!!!!!
+        this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
+        this.load.image('func_delete', '../../assets/function/TA_BORT1.png');
+        this.load.image('func_create', '../../assets/function/TA_SKAPA1.png');
+        this.load.image('func_save', '../../assets/function/TA_SPARA1.png');
+        //this.load.image('func_new', '../../assets/function/TA_NY_FUNK1.png');
+        this.load.image('func_edit', '../../assets/function/TA_ANDRA1.png');
+        this.load.image('func_cancel', '../../assets/function/TA_AVBRYT1.png');
+        this.load.image('func_make', '../../assets/function/klick_att_skapa.png');        
+        this.load.image('f1', '../../assets/function/f1.png');
+        this.load.image('f2', '../../assets/function/f2.png');
+        this.load.image('f3', '../../assets/function/f3.png');
+        this.load.image('f4', '../../assets/function/f4.png');
+        this.load.image('f5', '../../assets/function/f5.png');
+        this.load.image('f6', '../../assets/function/f6.png');
+        this.load.image('cloud','../../assets/function/func_cloud3.png');
+
+        //this.load.image('cloud','../../assets/favx_cloud1.png');       
 	},
 	create: function () {
         'use strict';
