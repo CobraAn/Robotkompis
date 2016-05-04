@@ -45,6 +45,8 @@ RobotKompis.Level = function (game) {
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
     this.newPosX;
+    this.oldPosY; // Temporary from Niko
+    this.newPosY; // Temporary from Niko
     this.commandLineIndex;
 
     this.newCommand;
@@ -236,6 +238,7 @@ RobotKompis.Level.prototype = {
             this.commandLineRender();
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
+
             sprite.reset(this.oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
         }
     },
@@ -325,19 +328,26 @@ RobotKompis.Level.prototype = {
             }
         }
         else { 
-            this.func_create_array[2].kill();
+
             for (var i = 1; i < 7; i++) {
-                this.func_create_array[i].visible = false;                
-                if (this.func_sprite_array[i]!=null){
-                   this.func_sprite_array[i].visible = false;    
+                this.func_create_array[i].visible = false;
+
+                if (this.func_sprite_array[i]!=null){               
+                    if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                        this.func_sprite_array[i].visible = true;  
+                    }
+                    else{
+                        this.func_sprite_array[i].visible = false; 
+                    }
+                      
                 }
-            }            
-            this.cloud.visible = false;
-            
+            } 
             if(this.func_edit){this.func_edit.visible = false}
             if(this.func_save){this.func_save.visible = false}
             if(this.func_delete){this.func_delete.visible = false}
-            if(this.func_cancel){this.func_cancel.visible = false}
+            if(this.func_cancel){this.func_cancel.visible = false}          
+            this.cloud.visible = false;
+
         }    
     },
 
@@ -371,8 +381,14 @@ RobotKompis.Level.prototype = {
     makeNewFuncOnClick: function(index) {
         for (var i = 1; i < 7; i++) {
             this.func_create_array[i].visible = false;    
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = false;    
+            if (this.func_sprite_array[i]!=null){               
+                if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                    this.func_sprite_array[i].visible = true;  
+                }
+                else{
+                    this.func_sprite_array[i].visible = false; 
+                }
+                      
             }
         }  
         this.func_save = this.add.sprite(200, 400 , 'func_save');
@@ -394,8 +410,8 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array[index].inputEnabled = true;
         this.func_sprite_array[index].input.useHandCursor = true;
         this.func_sprite_array[index].input.enableDrag();
-        //this.func_sprite_array[this.func_global].events.onDragStart.add(this.savePosition, this); // this
-        //this.func_sprite_array[this.func_global].events.onDragStop.add(this.commandAdd, this);
+        this.func_sprite_array[index].events.onDragStart.add(this.savePosition, this); // this
+        this.func_sprite_array[index].events.onDragStop.add(this.commandFunctionAdd, this);
         this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
@@ -420,6 +436,53 @@ RobotKompis.Level.prototype = {
             else {
                 this.func_create_array[i].visible = true;    
             } 
+        }
+    },
+
+    // Hello! Someone has stopped dragging the command around. Try to add it to command_line if possible, and always adjust position.
+    commandFunctionAdd: function(sprite, pointer) {
+        var index = this.func_sprite_array.indexOf(sprite);
+        var xCoord = 235;
+        var yCoord = 160;
+        if(index<4){
+            xCoord+=(index%4-1)*100;
+        }
+        else {
+            xCoord+=index%4*100;
+            yCoord=260;
+        }
+        // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
+        if (pointer.y > 510 && pointer.y < 590) {
+            // if (this.oldPosX < 830) { // Was the command in commandLine before? (commandLine spans 20 - 830)
+            //     this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+            // }
+            // else {
+            //     this.addNew();
+            // }
+            var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
+            this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            this.command_line.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
+            this.commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+        }
+        // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
+        else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
+              //trash_100.visible = true;
+              //Some kind of timer. game.time.now
+            // if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
+            //     this.command_line.splice(this.commandLineIndex, 1); // If so, remove it from commandLine. Index decided when position saved in savePosition.
+            // } else { // Add it back to new, you pleb!
+            //     this.addNew();
+            // }
+            this.func_edit.kill();  
+            this.func_delete.kill();
+            this.func_create_array[index].visible = true;
+            this.func_sprite_array[index].kill();
+            this.func_sprite_array[index] = null;
+            this.commandLineRender();
+        }
+        else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !  
+            sprite.reset(xCoord, yCoord); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
         }
     },
 
