@@ -13,6 +13,7 @@ RobotKompis.MapOverview = function (game) {
     this.character = 'switch';
     this.popup;
     this.closebutton;
+    
 
 };
 
@@ -43,29 +44,32 @@ RobotKompis.MapOverview.prototype = {
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.image(896, 0, 'settingsIcon');
         
-        //for the robot-choosing-popup-meny
-        //change this.character to a spritesheet with all the robots so it can change when choosing a robot.
-        this.robotchoice = this.add.button(5, 5, this.character, this.popuprobot, this, 0, 0, 1);
+        //for the robot-choosing-popup-menu
+        this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
+        
         //the background of the popup
-        this.popup = this.add.sprite(200, 150, 'robotChoise');
-
+        this.popup = this.add.sprite(200, 150, 'robotChoiseBackground');
+        //postioner för close knappen.
         var pw = (this.popup.width) + 160;
         var ph = (this.popup.height/2) -10 ;
         // click the close button to close it down again
         this.closebutton = this.add.button(pw, ph, 'closeButton', this.closeWindow, this, 0, 0, 1);
-        this.while = this.make.button(220, 190, 'while', this.whileButton, this, 0, 0, 1);
-        this.switch = this.make.button(410, 190, 'switch', this.switchButton, this, 0, 0, 1);
-        //this.else = this.add.button(600, 190, 'else', this.startLevelThree, this, 0, 0, 1);
-        //this.goto = this.add.button(275, 360, 'goto', this.startLevelFour, this, 0, 0, 1);
-        //this.if = this.add.button(500, 360, 'if', this.startLevelFive, this, 0, 0, 1);   
+        //alla robotar som knappar
+        this.while = this.make.button(220, 190, 'whileChoise', this.whileButton, this, 0, 0, 1);
+        this.switch = this.make.button(410, 190, 'switchChoise', this.switchButton, this, 0, 0, 1);
+        this.else = this.add.button(600, 190, 'elseChoise', this.elseButton, this, 0, 0, 1);
+        this.goto = this.add.button(275, 360, 'gotoChoise', this.gotoButton, this, 0, 0, 1);
+        this.if = this.add.button(500, 360, 'ifChoise', this.ifButton, this, 0, 0, 1);   
         
-        
+        //lägger allt i en grupp för att enklara kunna stänga ner dem i closeWindow
         this.popup.addChild(this.closebutton);
         this.popupGroup.add(this.popup);
         this.popupGroup.add(this.closebutton);
         this.popupGroup.add(this.while);
-
         this.popupGroup.add(this.switch);
+        this.popupGroup.add(this.else);
+        this.popupGroup.add(this.goto);
+        this.popupGroup.add(this.if);
 
         this.popupGroup.visible = false;
 
@@ -119,13 +123,23 @@ RobotKompis.MapOverview.prototype = {
     },
     whileButton: function () {
         this.character = 'while'; //changes the character
-        return;
+        this.robotchoice.setFrames(1,1,1);
     },
     switchButton: function () {
         this.character = 'switch';
-        return;
-        
+        this.robotchoice.setFrames(0,0,0);
+    },
+    elseButton: function () {
+        this.character = 'elseChoise';
+        this.robotchoice.setFrames(4,4,4);
+    },
+    gotoButton: function () {
+        this.character = 'gotoChoise';
+        this.robotchoice.setFrames(2,2,2);
+    },
+    ifButton: function () {
+        this.character = 'ifChoise';
+        this.robotchoice.setFrames(3,3,3);
     }
-    
     
 };

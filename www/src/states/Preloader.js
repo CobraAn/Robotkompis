@@ -78,16 +78,21 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
-        this.load.image('robotBotton', '../../assets/Switch1_small.png');
-        
+        this.load.spritesheet('robotButton', '../../assets/robotar/robotar.png', 130, 190);
+
         // Playable character
         this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
         this.load.spritesheet('while', '../../assets/while1.png', 30, 64);
         
         //for the robot-choosing-popup-meny
         this.load.image('closeButton', '../../assets/close.png');
-        this.load.image('robotChoise', '../../assets/robotchoise.png');
-
+        this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
+        this.load.image('whileChoise', '../../assets/robotar/while.png');
+        this.load.image('gotoChoise', '../../assets/robotar/goto.png');
+        this.load.image('ifChoise', '../../assets/robotar/if.png');
+        this.load.image('switchChoise', '../../assets/robotar/switch.png');
+        this.load.image('elseChoise', '../../assets/robotar/else.png');
+        
         // Own-defined FUNCTIONS !!!!!!!!!!!!!!!!!!!!!
         this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
         this.load.spritesheet('func_delete', '../../assets/function/sheet_func_delete.png', 160, 50, 2);
