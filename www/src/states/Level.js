@@ -82,7 +82,7 @@ RobotKompis.Level.prototype = {
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
 
-        this.player = this.add.sprite(185, this.world.height - 280, 'switchAni');
+        this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
       
 
         this.physics.arcade.enable(this.player);
@@ -163,7 +163,7 @@ RobotKompis.Level.prototype = {
 
         if (this.cursors.left.isDown) { //  Move to the left
             this.player.animations.stop('cheer');
-            this.player.body.velocity.x = -150;
+            this.player.body.velocity.x = -90;
         }
         else if (this.cursors.right.isDown) {//  Move to the right
             this.player.animations.stop('cheer');
@@ -171,12 +171,12 @@ RobotKompis.Level.prototype = {
 
         }
         else if (this.cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
-            this.player.body.velocity.y = -150;
+            this.player.body.velocity.y = -90;
             this.player.animations.stop('jump');
             this.player.animations.play('jump');
         }
         else if (this.cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again.
-            this.player.body.velocity.y = 150;
+            this.player.body.velocity.y = 90;
         }
         else { //  Stand still
             this.player.body.velocity.x = 0;
@@ -303,6 +303,9 @@ RobotKompis.Level.prototype = {
 
             }
             else if (this.command_line[i].key === 'ladder_com') {
+                console.log('adding tween for jump cmd');
+                noWalkUp++;
+                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
 
              }
             else if (this.command_line[i].key === 'key_com') {
