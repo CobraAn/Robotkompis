@@ -333,6 +333,11 @@ RobotKompis.Level.prototype = {
                 }
             }            
             this.cloud.visible = false;
+            
+            if(this.func_edit){this.func_edit.visible = false}
+            if(this.func_save){this.func_save.visible = false}
+            if(this.func_delete){this.func_delete.visible = false}
+            if(this.func_cancel){this.func_cancel.visible = false}
         }    
     },
 
