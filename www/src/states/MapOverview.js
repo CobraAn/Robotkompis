@@ -131,15 +131,15 @@ RobotKompis.MapOverview.prototype = {
         this.robotchoice.setFrames(0,0,0);
     },
     elseButton: function () {
-        this.character = 'elseChoise';
+        this.character = 'else';
         this.robotchoice.setFrames(4,4,4);
     },
     gotoButton: function () {
-        this.character = 'gotoChoise';
+        this.character = 'goto';
         this.robotchoice.setFrames(2,2,2);
     },
     ifButton: function () {
-        this.character = 'ifChoise';
+        this.character = 'if';
         this.robotchoice.setFrames(3,3,3);
     }
     
