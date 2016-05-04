@@ -21,15 +21,12 @@ RobotKompis.Level = function (game) {
 
 
 
-
     // Making own functions
     this.func_btn; // Function button
     this.cloud;    // Cloud-window
-    this.func_image_array = ['f1','f2','f3','f4','f5','f6'];
+    this.func_create_array = [];
+    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
     this.func_sprite_array = []; // Function sprite array;
-    this.func_global = 0;
-    this.func_i_global = 235;
-    this.func_j_global = 160; 
 
     //Oklar
     this.cursors;
@@ -133,29 +130,14 @@ RobotKompis.Level.prototype = {
         this.trash_100.visible = false;
 
         
-
-
-
-
         // OWN FUNCTION DEFINING STUFF
 
         this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
-        this.func_new = this.add.button(200, 400 , 'func_new', this.newOnClick, this, 2, 1, 0);
-        this.func_create = this.add.button(200, 400 , 'func_create', this.createOnClick, this, 2, 1, 0);
-        // this.func_sprite_array[1]=this.add.sprite(235, 160, 'f1');
-        // this.func_sprite_array[2]=this.add.sprite(335, 160, 'f2');
-        // this.func_sprite_array[3]=this.add.sprite(435, 160, 'f3');
-        // this.func_sprite_array[4]=this.add.sprite(235, 260, 'f4');
-        // this.func_sprite_array[5]=this.add.sprite(335, 260, 'f5');
-        // this.func_sprite_array[6]=this.add.sprite(435, 260, 'f6');
-        // for (var i = 1; i < 7; i++) {
-        //     this.favx_cloud[i].visible = false;
-        // }
-        this.cloud.visible = false; 
-        this.func_new.visible = false; 
 
-        this.func_create.visible = false;  
+        this.cloud.visible = false; 
+        this.createSixTransparrent();
+
 
         // Command_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
@@ -218,6 +200,7 @@ RobotKompis.Level.prototype = {
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     savePosition: function(sprite, pointer) {
+
         // y is always 510. Both oldPosY and newPosY.
         var remainder = sprite.x % 70; // Cleanse the input from faulty values.
         this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
@@ -307,7 +290,7 @@ RobotKompis.Level.prototype = {
         this.player.reset(185, 320);
     },
 
-    // I am a functions which re-renders all commands. Worship me, for I am beautiful.
+    // I am a function which re-renders all commands. Worship me, for I am beautiful.
     commandLineRender: function () {
         for (i = 0; i < this.command_line.length; i++) {
             var comPosX = 20 + (70 * i); // Calculate the position.
@@ -326,95 +309,150 @@ RobotKompis.Level.prototype = {
     },
 
 
-    // OWN FUNCTION: clock on "I <3 f(x)"-button 
-    favxOnClick: function() { 
-        //this.cloud.visible =! this.cloud.visible;  
-        //this.func_new.visible = true;
+
+    // OWN FUNCTION: click on "I <3 f(x)"-button. Opens and closes the funktion making window.
+    favxOnClick: function() {         
         if (this.cloud.visible==false) { 
-            this.cloud.visible = true;
-            this.func_new.visible = true;
-            // this.func_edit.visible = true;
-            // this.func_delete.visible = true; 
+            this.cloud.visible = true; 
             for (var i = 1; i < 7; i++) {
                 if (this.func_sprite_array[i]!=null){
-                    this.func_sprite_array[i].visible = true;    
-                }
-                this.func_sprite_array[i].visible = false;
+                    this.func_sprite_array[i].visible = true; 
+                    this.func_create_array[i].visible = false;   
+                } 
+                else {
+                    this.func_create_array[i].visible = true;
+                }          
             }
         }
         else { 
-            this.func_new.visible = false;
-            this.func_create.visible = false;
-            this.func_edit.visible = false; 
-            this.func_delete.visible = false;
-            this.cloud.visible = false;
+            this.func_create_array[2].kill();
             for (var i = 1; i < 7; i++) {
+                this.func_create_array[i].visible = false;                
                 if (this.func_sprite_array[i]!=null){
-
+                   this.func_sprite_array[i].visible = false;    
                 }
-                this.func_sprite_array[i].visible = false;
-            }
-
+            }            
+            this.cloud.visible = false;
         }    
     },
-    // OWN FUNCTION: click on "NY FUNK"
-    newOnClick: function() {  
-        this.func_new.visible = false;
-        // this.func_delete.visible = false;
-        // this.func_edit.visible = false;
-        this.func_create.visible = true;       
-    }, 
-    // OWN FUNCTION: click on "SKAPA"
-    createOnClick: function() {
-        this.func_global++; // Felhantering behövs 
-        if(this.func_i_global<=435 && this.func_j_global<=260){
-            this.func_i_global+=100;
-        }  
-        else if (this.func_i_global>435 && this.func_j_global<=260){
-            this.func_i_global=335;
-            this.func_j_global+=100;
-        } 
-        else { // Temporary else 
-            this.func_i_global=235;
-            this.func_j_global=160;   
-        }     
-        this.func_create.visible = false;    
-        this.func_new.visible = true;
-        // this.func_delete.visible = true;
-        // this.func_edit.visible = true;
-        this.func_sprite_array[this.func_global] = this.add.sprite(this.func_i_global-100, this.func_j_global, this.func_image_array[this.func_global-1]);        
-        this.func_sprite_array[this.func_global].inputEnabled = true;
-        this.func_sprite_array[this.func_global].input.useHandCursor = true;
-        this.func_sprite_array[this.func_global].input.enableDrag();
-        this.func_sprite_array[this.func_global].events.onInputDown.add(this.funcSpriteOnClick, this);
 
-    }, 
-    funcSpriteOnClick: function(sprite) {
-        this.func_delete = this.add.button(376, 400 , 'func_delete', this.deleteFunctionBlockOnClick, this, 2, 1, 0);
-        this.func_edit = this.add.button(200, 340 , 'func_edit', this.newOnClick, this, 2, 1, 0);
-        // this.func_edit.visible = true;
-        // this.func_delete.visible = true;
-
-       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
-    //this.sprite.visible = false;
+    // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
+    createSixTransparrent: function() {
+        var xCoord = 235;
+        var yCoord = 160;
+        for(var i=1; i<7; i++){
+            if(xCoord==535){
+                xCoord=235;
+                yCoord=260;
+            }
+            this.func_create_array[i] = this.add.sprite(xCoord, yCoord, 'func_make');        
+            this.func_create_array[i].inputEnabled = true;
+            this.func_create_array[i].input.useHandCursor = true;
+            this.func_create_array[i].alpha = 0.3; // Makes them transparrent
+            this.func_create_array[i].visible=false; 
+            xCoord+=100;
+        }
+            // OnClick sends the Index parameter to the Listener makeNewFuncOnClick.
+            this.func_create_array[1].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[1]))}, this);
+            this.func_create_array[2].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[2]))}, this);
+            this.func_create_array[3].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[3]))}, this);
+            this.func_create_array[4].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[4]))}, this);
+            this.func_create_array[5].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[5]))}, this);
+            this.func_create_array[6].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[6]))}, this);
     },
-    deleteFunctionBlockOnClick: function(sprite) {
-       this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
-       this.func_delete.kill();
-        // this.func_edit.visible = true;
-        // this.func_delete.visible = true;
-       //this.func_sprite_array[this.func_sprite_array.indexOf(sprite)].kill();
-       //console.log(this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]);
-    //this.sprite.visible = false;
-    },     
 
-    // funcWindowRender: function () {
-    //     for (i = 0; i < this.cloud.length; i++) {
-    //         var comPosX = 20 + (70 * i); // Calculate the position.
-    //         this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
-    //     }
-    // }
+    // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
+    // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
+    makeNewFuncOnClick: function(index) {
+        for (var i = 1; i < 7; i++) {
+            this.func_create_array[i].visible = false;    
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = false;    
+            }
+        }  
+        this.func_save = this.add.sprite(200, 400 , 'func_save');
+        this.func_save.inputEnabled = true;
+        this.func_save.input.useHandCursor = true;
+        this.func_save.events.onInputDown.add(function() {this.saveFunctionOnClick(index)}, this);  
+        this.func_cancel = this.add.sprite(376, 400, 'func_cancel');
+        this.func_cancel.inputEnabled = true;
+        this.func_cancel.input.useHandCursor = true;
+        this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this);               
+    }, 
 
+    // OWN FUNCTION: click on "SPARA" and save the function. 
+    saveFunctionOnClick: function(index) {
+        this.func_save.visible = false;  
+        this.func_cancel.visible = false;  
+
+        this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);        
+        this.func_sprite_array[index].inputEnabled = true;
+        this.func_sprite_array[index].input.useHandCursor = true;
+        this.func_sprite_array[index].input.enableDrag();
+        //this.func_sprite_array[this.func_global].events.onDragStart.add(this.savePosition, this); // this
+        //this.func_sprite_array[this.func_global].events.onDragStop.add(this.commandAdd, this);
+        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+
+    },
+    // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
+    cancelCreateFunctionOnClick: function() {
+        this.func_save.visible = false;
+        this.func_cancel.visible = false;
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+    },
+
+    // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
+    // You may in that case eather edit you or function or delete the sprite.  
+    funcSpriteOnClick: function(sprite) {
+        this.func_delete = this.add.sprite(376, 400 , 'func_delete');
+        this.func_delete.inputEnabled = true;
+        this.func_delete.input.useHandCursor = true;        
+        this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+        this.func_edit = this.add.sprite(200, 400 , 'func_edit');
+        this.func_edit.inputEnabled = true;
+        this.func_edit.input.useHandCursor = true;        
+        this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+    },
+
+    // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
+    deleteFunctionBlockOnClick: function(index) {        
+        this.func_sprite_array[index].kill();
+        this.func_sprite_array[index] = null;
+        this.func_create_array[index].visible = true; 
+        this.func_delete.visible = false;
+        this.func_edit.visible = false;
+    },
+    // OWN FUNCTION: click on "ÄNDRA" and edit the current function.
+    editFunctionBlockOnClick: function(index) {        
+        for (var i=1; i<7; i++) {
+            if (this.func_sprite_array[i]!=null){
+                this.func_sprite_array[i].visible = true;
+                this.func_create_array[i].visible = false;    
+            }
+            else {
+                this.func_create_array[i].visible = true;    
+            } 
+        }
+        this.func_delete.visible = false;
+        this.func_edit.visible = false;
+    },      
     
     //Home button function
     homeFunction: function() {
@@ -422,8 +460,3 @@ RobotKompis.Level.prototype = {
     }
 
 };
-
-
-          
-
-            
