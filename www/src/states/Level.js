@@ -18,7 +18,8 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
-    
+    this.func_btn; 
+
     //Oklar
     this.cursors;
 
@@ -31,6 +32,7 @@ RobotKompis.Level = function (game) {
 
     // Command_line array which contains all the commands.
     this.command_line = []; // The command line is an empty array.
+    this.cloud = []; // Temporary command line. 
     this.com_line; // This is just a graphics object. Kept to render things.  
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
@@ -115,7 +117,15 @@ RobotKompis.Level.prototype = {
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
-
+        // Left Menu buttons
+        //this.func_btn = this.add.sprite(10, 430, 'func_btn');
+        //this.func_btn1 = this.add.sprite(10, 430, 'func_btn1');
+        //this.func_btn1.inputEnabled = true; 
+        //this.func_btn1.visible = false;
+        this.func_btn = this.add.button(30, 450 , 'func_button', this.funcWindow, this, 2, 1, 0);
+        //this.cloud = this.add.sprite(70,300, 'cloud');
+        //this.func_btn.name = 'background';
+        //this.func_btn.anchor.setTo(0.5, 0.5);
         // Command_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
@@ -282,6 +292,17 @@ RobotKompis.Level.prototype = {
             this.command_line[i].kill(); // Kill the sprite
         }
         this.command_line = []; 
+    },
+    funcWindow: function(button) {
+        //this.background.loadTexture(button.name);
+        this.cloud = this.add.sprite(0, 100, 'cloud');        
+    },
+    
+    funcWindowRender: function () {
+        for (i = 0; i < this.cloud.length; i++) {
+            var comPosX = 20 + (70 * i); // Calculate the position.
+            this.cloud[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+        }
     }
 };
 

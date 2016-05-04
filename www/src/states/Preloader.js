@@ -78,6 +78,10 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
+        //this.load.image('func_btn', '../../assets/favx50_.png');
+        //this.load.image('func_btn1', '../../assets/favx50_1.png');
+        this.load.spritesheet('func_button', '../../assets/favx.png',50, 50, 2);
+        this.load.image('cloud','../../assets/favx_cloud1.png');
 
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
