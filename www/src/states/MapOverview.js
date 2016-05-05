@@ -101,8 +101,14 @@ RobotKompis.MapOverview.prototype = {
                     //which level does the button refer?
                     var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
                     //adding button, calls the buttonClicked function
+                    if (this.starsArray[levelNumber] == 2) {
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
+                        
+                    }
+                    else {
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, 0, 0, 1);
+                    }
                     
-                    var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
                     //showing right frame
                     levelButton.frame = this.starsArray[levelNumber];
                     // custom attribute 
