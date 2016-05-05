@@ -8,61 +8,60 @@ RobotKompis.MapOverview = function (game) {
     this.LevelFive = null;
     this.settingIcon = null;
     
-    this.levelButtonGroup;
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
     // this.character = 'switch';
     // this.popup;
     // this.closebutton;
     
-
+    //Variabler för level select
+    this.currentWorld;
+    // number of button rows
+    this.buttonRows = 1;
+    // number of button columns
+    this.buttonCols = 5;
+    // width of a button, in pixels
+    this.buttonWidth = 100;
+    // height of a button, in pixels
+    this.buttonHeight = 100;
+    // space among buttons, in pixels
+    this.buttonSpacing = 8;
+    // array with finished levels and stars collected.
+    // 0 = playable yet unfinished level
+    // 2 = Locked level
+    this.starsArray = [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
+    // how many pages are needed to show all levels?
+    this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
+    // group where to place all level buttons
+    this.levelButtonsGroup;
+    // current page
+    this.currentPage = 0;
+    // arrows to navigate through level pages
+    this.leftArrow;
+    this.rightArrow;
+    this.levelText;
+    this.style = {
+        font: "50px Arial Black",
+        fill: "#000000"
+    };
 };
 
 RobotKompis.MapOverview.prototype = {
     
     create: function () {
         'use strict';
+        this.createLevelSelect();
 
         //Knappar för att starta olika banor
 
-        this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
+        /*this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
         this.LevelTwo = this.add.button(440, 190, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
         this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
-        this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);
+        this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
 
         
-        //this.levelButtonGroup = this.add.group();
-        //for(var l = 0; l < pages; l++){
-		// horizontal offset to have level thumbnails horizontally centered in the page
-		//var offsetX = (game.width-levelLength)/2+game.width*l;
-		// I am not interested in having level thumbnails vertically centered in the page, but
-		// if you are, simple replace my "20" with
-		// (game.height-levelHeight)/2
-		//var offsetY = 20;
-		// looping through each level thumbnails
-	    // for(var i = 0; i < thumbRows; i ++){
-	   //  	for(var j = 0; j < thumbCols; j ++){  
-	   //  		// which level does the thumbnail refer?
-		//		var levelNumber = i*thumbCols+j+l*(thumbRows*thumbCols);
-		//		// adding the thumbnail, as a button which will call thumbClicked function if clicked   		
-		//		// shwoing proper frame
-		//		levelThumb.frame=starsArray[levelNumber];
-		//		// custom attribute 
-		//		levelThumb.levelNumber = levelNumber+1;
-		//		levelThumbsGroup.add(levelThumb);
-		//		// if the level is playable, also write level number
-		//		if(starsArray[levelNumber]<4){
-		//			var style = {
-		//				font: "18px Arial",
-		//				fill: "#ffffff"
-		//			};
-		//			var levelText = game.add.text(levelThumb.x+5,levelThumb.y+5,levelNumber+1,style);
-		//			levelText.setShadow(2, 2, 'rgba(0,0,0,0.5)', 1);
-		//			levelThumbsGroup.add(levelText);
-		//		}
-		//	}
-		//}
+       
 	
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
@@ -72,6 +71,126 @@ RobotKompis.MapOverview.prototype = {
    
     },
     
+    createLevelSelect: function() {
+        
+        this.leftArrow = this.add.button(this.world.centerX - 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 0, 0, 1);
+        this.leftArrow.anchor.setTo(0.5);
+        this.leftArrow.frame = 0;
+        this.leftArrow.alpha = 0.3;
+        this.rightArrow = this.add.button(this.world.centerX + 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 2, 2, 3);
+        this.rightArrow.anchor.setTo(0.5);
+        this.rightArrow.frame = 2;
+        //Creation of levelButton group
+        this.levelButtonsGroup = this.add.group();
+        var levelLength = this.buttonWidth*this.buttonCols+this.buttonSpacing*(this.buttonCols - 1);
+        var levelHeight = this.buttonWidth*this.buttonRows+this.buttonSpacing*(this.buttonRows - 1);
+        //Looping through each page
+        for(var l = 0; l < this.pages; l++){
+            //position of grid
+            var offsetX = (this.world.width - levelLength)/2+this.world.width*l;
+            var offsetY = (this.world.height - levelHeight)/2;
+            //What world?
+            var currentWorld = l + 1;
+            var currentWorldString = currentWorld.toString();
+            this.currentWorldText = this.add.text(offsetX + 180, 170, 'Värld ' + currentWorldString, this.style);
+            this.levelButtonsGroup.add(this.currentWorldText);
+            //Looping through each level button
+            for(var i = 0; i < this.buttonRows; i++) {
+                for(var j = 0; j < this.buttonCols; j++){
+                    
+                    //which level does the button refer?
+                    var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
+                    //adding button, calls the buttonClicked function
+                    
+                    var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
+                    //showing right frame
+                    levelButton.frame = this.starsArray[levelNumber];
+                    // custom attribute 
+				    levelButton.levelNumber = levelNumber+1;
+				    // adding the level thumb to the group
+				    this.levelButtonsGroup.add(levelButton);
+                    if(this.starsArray[levelNumber] < 2 && (levelNumber+1) < 10) {
+                        var levelNumberRight = levelNumber + 1;
+                        var printedNumber = levelNumberRight.toString();
+                        this.levelText = this.add.bitmapText(levelButton.x+30,levelButton.y+25, 'numberFont', printedNumber, 70);
+                        this.levelButtonsGroup.add(this.levelText);
+                    }
+                    else if (this.starsArray[levelNumber] < 2){
+                        var levelNumberRight = levelNumber + 1;
+                        var printedNumber = levelNumberRight.toString();
+                        this.levelText = this.add.bitmapText(levelButton.x+10,levelButton.y+25, 'numberFont', printedNumber, 70);
+                        this.levelButtonsGroup.add(this.levelText);
+                    }
+                }
+            }
+        }
+    },
+     buttonClicked: function (button) {
+	   // the level is playable, then play the level!!
+        if(button.frame < 2){
+            if (button.levelNumber == 1) {
+                this.startLevelOne();
+            }
+            else if (button.levelNumber == 2) {
+                this.startLevelTwo();
+            }
+            else {
+                alert('finns ej');
+            }
+        }
+        // else, let's shake the locked levels
+        else{
+            var buttonTween = this.add.tween(button)
+            buttonTween.to({
+                x: button.x+this.buttonWidth/15
+            }, 20, Phaser.Easing.Cubic.None);
+            buttonTween.to({
+                x: button.x-this.buttonWidth/15
+            }, 20, Phaser.Easing.Cubic.None);
+            buttonTween.to({
+                x: button.x+this.buttonWidth/15
+            }, 20, Phaser.Easing.Cubic.None);
+            buttonTween.to({
+                x: button.x-this.buttonWidth/15
+            }, 20, Phaser.Easing.Cubic.None);
+            buttonTween.to({
+                x: button.x
+            }, 20, Phaser.Easing.Cubic.None);
+            buttonTween.start();
+        }
+    },
+    arrowClicked: function (button) {
+        // touching right arrow and still not reached last page
+        if(button.frame==3 && this.currentPage < this.pages-1){
+            this.leftArrow.alpha = 1;
+            this.currentPage++;
+            // fade out the button if we reached last page
+            if(this.currentPage == this.pages-1){
+                button.alpha = 0.3;
+            }
+            // scrolling level pages
+            var buttonsTween = this.add.tween(this.levelButtonsGroup);
+            buttonsTween.to({
+                x: this.currentPage * this.world.width * -1
+            }, 500, Phaser.Easing.Cubic.None);
+            buttonsTween.start();
+        }
+        // touching left arrow and still not reached first page
+        if(button.frame==1 && this.currentPage>0){
+            this.rightArrow.alpha = 1;
+            this.currentPage--;
+            // fade out the button if we reached first page
+            if(this.currentPage == 0){
+                button.alpha = 0.3;
+            }
+            // scrolling level pages
+            var buttonsTween = this.add.tween(this.levelButtonsGroup);
+            buttonsTween.to({
+                x: this.currentPage * this.world.width * -1
+            }, 400, Phaser.Easing.Cubic.None);
+            buttonsTween.start();
+        }		
+    },
     
     //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
     startLevelOne: function () {

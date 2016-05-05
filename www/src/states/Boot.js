@@ -26,7 +26,7 @@ RobotKompis.Boot.prototype = {
         this.scale.updateLayout (true);
 
 		this.input.addPointer();
-		this.stage.backgroundColor = '#cb3535';
+		this.stage.backgroundColor = '#bffeff';
 
 		this.state.start('Preloader');
 	}

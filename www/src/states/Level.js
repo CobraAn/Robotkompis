@@ -63,7 +63,6 @@ RobotKompis.Level = function (game) {
 RobotKompis.Level.prototype = {
     init: function (character){
         this.robot = character;
-        console.log(this.robot)
     },
     
     create: function () {
