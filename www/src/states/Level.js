@@ -524,13 +524,18 @@ RobotKompis.Level.prototype = {
         this.func_save.visible = false;  
         this.func_cancel.visible = false;  
  
-        this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);        
+        this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
+        this.physics.arcade.enable(this.func_sprite_array[index]);
+        this.func_sprite_array[index].body.allowGravity = false;        
+        //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
         this.func_sprite_array[index].inputEnabled = true;
         this.func_sprite_array[index].input.useHandCursor = true;
         this.func_sprite_array[index].input.enableDrag();
         this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
         this.func_sprite_array[index].events.onDragStop.add(this.commandFunctionAdd, this);
-        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);
+        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
+
+
         // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
