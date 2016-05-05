@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-    //this.robot;
+    //this.robot; 
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -573,12 +573,21 @@ RobotKompis.Level.prototype = {
             yCoord=260;
         }
         // If the pointer drops it inside of the command_line square IN HEIGHT (relevant for the Library buttons)
-        if (pointer.y > 510 && pointer.y < 590) {
+        if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
+            if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
+                this.addNew();
+            }
             var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
-            this.newPosX = 20 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-            this.command_line.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
-            this.commandLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            sprite.reset(this.newPosX, 510);
+            if (this.commandLineIndex <= this.commandGroup.length) {
+                this.commandGroup.addAt(sprite, this.commandLineIndex);
+            } 
+            else {
+                this.commandGroup.add(sprite);
+            }
+            this.currentSpriteGroup.remove(sprite);
+            this.commandGroupRender();
         }
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
@@ -587,7 +596,7 @@ RobotKompis.Level.prototype = {
             this.func_create_array[index].visible = true;
             this.func_sprite_array[index].kill();
             this.func_sprite_array[index] = null;
-            this.commandLineRender();
+            this.commandGroupRender();
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !  
             sprite.reset(xCoord, yCoord); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
