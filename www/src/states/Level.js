@@ -66,7 +66,7 @@ RobotKompis.Level.prototype = {
         this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
 
         // Tilesets
-        this.map.addTilesetImage('spritesheet_ground', 'ground');
+        this.map.addTilesetImage('spritesheet_ground2', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
         this.map.addTilesetImage('newdesert', 'background');
@@ -78,15 +78,13 @@ RobotKompis.Level.prototype = {
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
-
+        //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
-<<<<<<< HEAD
-        this.player = this.add.sprite(160, this.world.height - 280, 'while');
-=======
-        this.player = this.add.sprite(185, this.world.height - 280, 'switchAni');
+
+        this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
       
->>>>>>> refs/remotes/origin/Dev-graphics-branch
+
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
@@ -165,20 +163,20 @@ RobotKompis.Level.prototype = {
 
         if (this.cursors.left.isDown) { //  Move to the left
             this.player.animations.stop('cheer');
-            this.player.body.velocity.x = -150;
+            this.player.body.velocity.x = -90;
         }
         else if (this.cursors.right.isDown) {//  Move to the right
             this.player.animations.stop('cheer');
-            this.player.body.velocity.x = 150;
+            this.player.body.velocity.x = 90;
 
         }
         else if (this.cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
-            this.player.body.velocity.y = -150;
+            this.player.body.velocity.y = -90;
             this.player.animations.stop('jump');
             this.player.animations.play('jump');
         }
         else if (this.cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again.
-            this.player.body.velocity.y = 150;
+            this.player.body.velocity.y = 90;
         }
         else { //  Stand still
             this.player.body.velocity.x = 0;
@@ -282,21 +280,21 @@ RobotKompis.Level.prototype = {
             if (this.command_line[i].key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
                 noWalkRight++;
-                this.tween.to({x: this.player.x + (noWalkRight * 64)}, 500, Phaser.Easing.Linear.None, false);
+                this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 35)}, 500, Phaser.Easing.Linear.None, false);
+                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
                 noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 64) - (noWalkLeft * 64))}, 500, Phaser.Easing.Linear.None, false);
+                this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'down_com') {
                 noWalkDown++;
-                this.tween.to({y: this.player.y + ((noWalkUp * 35) - (noWalkDown * 35))}, 500, Phaser.Easing.Linear.None, false);
+                this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
             }
             else if (this.command_line[i].key === 'hop_left_com') {
 
@@ -305,6 +303,9 @@ RobotKompis.Level.prototype = {
 
             }
             else if (this.command_line[i].key === 'ladder_com') {
+                console.log('adding tween for jump cmd');
+                noWalkUp++;
+                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
 
              }
             else if (this.command_line[i].key === 'key_com') {
