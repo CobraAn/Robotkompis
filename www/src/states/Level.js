@@ -78,7 +78,7 @@ RobotKompis.Level.prototype = {
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
-
+        //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
         
 

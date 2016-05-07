@@ -83,23 +83,34 @@ RobotKompis.MapOverview.prototype = {
     
     startLevelTwo: function () {
         'use strict';
-        alert('LEVEL 2 FINNS EJ ÄN');
+        this.state.states['Level'].tilemapKey = 'tilemap2'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     },
     
     startLevelThree: function () {
         'use strict';
-        alert('LEVEL 3 FINNS EJ ÄN');
+        this.state.states['Level'].tilemapKey = 'tilemap3'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     },
     
     startLevelFour: function () {
         'use strict';
-        alert('LEVEL 4 FINNS EJ ÄN');
+        this.state.states['Level'].tilemapKey = 'tilemap4'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     },
     
     startLevelFive: function () {
         'use strict';
-        alert('LEVEL 5 FINNS EJ ÄN');
-        
+        this.state.states['Level'].tilemapKey = 'tilemap5'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'down_com', 
+                                                'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     }
     
     
