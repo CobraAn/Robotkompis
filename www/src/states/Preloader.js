@@ -84,8 +84,12 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
+        
+        // Images for settings-state
         this.load.image('backButton', '../../images/goback.png');
-        this.load.image('muteButton', '../../images/mute.png');
+        //this.load.image('muteButton', '../../images/mute.png');
+        //this.load.image('unMuteButton', '../../images/unmute.png');
+        this.load.spritesheet('muteUnMute', '../../images/muteUnMute.png', 82, 75, 2);
         
         
 
