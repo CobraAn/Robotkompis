@@ -151,16 +151,16 @@ RobotKompis.Level.prototype = {
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
         this.cloud.visible = false; 
         this.createSixTransparrent();
-        this.functionGroup1 = this.add.group();
-        this.physics.arcade.enable(this.functionGroup1);
-        this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
-        this.functionGroup1.allowGravity = false; 
-        this.functionGroup1.immovable = true;
-        this.functionGroup2 = this.add.group();
-        this.physics.arcade.enable(this.functionGroup2);
-        this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
-        this.functionGroup2.allowGravity = false; 
-        this.functionGroup2.immovable = true;
+        // this.functionGroup1 = this.add.group();
+        // this.physics.arcade.enable(this.functionGroup1);
+        // this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
+        // this.functionGroup1.allowGravity = false; 
+        // this.functionGroup1.immovable = true;
+        // this.functionGroup2 = this.add.group();
+        // this.physics.arcade.enable(this.functionGroup2);
+        // this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
+        // this.functionGroup2.allowGravity = false; 
+        // this.functionGroup2.immovable = true;
 
 
 
@@ -215,6 +215,19 @@ RobotKompis.Level.prototype = {
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
         this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
+
+        this.functionGroup1 = this.add.group();
+        this.physics.arcade.enable(this.functionGroup1);
+        this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
+        this.functionGroup1.allowGravity = false; 
+        this.functionGroup1.immovable = true;
+        this.functionGroup2 = this.add.group();
+        this.physics.arcade.enable(this.functionGroup2);
+        this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
+        this.functionGroup2.allowGravity = false; 
+        this.functionGroup2.immovable = true;
+
+
     },
     
     update: function () {// LET'S UPDATE !
@@ -285,12 +298,10 @@ RobotKompis.Level.prototype = {
             if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
-            var remainder = sprite.x % 70;
-            console.log(sprite.x,pointer.y) // Cleanse the (new) input from faulty values. Through semi-holy fire.
+            var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
             this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
             this.newPosX = 40 + (this.commandLineIndex * 70);
-            console.log(this.commandLineIndex)
-            console.log(this.newPosX) // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
             sprite.reset(this.newPosX, 510);
             if (this.commandLineIndex <= this.commandGroup.length) {
                 this.commandGroup.addAt(sprite, this.commandLineIndex);
@@ -303,22 +314,17 @@ RobotKompis.Level.prototype = {
             //NIKOLAI
         else if (pointer.y > 80 && pointer.y < 430 && pointer.x > 160 && pointer.x < 515 ) {
             if (this.cloud.visible===true && this.func_save!=null && this.func_save.visible===true){ 
-                console.log(pointer.x,pointer.y)
 
                 if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                     this.addNew();
                 }
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                console.log(sprite.x,remainder) 
-                this.functionLineIndex1 = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).  
-                console.log(this.functionLineIndex1)          
-                this.newPosX = 40 + (this.functionLineIndex1 * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                console.log(this.newPosX)                 
-                console.log(sprite) 
-
+                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                console.log(this.newPosX)
                 sprite.reset(this.newPosX, 160);
-                if (this.functionLineIndex1 <= this.functionGroup1.length) {
-                    this.functionGroup1.addAt(sprite, this.functionLineIndex1);
+                if (this.commandLineIndex <= this.functionGroup1.length) {
+                    this.functionGroup1.addAt(sprite, this.commandLineIndex);
                 } else {
                     this.functionGroup1.add(sprite);
                 }
