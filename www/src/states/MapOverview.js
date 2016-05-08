@@ -61,8 +61,13 @@ RobotKompis.MapOverview.prototype = {
         this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
+        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+        this.cloud.visible = false; 
 
         
+       
+	
         //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
         

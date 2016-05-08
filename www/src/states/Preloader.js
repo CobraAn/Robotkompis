@@ -91,6 +91,7 @@ RobotKompis.Preloader.prototype = {
         //this.load.image('unMuteButton', '../../images/unmute.png');
         this.load.spritesheet('muteUnMute', '../../images/muteUnMute.png', 82, 75, 2);
         this.load.image('tutBtn', '../../images/tutBtn.png');
+        this.load.image('settingsCloud', '../../images/Settingscloud.png');
         
 
         // Playable character

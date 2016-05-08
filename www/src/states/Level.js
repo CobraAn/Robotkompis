@@ -115,6 +115,7 @@ RobotKompis.Level.prototype = {
         
         this.player.body.moves = true;
         this.player.body.gravity.y = 1000;
+        this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
         this.player.animations.add('jump', [1, 0], 1, false);
@@ -247,35 +248,6 @@ RobotKompis.Level.prototype = {
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
-        // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
-        this.player.body.velocity.x = 0;
-
-        if (this.cursors.left.isDown) { //  Move to the left
-            this.player.animations.stop('cheer');
-            this.player.body.velocity.x = -150;
-        }
-        else if (this.cursors.right.isDown) {//  Move to the right
-            this.player.animations.stop('cheer');
-            this.player.body.velocity.x = 150;
-
-        }
-        else if (this.cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
-            this.player.body.velocity.y = -150;
-            this.player.animations.stop('jump');
-            this.player.animations.play('jump');
-        }
-        else if (this.cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again.
-            this.player.body.velocity.y = 150;
-        }
-        else { //  Stand still
-            this.player.body.velocity.x = 0;
-            this.player.body.velocity.y = 0;
-            this.player.animations.play('cheer');
-            //this.player.frame = 4; // Don't ask me what this does xP
-            
-        }
-
-
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
@@ -391,7 +363,7 @@ RobotKompis.Level.prototype = {
     listener: function () {
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
         for (i = 0; i < this.commandGroup.length; i++) {
-            this.commandGroup.getAt(i).input.draggable = false;
+            this.commandGroup.getAt(i).input.enabled = false;
         }
         this.rightArrow20.input.enabled = false;
         this.leftArrow20.input.enabled = false;
@@ -407,7 +379,6 @@ RobotKompis.Level.prototype = {
         console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
-        this.tween = this.add.tween(this.player);
         for (var i = 0; i < this.commandGroup.length; i++) {
             //TODO
             //Change to switch-statement
@@ -450,8 +421,9 @@ RobotKompis.Level.prototype = {
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
         // Re-activate commands and their input related functionality. 
-        for (i = 0; i < this.commandGroup.getAt(i).length; i++) {
-            this.commandGroup.getAt(i).input.draggable = true;
+        for (i = 0; i < this.commandGroup.length; i++) {
+            //console.log("Hippity hoop, I'm in your for loop!");
+            this.commandGroup.getAt(i).input.enabled = true;
         }
         this.rightArrow20.input.enabled = true;
         this.leftArrow20.input.enabled = true;
