@@ -9,12 +9,17 @@ RobotKompis.MapOverview = function (game) {
     this.settingIcon = null;
     this.cloud;
     this.func_btn;
-    
+    this.func_sprite_array = []; // Function sprite array;
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
     // this.character = 'switch';
     // this.popup;
     // this.closebutton;
+    this.mute_button = null;
+    this.unMute_button = null;
+    
+    this.tut_button = null;
+    
     
     //Variabler för level select
     this.currentWorld;
@@ -61,15 +66,21 @@ RobotKompis.MapOverview.prototype = {
         this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
-        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
-        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+        //this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.image(430, 50, 'settingsCloud');
+        this.cloud.bringToTop();
         this.cloud.visible = false; 
-
+                
+        this.mute_button = this.add.button(500,200,  'muteUnMute', this.Mute, this);
+        this.tut_button = this.add.button(500, 300,  'tutBtn', this.LoadTutorial, this)
+        this.mute_button.visible = false;
+        this.tut_button.visible = false;
+     
         
        
 	
         //Gör om denna till knapp för inställningar
-        this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
+        this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this);
         
         //titel
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis', 110);
@@ -219,36 +230,19 @@ RobotKompis.MapOverview.prototype = {
         if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
             // Everything what is supposed to be opened is opened, other stuff is closed
-            for (var i = 1; i < 7; i++) {
-                if (this.func_sprite_array[i]!=null){
-                    this.func_sprite_array[i].visible = true; 
-                    this.func_create_array[i].visible = false;   
-                } 
-                else {
-                    this.func_create_array[i].visible = true;
-                }          
+            this.tut_button.visible = true;
+            this.mute_button.visible = true;
+                
+                          
             }
-        }
+        
         else { //...*** and closes if opened ;)
             // Close everything except for the chosen function. 
-            for (var i = 1; i < 7; i++) {
-                this.func_create_array[i].visible = false;
-  
-                if (this.func_sprite_array[i]!=null){               
-                    if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
-                        this.func_sprite_array[i].visible = true;  
-                    }
-                    else{
-                        this.func_sprite_array[i].visible = false; 
-                    }                        
-                } 
-            }
+            this.mute_button.visible = false;
+            this.tut_button.visible = false; 
+            
             // To be sure that everything is closed (bugging without the following 4 guys).
-            if(this.func_edit){this.func_edit.visible = false}
-            if(this.func_save){this.func_save.visible = false}
-            if(this.func_delete){this.func_delete.visible = false}
-            if(this.func_save){this.func_save.visible = false}
-            if(this.func_cancel){this.func_cancel.visible = false}          
+                  
             this.cloud.visible = false;
   
          }    
@@ -276,6 +270,24 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         alert('LEVEL 5 FINNS EJ ÄN');
         
-    }
+    },
     
+
+   Mute: function(){
+        if (this.sound.mute == false) {
+            this.sound.mute = true;
+           
+            this.mute_button.frame = 1;
+            //this.mute_button = this.add.button(200,0,  'muteButton', this.Mute, this, 0, 0, 1);
+            
+        } else {
+            this.sound.mute = false;
+            
+            this.mute_button.frame = 0;
+        };   
+    },
+    LoadTutorial: function() {
+        alert('finns ej');
+    }
+
 };
