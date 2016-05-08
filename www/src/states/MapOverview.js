@@ -7,6 +7,8 @@ RobotKompis.MapOverview = function (game) {
     this.LevelFour = null;
     this.LevelFive = null;
     this.settingIcon = null;
+    this.cloud;
+    this.func_btn;
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
@@ -59,6 +61,9 @@ RobotKompis.MapOverview.prototype = {
         this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
+        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+        this.cloud.visible = false; 
 
         
        
@@ -210,7 +215,46 @@ RobotKompis.MapOverview.prototype = {
     
     startSettings: function () {
         'use strict';
-        this.state.start('Settings');
+                  
+        if (this.cloud.visible==false) { // The cloud opens if closed...*** 
+            this.cloud.visible = true; 
+            // Everything what is supposed to be opened is opened, other stuff is closed
+            for (var i = 1; i < 7; i++) {
+                if (this.func_sprite_array[i]!=null){
+                    this.func_sprite_array[i].visible = true; 
+                    this.func_create_array[i].visible = false;   
+                } 
+                else {
+                    this.func_create_array[i].visible = true;
+                }          
+            }
+        }
+        else { //...*** and closes if opened ;)
+            // Close everything except for the chosen function. 
+            for (var i = 1; i < 7; i++) {
+                this.func_create_array[i].visible = false;
+  
+                if (this.func_sprite_array[i]!=null){               
+                    if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                        this.func_sprite_array[i].visible = true;  
+                    }
+                    else{
+                        this.func_sprite_array[i].visible = false; 
+                    }                        
+                } 
+            }
+            // To be sure that everything is closed (bugging without the following 4 guys).
+            if(this.func_edit){this.func_edit.visible = false}
+            if(this.func_save){this.func_save.visible = false}
+            if(this.func_delete){this.func_delete.visible = false}
+            if(this.func_save){this.func_save.visible = false}
+            if(this.func_cancel){this.func_cancel.visible = false}          
+            this.cloud.visible = false;
+  
+         }    
+    
+
+        
     },
     
     startLevelTwo: function () {
