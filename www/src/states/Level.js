@@ -27,6 +27,10 @@ RobotKompis.Level = function (game) {
     this.func_create_array = [];
     this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
     this.func_sprite_array = []; // Function sprite array;
+    this.functionGroup1;
+    this.functionGroup2;
+    this.functionLineIndex1;
+    this.functionLineIndex2;
 
     //Oklar
     this.cursors;
@@ -147,6 +151,17 @@ RobotKompis.Level.prototype = {
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
         this.cloud.visible = false; 
         this.createSixTransparrent();
+        this.functionGroup1 = this.add.group();
+        this.physics.arcade.enable(this.functionGroup1);
+        this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
+        this.functionGroup1.allowGravity = false; 
+        this.functionGroup1.immovable = true;
+        this.functionGroup2 = this.add.group();
+        this.physics.arcade.enable(this.functionGroup2);
+        this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
+        this.functionGroup2.allowGravity = false; 
+        this.functionGroup2.immovable = true;
+
 
 
         // Com_line dimensions: 820 x 80 px
@@ -169,7 +184,7 @@ RobotKompis.Level.prototype = {
         //  Here we'll draw a circle
         mask.drawRect(10, 500, 800, 80);
         this.commandGroup.mask = mask; // MASK :D :D :D (This took me half of my saturday to find...)
-
+        //this.functionGroup1.mask=mask;
 
         this.rightArrow20 = this.add.sprite(13, 500, 'left20');
         this.rightArrow20.inputEnabled = true;
@@ -270,8 +285,12 @@ RobotKompis.Level.prototype = {
             if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
-            var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            var remainder = sprite.x % 70;
+            console.log(sprite.x,pointer.y) // Cleanse the (new) input from faulty values. Through semi-holy fire.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+            this.newPosX = 40 + (this.commandLineIndex * 70);
+            console.log(this.commandLineIndex)
+            console.log(this.newPosX) // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
             sprite.reset(this.newPosX, 510);
             if (this.commandLineIndex <= this.commandGroup.length) {
                 this.commandGroup.addAt(sprite, this.commandLineIndex);
@@ -281,6 +300,32 @@ RobotKompis.Level.prototype = {
             this.currentSpriteGroup.remove(sprite);
             this.commandGroupRender();
         }
+            //NIKOLAI
+        else if (pointer.y > 80 && pointer.y < 430 && pointer.x > 160 && pointer.x < 515 ) {
+            if (this.cloud.visible===true && this.func_save!=null && this.func_save.visible===true){ 
+                console.log(pointer.x,pointer.y)
+
+                if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
+                    this.addNew();
+                }
+                var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                console.log(sprite.x,remainder) 
+                this.functionLineIndex1 = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).  
+                console.log(this.functionLineIndex1)          
+                this.newPosX = 40 + (this.functionLineIndex1 * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                console.log(this.newPosX)                 
+                console.log(sprite) 
+
+                sprite.reset(this.newPosX, 160);
+                if (this.functionLineIndex1 <= this.functionGroup1.length) {
+                    this.functionGroup1.addAt(sprite, this.functionLineIndex1);
+                } else {
+                    this.functionGroup1.add(sprite);
+                }
+                this.currentSpriteGroup.remove(sprite);
+                this.functionGroupRender();
+            }
+        } 
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
               //trash_100.visible = true;
@@ -297,7 +342,17 @@ RobotKompis.Level.prototype = {
             }
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
+            console.log(sprite.x,pointer.y)
             sprite.reset(this.oldPosX, 510); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
+        }
+    },
+
+    // I am a functions which re-renders all commands. Worship me, for I am even more beautiful.
+    functionGroupRender: function () { // What happens if the commandGroup is empty?
+        for (var i = 0; i < this.functionGroup1.length; i++) {
+            var comPosX = 40 + (70 * i); // Calculate the position.
+            this.functionGroup1.getAt(i).reset(comPosX, 510);
+            //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
     
@@ -532,7 +587,7 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array[index].input.enableDrag();
         this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
         this.func_sprite_array[index].events.onDragStop.add(this.commandFunctionAdd, this);
-        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
+        this.func_sprite_array[index].events.onInputUp.add(this.funcSpriteOnClick, this);        
 
 
         // Close what to be closed and open what to be opened
@@ -610,18 +665,20 @@ RobotKompis.Level.prototype = {
     // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
     // You may in that case eather edit you or function or delete the sprite.  
     funcSpriteOnClick: function(sprite) {
-        // The following two lines saved me!!! Thanx to them! :)) 
-        if(this.func_edit){this.func_edit.visible = false}
-        if(this.func_delete){this.func_delete.visible = false}
+        // The following two lines saved me!!! Thanx to them! :))
+        if(this.cloud.visible===true) {
+            if(this.func_edit){this.func_edit.visible = false}
+            if(this.func_delete){this.func_delete.visible = false}
 
-        this.func_delete = this.add.sprite(376, 400 , 'func_delete');
-        this.func_delete.inputEnabled = true;
-        this.func_delete.input.useHandCursor = true;        
-        this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
-        this.func_edit = this.add.sprite(200, 400 , 'func_edit');
-        this.func_edit.inputEnabled = true;
-        this.func_edit.input.useHandCursor = true;        
-        this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_delete = this.add.sprite(376, 400 , 'func_delete');
+            this.func_delete.inputEnabled = true;
+            this.func_delete.input.useHandCursor = true;        
+            this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_edit = this.add.sprite(200, 400 , 'func_edit');
+            this.func_edit.inputEnabled = true;
+            this.func_edit.input.useHandCursor = true;        
+            this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+        }
     },
 
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
