@@ -29,7 +29,8 @@ RobotKompis.Level = function (game) {
     this.func_sprite_array = []; // Function sprite array;
     this.functionGroup;
     this.func_ready_array = [];
-    // this.functionGroup2;
+    this.command_array = [];
+    //this.functionGroup2;
     // this.functionLineIndex1;
     // this.functionLineIndex2;
 
@@ -398,20 +399,37 @@ RobotKompis.Level.prototype = {
         console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
-        for (var i = 0; i < this.commandGroup.length; i++) {
+        var temp;
+        for( i = 0; i < this.commandGroup.length; i++){
+            temp = this.commandGroup.getAt(i);
+            console.log(temp.key)
+            if (this.inArray(temp,this.func_sprite_array)===true){
+                console.log(this.func_sprite_array.indexOf(temp))
+
+                for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
+                    console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
+                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)].getAt(y));
+                }
+            }
+            else {
+                this.command_array.push(temp);    
+            }
+        }
+        console.log(this.command_array.length)
+        for (var i = 0; i < this.command_array.length; i++) {
             //TODO
             //Change to switch-statement
-            if (this.commandGroup.getAt(i).key === 'walk_right_com') {
+            if (this.command_array[i].key === 'walk_right_com') {
                 console.log('adding tween for walkRight CMD');
                 noWalkRight++;
                 this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.commandGroup.getAt(i).key === 'up_com') {
+            else if (this.command_array[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.commandGroup.getAt(i).key === 'walk_left_com') {
+            else if (this.command_array[i].key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
                 noWalkLeft++;
                 this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
@@ -582,15 +600,17 @@ RobotKompis.Level.prototype = {
     saveFunctionOnClick: function(index) {
         this.func_save.visible = false;  
         this.func_cancel.visible = false;
+        
 
         this.func_ready_array[index] = this.functionGroup; 
-        console.log(this.func_ready_array[index]);       
-
-        while (this.functionGroup.length != 0) {
-            var sprite = this.functionGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
-            this.functionGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
-            sprite.kill(); // Kill the sprite
-        }
+        this.functionGroup.visible=false;
+        console.log("length of the group in array", this.func_ready_array[index].length);       
+        console.log("length of the group before", this.functionGroup.length);
+        // while (this.functionGroup.length != 0) {
+        //     var sprite = this.functionGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
+        //     this.functionGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
+        //     sprite.kill(); // Kill the sprite
+        // }
   
  
         this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
@@ -717,7 +737,16 @@ RobotKompis.Level.prototype = {
         }
         this.func_delete.visible = false;
         this.func_edit.visible = false;
-    },      
+    },
+    // :D :D :D 
+    inArray: function(needle,haystack) {
+        var count=haystack.length;
+        for(var i=0;i<count;i++) {
+            if(haystack[i]===needle){
+                return true;}
+        }
+        return false;
+    },     
     
     //Home button function
     homeFunction: function() {
