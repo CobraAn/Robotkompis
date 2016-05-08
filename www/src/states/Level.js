@@ -27,10 +27,12 @@ RobotKompis.Level = function (game) {
     this.func_create_array = [];
     this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
     this.func_sprite_array = []; // Function sprite array;
-    this.functionGroup1;
-    this.functionGroup2;
-    this.functionLineIndex1;
-    this.functionLineIndex2;
+    this.functionGroup;
+    this.func_ready_array = [];
+    // this.functionGroup2;
+    // this.functionLineIndex1;
+    // this.functionLineIndex2;
+
 
     //Oklar
     this.cursors;
@@ -53,6 +55,7 @@ RobotKompis.Level = function (game) {
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
     this.newPosX;
+    this.newPosY;
     this.commandLineIndex;
 
     this.newCommand;
@@ -216,16 +219,16 @@ RobotKompis.Level.prototype = {
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
         this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
-        this.functionGroup1 = this.add.group();
-        this.physics.arcade.enable(this.functionGroup1);
-        this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
-        this.functionGroup1.allowGravity = false; 
-        this.functionGroup1.immovable = true;
-        this.functionGroup2 = this.add.group();
-        this.physics.arcade.enable(this.functionGroup2);
-        this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
-        this.functionGroup2.allowGravity = false; 
-        this.functionGroup2.immovable = true;
+        this.functionGroup = this.add.group();
+        this.physics.arcade.enable(this.functionGroup);
+        this.physics.enable( [ this.functionGroup ], Phaser.Physics.ARCADE);
+        this.functionGroup.allowGravity = false; 
+        this.functionGroup.immovable = true;
+        // this.functionGroup2 = this.add.group();
+        // this.physics.arcade.enable(this.functionGroup2);
+        // this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
+        // this.functionGroup2.allowGravity = false; 
+        // this.functionGroup2.immovable = true;
 
 
     },
@@ -311,7 +314,7 @@ RobotKompis.Level.prototype = {
             this.currentSpriteGroup.remove(sprite);
             this.commandGroupRender();
         }
-            //NIKOLAI
+            //NIKO
         else if (pointer.y > 80 && pointer.y < 430 && pointer.x > 160 && pointer.x < 515 ) {
             if (this.cloud.visible===true && this.func_save!=null && this.func_save.visible===true){ 
 
@@ -320,16 +323,19 @@ RobotKompis.Level.prototype = {
                 }
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
                 this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                console.log(this.newPosX)
+                this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                console.log(this.commandLineIndex)
                 sprite.reset(this.newPosX, 160);
-                if (this.commandLineIndex <= this.functionGroup1.length) {
-                    this.functionGroup1.addAt(sprite, this.commandLineIndex);
+                if (this.commandLineIndex <= this.functionGroup.length) {
+                    this.functionGroup.addAt(sprite, this.commandLineIndex);
                 } else {
-                    this.functionGroup1.add(sprite);
+                    this.functionGroup.add(sprite);
                 }
                 this.currentSpriteGroup.remove(sprite);
                 this.functionGroupRender();
+            }
+            else {
+                sprite.reset(this.oldPosX, 510);                
             }
         } 
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
@@ -355,9 +361,9 @@ RobotKompis.Level.prototype = {
 
     // I am a functions which re-renders all commands. Worship me, for I am even more beautiful.
     functionGroupRender: function () { // What happens if the commandGroup is empty?
-        for (var i = 0; i < this.functionGroup1.length; i++) {
-            var comPosX = 40 + (70 * i); // Calculate the position.
-            this.functionGroup1.getAt(i).reset(comPosX, 510);
+        for (var i = 0; i < this.functionGroup.length; i++) {
+            var comPosX = 235 + (70 * i); // Calculate the position.
+            this.functionGroup.getAt(i).reset(comPosX, 160);
             //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
@@ -582,7 +588,17 @@ RobotKompis.Level.prototype = {
     // OWN FUNCTION: click on "SPARA" and save the function. 
     saveFunctionOnClick: function(index) {
         this.func_save.visible = false;  
-        this.func_cancel.visible = false;  
+        this.func_cancel.visible = false;
+
+        this.func_ready_array[index] = this.functionGroup; 
+        console.log(this.func_ready_array[index]);       
+
+        while (this.functionGroup.length != 0) {
+            var sprite = this.functionGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
+            this.functionGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
+            sprite.kill(); // Kill the sprite
+        }
+  
  
         this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
         this.physics.arcade.enable(this.func_sprite_array[index]);

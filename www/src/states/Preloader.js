@@ -120,6 +120,7 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f5', '../../assets/function/f5.png');
         this.load.image('f6', '../../assets/function/f6.png');
         this.load.image('cloud','../../assets/function/func_cloud3.png');
+        this.load.image('temp1','../../assets/function/TEMP1.png');
 
         //this.load.image('cloud','../../assets/favx_cloud1.png');       
 
