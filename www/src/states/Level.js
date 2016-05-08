@@ -391,7 +391,10 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = false; 
         this.clear_btn.input.enabled = false;
         // Start moving the sprite along the commands
-        var noWalk = 0;
+        var noWalkRight = 0;
+        var noWalkUp = 0;
+        var noWalkLeft = 0;
+        var noWalkDown = 0;
         var noJump = 0;
         var noLadder; // Might be removed?
         var noKey; // Might be removed?
@@ -434,23 +437,23 @@ RobotKompis.Level.prototype = {
                 noWalkLeft++;
                 this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.command_line[i].key === 'down_com') {
+            else if (this.command_array[i].key === 'down_com') {
                 noWalkDown++;
                 this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
             }
-            else if (this.commandGroup.getAt(i).key === 'hop_left_com') {
+            else if (this.command_array[i].key === 'hop_left_com') {
 
             }
-            else if (this.commandGroup.getAt(i).key === 'hop_right_com') {
+            else if (this.command_array[i].key === 'hop_right_com') {
 
             }
-            else if (this.command_line[i].key === 'ladder_com') {
+            else if (this.command_array[i].key === 'ladder_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
 
              }
-            else if (this.commandGroup.getAt(i).key === 'key_com') {
+            else if (this.command_array[i].key === 'key_com') {
             }
             
         }
