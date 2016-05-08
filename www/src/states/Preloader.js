@@ -86,11 +86,11 @@ RobotKompis.Preloader.prototype = {
         this.load.image('help_btn', '../../assets/help_50.png');
         
         // Images for settings-state
-        this.load.image('backButton', '../../images/goback.png');
+        this.load.image('backButton', '../../images/bakpil.png');
         //this.load.image('muteButton', '../../images/mute.png');
         //this.load.image('unMuteButton', '../../images/unmute.png');
         this.load.spritesheet('muteUnMute', '../../images/muteUnMute.png', 82, 75, 2);
-        
+        this.load.image('tutBtn', '../../images/tutBtn.png');
         
 
         // Playable character

@@ -4,6 +4,7 @@ RobotKompis.Settings = function (game) {
     this.mute_button = null;
     this.unMute_button = null;
     this.back_button = null;
+    this.tut_button = null;
     
 };
 
@@ -15,6 +16,7 @@ RobotKompis.Settings.prototype = {
         
         this.mute_button = this.add.button(200,0,  'muteUnMute', this.Mute, this);
         this.back_button = this.add.button(400, 0,  'backButton', this.GoBack, this, 0, 0, 1);
+        this.tut_button = this.add.button(600, 0,  'tutBtn', this.LoadTutorial, this);
     },
     
     Mute: function(){
@@ -34,7 +36,10 @@ RobotKompis.Settings.prototype = {
     GoBack: function() {
         this.state.start('MapOverview');
     
-}
+},
+    LoadTutorial: function() {
+        alert('finns ej');
+    }
     
 }
     
