@@ -45,9 +45,12 @@ RobotKompis.Level = function (game) {
     this.trash_50;
     this.trash_100;
     
+    
+    
 };
 
-RobotKompis.Level.prototype = {
+RobotKompis.Level.prototype = {        
+
     
     create: function () {
 
@@ -64,7 +67,10 @@ RobotKompis.Level.prototype = {
 
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
         this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
-
+        
+        
+        
+        
         // Tilesets
         this.map.addTilesetImage('spritesheet_ground2', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
@@ -79,7 +85,7 @@ RobotKompis.Level.prototype = {
         this.layer5 = this.map.createLayer('door');
     
         //Activate collision tiles from blocked layer
-        this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        this.map.setCollisionBetween(1, 8000, true, 'blocked');
         
 
         this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
@@ -92,6 +98,9 @@ RobotKompis.Level.prototype = {
         
         this.player.body.moves = true;
         this.player.body.gravity.y = 1000;
+        
+        
+        this.map.setTileIndexCallback([10,121], this.resetPlayer, this);
         
         //animation
         this.player.animations.add('jump', [1, 0], 1, false);
@@ -152,11 +161,18 @@ RobotKompis.Level.prototype = {
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
+        
+        
+        //this.map.setTileIndexCallback([249, 138], tileFunc1.emitBlock, this, 'water');// tile 146 amd 147 are the functioned tiles in my index
+        
 
     },
     
+    
+    
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
+        
 
         // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
         this.player.body.velocity.x = 0;
@@ -188,7 +204,10 @@ RobotKompis.Level.prototype = {
 
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
-
+    
+    resetPlayer: function(){ 
+            console.log("HEJ");
+    },
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // y is always 510. Both oldPosY and newPosY.
