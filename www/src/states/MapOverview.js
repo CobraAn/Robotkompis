@@ -15,7 +15,7 @@ RobotKompis.MapOverview = function (game) {
     this.character = 'switchAni';
     this.popup;
     this.closebutton;
-    
+
     //Variabler för level select
     this.currentWorld;
     // number of button rows
@@ -58,6 +58,7 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         this.createLevelSelect();
         this.popupGroup = this.add.group();
+
         //Knappar för att starta olika banor
 
         /*this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
@@ -341,8 +342,8 @@ RobotKompis.MapOverview.prototype = {
         this.popupGroup.visible = false;
         this.levelButtonsGroup.visible = true;
         //change to visible but not clickable when time. 
-        this.leftArrow.visible = false;
-        this.rightArrow.visible = false;
+        this.leftArrow.visible = true;
+        this.rightArrow.visible = true;
         return;
     },
         

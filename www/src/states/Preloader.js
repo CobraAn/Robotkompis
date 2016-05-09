@@ -9,9 +9,9 @@ RobotKompis.Preloader = function (game) {
 RobotKompis.Preloader.prototype = {
 	preload: function () {
         'use strict';
-        //game.load.audio('boden', ['assets/audio/bodenstaendig_2000_in_rock_4bit.mp3', 'assets/audio/bodenstaendig_2000_in_rock_4bit.ogg']);
+        this.load.audio('sound', ['../../assets/ljud/happy.mp3', '../../assets/ljud/happy.ogg']);
         //Saker som visas medan allt laddas
-        this.load.audio('sound', '../../sound/mainTheme.mp3');
+        //this.load.audio('sound', '../../sound/mainTheme.mp3');
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
 		this.preloadBar.anchor.setTo(0.5, 0.5);
 		this.load.setPreloadSprite(this.preloadBar, 0);
@@ -148,14 +148,15 @@ RobotKompis.Preloader.prototype = {
 	create: function () {
         'use strict';
 		this.preloadBar.cropEnabled = false;
-        //this.music = this.add.audio('sound');
-        //this.music.play();
-        //this.music.volume = 0.5;
-        //this.music.loop = true;
+        this.music = this.add.audio('sound');
+        this.music.play();
+        this.music.volume = 0.5;
+        this.music.loopFull();
+		this.ready = true;
+   
 	},
 	update: function () {
         'use strict';
-        
 		this.ready = true;
         this.state.start('StartMenu');
 	}
