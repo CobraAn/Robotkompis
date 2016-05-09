@@ -21,13 +21,14 @@ RobotKompis.Level = function (game) {
 
 
 
-    // Making own functions
+     // Making own functions
     this.func_btn; // Function button
     this.cloud;    // Cloud-window
     this.func_create_array = [];
     this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
     this.func_sprite_array = []; // Function sprite array;
     this.functionGroup;
+    this.functionLine = [];
     this.func_ready_array = [];
     this.command_array = [];
     //this.functionGroup2;
@@ -313,37 +314,50 @@ RobotKompis.Level.prototype = {
                 if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                     this.addNew();
                 }
+                // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                // this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                // this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                // console.log(this.commandLineIndex)
+                // sprite.reset(this.newPosX, 160);
+                // if (this.commandLineIndex <= this.functionGroup.length) {
+                //     this.functionGroup.addAt(sprite, this.commandLineIndex);
+                // } else {
+                //     this.functionGroup.add(sprite);
+                // }
+                // this.currentSpriteGroup.remove(sprite);
+                // this.functionGroupRender();
+
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
                 this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                console.log(this.commandLineIndex)
-                sprite.reset(this.newPosX, 160);
-                if (this.commandLineIndex <= this.functionGroup.length) {
-                    this.functionGroup.addAt(sprite, this.commandLineIndex);
-                } else {
-                    this.functionGroup.add(sprite);
-                }
-                this.currentSpriteGroup.remove(sprite);
-                this.functionGroupRender();
+                this.functionLine.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
+                this.functionLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
+
             }
             else {
                 sprite.reset(this.oldPosX, 510);                
             }
-        } 
+        }  
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
               //trash_100.visible = true;
               //Some kind of timer. game.time.now
-            if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
+            if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
                 // It works but there's quite a delay?
-                this.commandGroup.remove(sprite, true);// IS the true necessary when we also have to kill it?
+                this.commandGroup.remove(sprite, true); // IS the true necessary when we also have to kill it?
                 //this.commandGroup.kill(sprite);
                 sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
                 this.commandGroupRender();
+
             } else { // Add it back to new, you pleb!
                 this.addNew();
                 sprite.kill();
             }
+                    // Closing the transparrent guys and everything...
+            for (var i=1; i<7; i++) {
+                this.func_create_array[i].visible = false;                   
+            }  
+
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
             console.log(sprite.x,pointer.y)
@@ -352,11 +366,10 @@ RobotKompis.Level.prototype = {
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am even more beautiful.
-    functionGroupRender: function () { // What happens if the commandGroup is empty?
-        for (var i = 0; i < this.functionGroup.length; i++) {
+    functionLineRender: function () {
+        for (i = 0; i < this.functionLine.length; i++) {
             var comPosX = 235 + (70 * i); // Calculate the position.
-            this.functionGroup.getAt(i).reset(comPosX, 160);
-            //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+            this.functionLine[i].reset(comPosX, 160); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
     
@@ -407,14 +420,16 @@ RobotKompis.Level.prototype = {
             temp = this.commandGroup.getAt(i);
             console.log(temp.key)
             if (this.inArray(temp,this.func_sprite_array)===true){
-                console.log(this.func_sprite_array.indexOf(temp))
+                console.log("Length of ready array", this.func_ready_array[this.func_sprite_array.indexOf(temp)].length)
 
                 for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
+                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)][y]);
+
                     console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
-                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)].getAt(y));
                 }
             }
             else {
+
                 this.command_array.push(temp);    
             }
         }
@@ -605,10 +620,14 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         
 
-        this.func_ready_array[index] = this.functionGroup; 
-        this.functionGroup.visible=false;
-        console.log("length of the group in array", this.func_ready_array[index].length);       
-        console.log("length of the group before", this.functionGroup.length);
+        this.func_ready_array[index] = this.functionLine; 
+        console.log("langd av ready array",this.func_ready_array[index].length  , index)
+        for(i=0; i<this.functionLine.length; i++){
+            if(this.functionLine[i]!=null) {
+                this.functionLine[i].visible = false;            
+            }
+        }
+        this.functionLine = [];
         // while (this.functionGroup.length != 0) {
         //     var sprite = this.functionGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
         //     this.functionGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
@@ -643,6 +662,15 @@ RobotKompis.Level.prototype = {
     cancelCreateFunctionOnClick: function() {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
+
+        this.func_ready_array[index] = this.functionLine; 
+        for(i=1; i<this.functionLine.length; i++){
+            if(this.functionLine[i]!=null) {
+                this.functionLine[i].visible = false;            
+            }
+        }
+        this.functionLine = [];
+
         // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
@@ -720,7 +748,16 @@ RobotKompis.Level.prototype = {
     },
 
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
-    deleteFunctionBlockOnClick: function(index) {        
+    deleteFunctionBlockOnClick: function(index) {  
+
+        this.func_ready_array[index] = this.functionLine; 
+        for(i=0; i<this.functionLine.length; i++){
+            if(this.functionLine[i]!=null) {
+                this.functionLine[i].visible = false;            
+            }
+        }
+        this.functionLine = []; 
+          
         this.func_sprite_array[index].kill();
         this.func_sprite_array[index] = null;
         this.func_create_array[index].visible = true; 
