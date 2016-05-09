@@ -61,15 +61,16 @@ RobotKompis.MapOverview.prototype = {
         this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
         this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
         this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
-        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        
+        /*this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
-        this.cloud.visible = false; 
+        this.cloud.visible = false;*/ 
 
         
        
 	
         //Gör om denna till knapp för inställningar
-        this.settingsIcon = this.add.button(896, 0, 'settingsIcon', this.startSettings, this, 0, 0, 1);
+        this.settingsIcon = this.add.button(950, 5, 'settingsIcon', this.startSettings, this, 0, 0, 1);
         
         //titel
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis', 110);
@@ -138,15 +139,24 @@ RobotKompis.MapOverview.prototype = {
     },
      buttonClicked: function (button) {
 	   // the level is playable, then play the level!!
-        if(button.frame < 2){
+        if(button.frame < 2) {
             if (button.levelNumber == 1) {
                 this.startLevelOne();
             }
             else if (button.levelNumber == 2) {
                 this.startLevelTwo();
             }
+            else if (button.levelNumber == 3) {
+                this.startLevelThree();
+            }
+             else if (button.levelNumber == 4) {
+                this.startLevelFour();
+            }
+             else if (button.levelNumber == 5) {
+                this.startLevelFive();
+            }
             else {
-                alert('finns ej');
+                console.log('Något är fel');
             }
         }
         // else, let's shake the locked levels
@@ -202,17 +212,6 @@ RobotKompis.MapOverview.prototype = {
             buttonsTween.start();
         }		
     },
-    
-    //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
-    startLevelOne: function () {
-        'use strict';
-        this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
-        //, 'down_com', 
-          //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
-        this.state.start('Level');
-    },
-    
     startSettings: function () {
         'use strict';
                   
@@ -252,9 +251,16 @@ RobotKompis.MapOverview.prototype = {
             this.cloud.visible = false;
   
          }    
+     },
     
-
-        
+    //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
+    startLevelOne: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
+        //, 'down_com', 
+          //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
+        this.state.start('Level');
     },
     
     startLevelTwo: function () {
