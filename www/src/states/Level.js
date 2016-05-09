@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-    //this.robot; 
+    this.robot; 
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -105,7 +105,7 @@ RobotKompis.Level.prototype = {
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
 
-        this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
+        this.player = this.add.sprite(95, this.world.height - 280, this.robot);
       
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);

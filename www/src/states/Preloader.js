@@ -100,7 +100,17 @@ RobotKompis.Preloader.prototype = {
         this.load.image('tutBtn', '../../images/tutBtn.png');
         this.load.image('settingsCloud', '../../images/Settingscloud.png');
         
-
+        //for the robot-choosing-popup-meny
+        this.load.spritesheet('robotButton', '../../assets/robotar/robotar.png', 130, 190);
+        this.load.image('closeButton', '../../assets/close.png');
+        this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
+        this.load.image('whileChoise', '../../assets/robotar/while.png');
+        this.load.image('gotoChoise', '../../assets/robotar/goto.png');
+        this.load.image('ifChoise', '../../assets/robotar/if.png');
+        this.load.image('switchChoise', '../../assets/robotar/switch.png');
+        this.load.image('elseChoise', '../../assets/robotar/else.png');
+        
+        
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
 
