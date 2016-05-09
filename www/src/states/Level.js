@@ -41,6 +41,8 @@ RobotKompis.Level = function (game) {
     // Tween for animations
     this.tween;
 
+    // MAD STUFF BELOW !
+    
     // HI GUYS! We have two little adoptees from MapOverview.js:
     //this.commandKeys
     //this.tilemapKey
@@ -58,6 +60,12 @@ RobotKompis.Level = function (game) {
     this.newPosX;
     this.newPosY;
     this.commandLineIndex;
+
+    this.finalPosX; 
+    this.finalPosY;
+    this.runInitiated = false;
+    this.comArrIndex = 0;
+    this.smallerThan = false; 
 
     this.newCommand;
 
@@ -243,28 +251,56 @@ RobotKompis.Level.prototype = {
             this.commandGroup.setAll('body.velocity.x', +120);
         } else {
             this.commandGroup.setAll('body.velocity.x', 0);
-/*
-        // The below code allows the sprite to be moved with the arrow keys. Just a test thing for tilemap, really.
-        this.player.body.velocity.x = 0;
-
-        if (this.cursors.left.isDown) { //  Move to the left
-            this.player.animations.stop('cheer');
-            this.player.body.velocity.x = -90;
-        }
-        else if (this.cursors.right.isDown) {//  Move to the right
-            this.player.animations.stop('cheer');
-            this.player.body.velocity.x = 90;
 
         }
-        else if (this.cursors.up.isDown) { //  Allow the player to jump if they are touching the ground.
-            this.player.body.velocity.y = -90;
-            this.player.animations.stop('jump');
-            this.player.animations.play('jump');
+/* Adoptee keys: 
+    this.finalPosX; 
+    this.finalPosY;
+    this.runInitiated;
+    this.comArrIndex;
+    */
+    // this.smallerThan = true
+        if (this.player.x >= this.finalPosX && this.smallerThan == false) {
+            this.player.body.velocity.x = 0; 
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
+        } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
+            this.player.body.velocity.x = 0; 
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
+        } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
+            this.player.body.velocity.y = 0; 
+            this.player.body.allowGravity = true; 
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
         }
-        else if (this.cursors.down.isDown) { // Move the player down a bit. We're not using gravity so needed to get it down to earth again.
-            this.player.body.velocity.y = 90;
-*/
-        }
+
+        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
+            /*
+            console.log("We found a run-away!");
+            console.log("this.command_array:");
+            console.log(this.command_array);
+            console.log("this.comArrIndex:");
+            console.log(this.comArrIndex);
+            */
+            var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+
+            if (comKey == "walk_right_com") {
+                this.player.body.velocity.x = 100;
+                this.finalPosX = this.player.x + 32;
+                this.smallerThan = false;
+            } else if (comKey == "walk_left_com") {
+                this.finalPosX = this.player.x - 32;
+                this.player.body.velocity.x = -100;
+                this.smallerThan = true;
+            } else if (comKey == "ladder_com") {
+                this.finalPosY = this.player.y - 128;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -100;
+                this.smallerThan = true; 
+            }
+            this.runInitiated = false; 
+        } 
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
@@ -378,8 +414,8 @@ RobotKompis.Level.prototype = {
         this.newCommand.kill(); // Kill the old new Command sprite.
         this.addNew();
     },
-
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
+    // RUN !
     listener: function () {
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
         for (i = 0; i < this.commandGroup.length; i++) {
@@ -391,6 +427,9 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = false; 
         this.clear_btn.input.enabled = false;
         // Start moving the sprite along the commands
+        // What I want: Send on index, check final position and so on. 
+
+        //this.player.velocity.x = 50; 
         var noWalkRight = 0;
         var noWalkUp = 0;
         var noWalkLeft = 0;
@@ -398,19 +437,20 @@ RobotKompis.Level.prototype = {
         var noJump = 0;
         var noLadder; // Might be removed?
         var noKey; // Might be removed?
-        console.log(this.commandGroup.length);
-        console.log(this.commandGroup.getAt(1));
+        //console.log(this.commandGroup.length);
+        //console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         var temp;
+        this.command_array = []; 
         for( i = 0; i < this.commandGroup.length; i++){
             temp = this.commandGroup.getAt(i);
-            console.log(temp.key)
+            //console.log(temp.key)
             if (this.inArray(temp,this.func_sprite_array)===true){
-                console.log(this.func_sprite_array.indexOf(temp))
+                //console.log(this.func_sprite_array.indexOf(temp))
 
                 for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
-                    console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
+                    //console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
                     this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)].getAt(y));
                 }
             }
@@ -418,25 +458,48 @@ RobotKompis.Level.prototype = {
                 this.command_array.push(temp);    
             }
         }
-        console.log(this.command_array.length)
+        this.comArrIndex = 0;
+        this.runInitiated = true;
+        /*
+        //console.log(this.command_array.length)
         for (var i = 0; i < this.command_array.length; i++) {
+            var comKey = this.command_array[i].key; // Because ain't nobody got time to type that every single time. 
             //TODO
             //Change to switch-statement
+            if (comKey == "walk_right_com") {
+                finalPosX = this.player.x + 32;
+                while (this.player.x > finalPosX) {
+                    console.log("Hello there, handsome!");
+                    this.player.body.velocity.x = 50;
+                }
+            } else if (comKey == "walk_left_com") {
+                finalPosX = this.player.x - 32;
+                while (this.player.x < finalPosX) {
+                    this.player.body.velocity.x = -50;
+                }
+            }
+            /*
             if (this.command_array[i].key === 'walk_right_com') {
-                console.log('adding tween for walkRight CMD');
+                // console.log('adding tween for walkRight CMD');
                 noWalkRight++;
+                this.player.body.moveTo()
                 this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
             }
+            */
+            /*
             else if (this.command_array[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
             }
+            /*
             else if (this.command_array[i].key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
                 noWalkLeft++;
                 this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
             }
+            */
+            /*
             else if (this.command_array[i].key === 'down_com') {
                 noWalkDown++;
                 this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
@@ -458,6 +521,9 @@ RobotKompis.Level.prototype = {
             
         }
         this.tween.start();
+           // run: function(comKey, index, finalPosX, finalPosY) {
+            */
+        
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
@@ -482,7 +548,11 @@ RobotKompis.Level.prototype = {
         }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(185, 320);
+        //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
+        this.player.reset(95, this.world.height - 280);
+        this.runInitiated = false; 
+        this.comArrIndex = 0;
+        this.command_array = [];
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
@@ -742,7 +812,7 @@ RobotKompis.Level.prototype = {
         this.func_edit.visible = false;
     },
     // :D :D :D 
-    inArray: function(needle,haystack) {
+    inArray: function(needle,haystack) { // I hope someone brought a magnet. Or Tony will be very dissapointed. 
         var count=haystack.length;
         for(var i=0;i<count;i++) {
             if(haystack[i]===needle){
