@@ -1,4 +1,4 @@
-RobotKompis.Level = function (game) {
+RobotKompis.Tutorial = function (game) {
     // Tilemap variables.
     this.map;
     this.layer0;
@@ -10,7 +10,7 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-    this.robot; 
+    //this.robot; 
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -19,16 +19,13 @@ RobotKompis.Level = function (game) {
     this.sound_btn;
     this.help_btn;
 
-
-
-     // Making own functions
+    // Making own functions
     this.func_btn; // Function button
     this.cloud;    // Cloud-window
     this.func_create_array = [];
     this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
     this.func_sprite_array = []; // Function sprite array;
     this.functionGroup;
-    this.functionLine = [];
     this.func_ready_array = [];
     this.command_array = [];
     //this.functionGroup2;
@@ -42,8 +39,6 @@ RobotKompis.Level = function (game) {
     // Tween for animations
     this.tween;
 
-    // MAD STUFF BELOW !
-    
     // HI GUYS! We have two little adoptees from MapOverview.js:
     //this.commandKeys
     //this.tilemapKey
@@ -62,12 +57,6 @@ RobotKompis.Level = function (game) {
     this.newPosY;
     this.commandLineIndex;
 
-    this.finalPosX; 
-    this.finalPosY;
-    this.runInitiated = false;
-    this.comArrIndex = 0;
-    this.smallerThan = false; 
-
     this.newCommand;
 
     this.new_btn;
@@ -77,7 +66,7 @@ RobotKompis.Level = function (game) {
     
 };
 
-RobotKompis.Level.prototype = {
+RobotKompis.Tutorial.prototype = {
     init: function (character){
         this.robot = character;
     },
@@ -97,7 +86,7 @@ RobotKompis.Level.prototype = {
 
         graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
         this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
-
+    
         // Tilesets
         this.map.addTilesetImage('spritesheet_ground2', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
@@ -114,7 +103,7 @@ RobotKompis.Level.prototype = {
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
 
-        this.player = this.add.sprite(95, this.world.height - 280, this.robot);
+        this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
       
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
@@ -156,26 +145,6 @@ RobotKompis.Level.prototype = {
         this.trash_100 = this.add.sprite(915, 380, 'trash_100');
         this.trash_100.visible = false;
 
-
-        // OWN FUNCTION DEFINING STUFF
-
-        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
-        this.cloud = this.add.sprite(71, 107, 'cloud'); 
-        this.cloud.visible = false; 
-        this.createSixTransparrent();
-        // this.functionGroup1 = this.add.group();
-        // this.physics.arcade.enable(this.functionGroup1);
-        // this.physics.enable( [ this.functionGroup1 ], Phaser.Physics.ARCADE);
-        // this.functionGroup1.allowGravity = false; 
-        // this.functionGroup1.immovable = true;
-        // this.functionGroup2 = this.add.group();
-        // this.physics.arcade.enable(this.functionGroup2);
-        // this.physics.enable( [ this.functionGroup2 ], Phaser.Physics.ARCADE);
-        // this.functionGroup2.allowGravity = false; 
-        // this.functionGroup2.immovable = true;
-
-
-
         // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
@@ -207,7 +176,7 @@ RobotKompis.Level.prototype = {
 
         this.addNew(); // Add the newCommand variable sprite. 
 
-
+        console.log("after addNew");
         this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
         this.run_btn.inputEnabled = true;
 
@@ -239,7 +208,6 @@ RobotKompis.Level.prototype = {
         // this.functionGroup2.allowGravity = false; 
         // this.functionGroup2.immovable = true;
 
-
     },
     
     update: function () {// LET'S UPDATE !
@@ -254,54 +222,6 @@ RobotKompis.Level.prototype = {
             this.commandGroup.setAll('body.velocity.x', 0);
 
         }
-/* Adoptee keys: 
-    this.finalPosX; 
-    this.finalPosY;
-    this.runInitiated;
-    this.comArrIndex;
-    */
-    // this.smallerThan = true
-        if (this.player.x >= this.finalPosX && this.smallerThan == false) {
-            this.player.body.velocity.x = 0; 
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
-            this.player.body.velocity.x = 0; 
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
-            this.player.body.velocity.y = 0; 
-            this.player.body.allowGravity = true; 
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        }
-
-        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
-            /*
-            console.log("We found a run-away!");
-            console.log("this.command_array:");
-            console.log(this.command_array);
-            console.log("this.comArrIndex:");
-            console.log(this.comArrIndex);
-            */
-            var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
-
-            if (comKey == "walk_right_com") {
-                this.player.body.velocity.x = 100;
-                this.finalPosX = this.player.x + 32;
-                this.smallerThan = false;
-            } else if (comKey == "walk_left_com") {
-                this.finalPosX = this.player.x - 32;
-                this.player.body.velocity.x = -100;
-                this.smallerThan = true;
-            } else if (comKey == "ladder_com") {
-                this.finalPosY = this.player.y - 128;
-                this.player.body.allowGravity = false;
-                this.player.body.velocity.y = -100;
-                this.smallerThan = true; 
-            }
-            this.runInitiated = false; 
-        } 
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
@@ -350,50 +270,37 @@ RobotKompis.Level.prototype = {
                 if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                     this.addNew();
                 }
-                // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                // this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                // this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                // console.log(this.commandLineIndex)
-                // sprite.reset(this.newPosX, 160);
-                // if (this.commandLineIndex <= this.functionGroup.length) {
-                //     this.functionGroup.addAt(sprite, this.commandLineIndex);
-                // } else {
-                //     this.functionGroup.add(sprite);
-                // }
-                // this.currentSpriteGroup.remove(sprite);
-                // this.functionGroupRender();
-
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
+                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
                 this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                this.functionLine.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
-                this.functionLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
-
+                console.log(this.commandLineIndex)
+                sprite.reset(this.newPosX, 160);
+                if (this.commandLineIndex <= this.functionGroup.length) {
+                    this.functionGroup.addAt(sprite, this.commandLineIndex);
+                } else {
+                    this.functionGroup.add(sprite);
+                }
+                this.currentSpriteGroup.remove(sprite);
+                this.functionGroupRender();
             }
             else {
                 sprite.reset(this.oldPosX, 510);                
             }
-        }  
+        } 
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
               //trash_100.visible = true;
               //Some kind of timer. game.time.now
-            if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
+            if (this.oldPosX < 820) { // Was the command in commandLine before? (commandLine spans 20 - 830)
                 // It works but there's quite a delay?
-                this.commandGroup.remove(sprite, true); // IS the true necessary when we also have to kill it?
+                this.commandGroup.remove(sprite, true);// IS the true necessary when we also have to kill it?
                 //this.commandGroup.kill(sprite);
                 sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
                 this.commandGroupRender();
-
             } else { // Add it back to new, you pleb!
                 this.addNew();
                 sprite.kill();
             }
-                    // Closing the transparrent guys and everything...
-            for (var i=1; i<7; i++) {
-                this.func_create_array[i].visible = false;                   
-            }  
-
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !
             console.log(sprite.x,pointer.y)
@@ -402,10 +309,11 @@ RobotKompis.Level.prototype = {
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am even more beautiful.
-    functionLineRender: function () {
-        for (i = 0; i < this.functionLine.length; i++) {
+    functionGroupRender: function () { // What happens if the commandGroup is empty?
+        for (var i = 0; i < this.functionGroup.length; i++) {
             var comPosX = 235 + (70 * i); // Calculate the position.
-            this.functionLine[i].reset(comPosX, 160); // Reset the commands position to be where it SHOULD be, and not where it currently is.
+            this.functionGroup.getAt(i).reset(comPosX, 160);
+            //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
     
@@ -427,8 +335,8 @@ RobotKompis.Level.prototype = {
         this.newCommand.kill(); // Kill the old new Command sprite.
         this.addNew();
     },
+
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
-    // RUN !
     listener: function () {
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
         for (i = 0; i < this.commandGroup.length; i++) {
@@ -440,9 +348,6 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = false; 
         this.clear_btn.input.enabled = false;
         // Start moving the sprite along the commands
-        // What I want: Send on index, check final position and so on. 
-
-        //this.player.velocity.x = 50; 
         var noWalkRight = 0;
         var noWalkUp = 0;
         var noWalkLeft = 0;
@@ -450,73 +355,45 @@ RobotKompis.Level.prototype = {
         var noJump = 0;
         var noLadder; // Might be removed?
         var noKey; // Might be removed?
-        //console.log(this.commandGroup.length);
-        //console.log(this.commandGroup.getAt(1));
+        console.log(this.commandGroup.length);
+        console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         var temp;
-        this.command_array = []; 
         for( i = 0; i < this.commandGroup.length; i++){
             temp = this.commandGroup.getAt(i);
-            //console.log(temp.key)
+            console.log(temp.key)
             if (this.inArray(temp,this.func_sprite_array)===true){
-
-                console.log("Length of ready array", this.func_ready_array[this.func_sprite_array.indexOf(temp)].length)
+                console.log(this.func_sprite_array.indexOf(temp))
 
                 for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
-                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)][y]);
-
                     console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
-
+                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)].getAt(y));
                 }
             }
             else {
-
                 this.command_array.push(temp);    
             }
         }
-        this.comArrIndex = 0;
-        this.runInitiated = true;
-        /*
-        //console.log(this.command_array.length)
+        console.log(this.command_array.length)
         for (var i = 0; i < this.command_array.length; i++) {
-            var comKey = this.command_array[i].key; // Because ain't nobody got time to type that every single time. 
             //TODO
             //Change to switch-statement
-            if (comKey == "walk_right_com") {
-                finalPosX = this.player.x + 32;
-                while (this.player.x > finalPosX) {
-                    console.log("Hello there, handsome!");
-                    this.player.body.velocity.x = 50;
-                }
-            } else if (comKey == "walk_left_com") {
-                finalPosX = this.player.x - 32;
-                while (this.player.x < finalPosX) {
-                    this.player.body.velocity.x = -50;
-                }
-            }
-            /*
             if (this.command_array[i].key === 'walk_right_com') {
-                // console.log('adding tween for walkRight CMD');
+                console.log('adding tween for walkRight CMD');
                 noWalkRight++;
-                this.player.body.moveTo()
                 this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
             }
-            */
-            /*
             else if (this.command_array[i].key === 'up_com') {
                 console.log('adding tween for jump cmd');
                 noWalkUp++;
                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
             }
-            /*
             else if (this.command_array[i].key === 'walk_left_com') {
                 console.log('adding tween for walkLeft cmd');
                 noWalkLeft++;
                 this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
             }
-            */
-            /*
             else if (this.command_array[i].key === 'down_com') {
                 noWalkDown++;
                 this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
@@ -538,9 +415,6 @@ RobotKompis.Level.prototype = {
             
         }
         this.tween.start();
-           // run: function(comKey, index, finalPosX, finalPosY) {
-            */
-        
     },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
@@ -565,11 +439,7 @@ RobotKompis.Level.prototype = {
         }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
-        this.player.reset(95, this.world.height - 280);
-        this.runInitiated = false; 
-        this.comArrIndex = 0;
-        this.command_array = [];
+        this.player.reset(185, 320);
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
@@ -692,14 +562,10 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         
 
-        this.func_ready_array[index] = this.functionLine; 
-        console.log("langd av ready array",this.func_ready_array[index].length  , index)
-        for(i=0; i<this.functionLine.length; i++){
-            if(this.functionLine[i]!=null) {
-                this.functionLine[i].visible = false;            
-            }
-        }
-        this.functionLine = [];
+        this.func_ready_array[index] = this.functionGroup; 
+        this.functionGroup.visible=false;
+        console.log("length of the group in array", this.func_ready_array[index].length);       
+        console.log("length of the group before", this.functionGroup.length);
         // while (this.functionGroup.length != 0) {
         //     var sprite = this.functionGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
         //     this.functionGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
@@ -734,15 +600,6 @@ RobotKompis.Level.prototype = {
     cancelCreateFunctionOnClick: function() {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
-
-        this.func_ready_array[index] = this.functionLine; 
-        for(i=1; i<this.functionLine.length; i++){
-            if(this.functionLine[i]!=null) {
-                this.functionLine[i].visible = false;            
-            }
-        }
-        this.functionLine = [];
-
         // Close what to be closed and open what to be opened
         for (var i=1; i<7; i++) {
             if (this.func_sprite_array[i]!=null){
@@ -820,16 +677,7 @@ RobotKompis.Level.prototype = {
     },
 
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
-    deleteFunctionBlockOnClick: function(index) {  
-
-        this.func_ready_array[index] = this.functionLine; 
-        for(i=0; i<this.functionLine.length; i++){
-            if(this.functionLine[i]!=null) {
-                this.functionLine[i].visible = false;            
-            }
-        }
-        this.functionLine = []; 
-          
+    deleteFunctionBlockOnClick: function(index) {        
         this.func_sprite_array[index].kill();
         this.func_sprite_array[index] = null;
         this.func_create_array[index].visible = true; 

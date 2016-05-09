@@ -9,9 +9,9 @@ RobotKompis.Preloader = function (game) {
 RobotKompis.Preloader.prototype = {
 	preload: function () {
         'use strict';
-        //game.load.audio('boden', ['assets/audio/bodenstaendig_2000_in_rock_4bit.mp3', 'assets/audio/bodenstaendig_2000_in_rock_4bit.ogg']);
+        this.load.audio('sound', ['../../assets/ljud/happy.mp3', '../../assets/ljud/happy.ogg']);
         //Saker som visas medan allt laddas
-        this.load.audio('sound', '../../sound/mainTheme.mp3');
+        //this.load.audio('sound', '../../sound/mainTheme.mp3');
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
 		this.preloadBar.anchor.setTo(0.5, 0.5);
 		this.load.setPreloadSprite(this.preloadBar, 0);
@@ -101,7 +101,17 @@ RobotKompis.Preloader.prototype = {
         this.load.image('tutBtn', '../../images/tutBtn.png');
         this.load.image('settingsCloud', '../../images/Settingscloud.png');
         
-
+        //for the robot-choosing-popup-meny
+        this.load.spritesheet('robotButton', '../../assets/robotar/robotar.png', 130, 190);
+        this.load.image('closeButton', '../../assets/close.png');
+        this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
+        this.load.image('whileChoise', '../../assets/robotar/while.png');
+        this.load.image('gotoChoise', '../../assets/robotar/goto.png');
+        this.load.image('ifChoise', '../../assets/robotar/if.png');
+        this.load.image('switchChoise', '../../assets/robotar/switch.png');
+        this.load.image('elseChoise', '../../assets/robotar/else.png');
+        
+        
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
 
@@ -139,14 +149,15 @@ RobotKompis.Preloader.prototype = {
 	create: function () {
         'use strict';
 		this.preloadBar.cropEnabled = false;
-        //this.music = this.add.audio('sound');
-        //this.music.play();
-        //this.music.volume = 0.5;
-        //this.music.loop = true;
+        this.music = this.add.audio('sound');
+        this.music.play();
+        this.music.volume = 0.5;
+        this.music.loopFull();
+		this.ready = true;
+   
 	},
 	update: function () {
         'use strict';
-        
 		this.ready = true;
         this.state.start('StartMenu');
 	}
