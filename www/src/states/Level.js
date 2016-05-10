@@ -126,10 +126,10 @@ RobotKompis.Level.prototype = {
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
-        this.player.animations.add('jump', [1, 0], 1, false);
+        /*this.player.animations.add('jump', [1, 0], 1, false);
         this.player.animations.add('cheer', [2, 3, 4], 3, true);
         this.player.animations.add('climb', [5], 10, true);
-        
+        */
 
         // Block Library
         graphics.lineStyle(0);
