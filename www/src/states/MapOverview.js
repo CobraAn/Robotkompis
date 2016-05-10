@@ -77,7 +77,7 @@ RobotKompis.MapOverview.prototype = {
         this.cloud.bringToTop();
         this.cloud.visible = false;
 
-        this.mute_button = this.add.button(500,200,  'muteUnMute', this.Mute, this);
+        this.mute_button = this.add.button(500, 65,  'muteUnMute', this.Mute, this);
         this.tut_button = this.add.button(500, 300,  'tutBtn', this.LoadTutorial, this)
         this.mute_button.visible = false;
         this.tut_button.visible = false;
@@ -127,7 +127,7 @@ RobotKompis.MapOverview.prototype = {
         if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
             // Everything what is supposed to be opened is opened, other stuff is closed
-            this.tut_button.visible = true;
+            //this.tut_button.visible = true;
             this.mute_button.visible = true;
                 
                           
