@@ -35,7 +35,8 @@ RobotKompis.MapOverview = function (game) {
     // 3 = two stars
     // 4 = three stars
     // 5 = Locked level
-    this.starsArray = [1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    //this.starsArray = [1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]; <-- Denna för Stjärnor!
+    this.starsArray = [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
     // how many pages are needed to show all levels?
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
     // group where to place all level buttons
@@ -141,11 +142,13 @@ RobotKompis.MapOverview.prototype = {
                     //which level does the button refer?
                     var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
                     //adding button, calls the buttonClicked function
-                    if (this.starsArray[levelNumber] == 5) {
+                    //if (this.starsArray[levelNumber] == 5) { <-- Denna för stjärnor!
+                    if (this.starsArray[levelNumber] == 2) {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
                     }
                     else {
-                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, null, 0);
+                        //För stjärnor, byt sista 1:an mot en 0:a
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, null, 1);
                     }
                     
                     //showing right frame
@@ -154,16 +157,20 @@ RobotKompis.MapOverview.prototype = {
 				    levelButton.levelNumber = levelNumber+1;
 				    // adding the level thumb to the group
 				    this.levelButtonsGroup.add(levelButton);
-                    if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
+                    //if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) { <-- Denna för stjärnor!
+                    if(this.starsArray[levelNumber] < 2 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        this.levelText = this.add.bitmapText(levelButton.x+35,levelButton.y+20, 'numberFont', printedNumber, 50);
+                        //this.levelText = this.add.bitmapText(levelButton.x+35,levelButton.y+20, 'numberFont', printedNumber, 50); <-- För stjärnor!
+                        this.levelText = this.add.bitmapText(levelButton.x+30,levelButton.y+20, 'numberFont', printedNumber, 70);
                         this.levelButtonsGroup.add(this.levelText);
                     }
-                    else if (this.starsArray[levelNumber] < 5){
+                    //else if (this.starsArray[levelNumber] < 5){ <-- Denna för stjärnor!!
+                    else if (this.starsArray[levelNumber] < 2){
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        this.levelText = this.add.bitmapText(levelButton.x+20,levelButton.y+20, 'numberFont', printedNumber, 50);
+                        //Ändra 70 till 50 för och 10 till 20 för stjärnor!
+                        this.levelText = this.add.bitmapText(levelButton.x+10,levelButton.y+20, 'numberFont', printedNumber, 70);
                         this.levelButtonsGroup.add(this.levelText);
                     }
                 }
@@ -172,7 +179,8 @@ RobotKompis.MapOverview.prototype = {
     },
      buttonClicked: function (button) {
 	   // the level is playable, then play the level!!
-        if(button.frame < 4) {
+        //if(button.frame < 4) { <-- Denna för stjärnor!!
+        if(button.frame < 2) {
             if (button.levelNumber == 1) {
                 this.startLevelOne();
             }
