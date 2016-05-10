@@ -374,6 +374,7 @@ RobotKompis.Level.prototype = {
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
                 this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
                 this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                //if()
                 this.functionLine.splice(this.commandLineIndex, 0, sprite); // Add command to commandLine
                 this.functionLineRender(); // We've moved lots of stuff around. Re-render ALL the commands (by using sprite.reset, not re-loading them in)
 
