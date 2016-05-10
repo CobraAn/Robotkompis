@@ -261,6 +261,7 @@ RobotKompis.Level.prototype = {
     this.comArrIndex;
     */
     // this.smallerThan = true
+
         if (this.player.x >= this.finalPosX && this.smallerThan == false) {
             this.player.body.velocity.x = 0; 
             this.comArrIndex = this.comArrIndex + 1; 
@@ -270,8 +271,11 @@ RobotKompis.Level.prototype = {
             this.comArrIndex = this.comArrIndex + 1; 
             this.runInitiated = true;
         } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
+            //console.log("ladder here. Gravity value:");
+            //console.log(this.player.body.gravity.y);
             this.player.body.velocity.y = 0; 
             this.player.body.allowGravity = true; 
+        
             this.comArrIndex = this.comArrIndex + 1; 
             this.runInitiated = true;
         }
@@ -287,14 +291,17 @@ RobotKompis.Level.prototype = {
             var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
 
             if (comKey == "walk_right_com") {
+                this.finalPosY = -20;
                 this.player.body.velocity.x = 100;
                 this.finalPosX = this.player.x + 32;
                 this.smallerThan = false;
             } else if (comKey == "walk_left_com") {
+                this.finalPosY = -20;
                 this.finalPosX = this.player.x - 32;
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (comKey == "ladder_com") {
+                this.finalPosX = -20;
                 this.finalPosY = this.player.y - 128;
                 this.player.body.allowGravity = false;
                 this.player.body.velocity.y = -100;
