@@ -700,7 +700,6 @@ RobotKompis.Level.prototype = {
         
 
         this.func_ready_array[index] = this.functionLine; 
-        console.log("langd av ready array",this.func_ready_array[index].length  , index)
         for(i=0; i<this.functionLine.length; i++){
             if(this.functionLine[i]!=null) {
                 this.functionLine[i].visible = false;            
@@ -741,9 +740,8 @@ RobotKompis.Level.prototype = {
     cancelCreateFunctionOnClick: function() {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
-
-        this.func_ready_array[index] = this.functionLine; 
-        for(i=1; i<this.functionLine.length; i++){
+        // Close all unnecessary commands and cleanse the functionLine
+        for(i=0; i<this.functionLine.length; i++){
             if(this.functionLine[i]!=null) {
                 this.functionLine[i].visible = false;            
             }
@@ -800,7 +798,8 @@ RobotKompis.Level.prototype = {
             this.func_create_array[index].visible = true;
             this.func_sprite_array[index].kill();
             this.func_sprite_array[index] = null;
-            this.commandGroupRender();
+            this.functionLineRender();
+            if (this.cloud.visible===false){this.func_create_array[index].visible = false} //Patch...
         }
         else { // So it was moved outside of the commandLine area, eh? SNAP IT BACK !  
             sprite.reset(xCoord, yCoord); // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
@@ -828,15 +827,12 @@ RobotKompis.Level.prototype = {
 
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
     deleteFunctionBlockOnClick: function(index) {  
-
-        this.func_ready_array[index] = this.functionLine; 
+        this.func_ready_array[index] = null; 
         for(i=0; i<this.functionLine.length; i++){
             if(this.functionLine[i]!=null) {
                 this.functionLine[i].visible = false;            
             }
-        }
-        this.functionLine = []; 
-          
+        }         
         this.func_sprite_array[index].kill();
         this.func_sprite_array[index] = null;
         this.func_create_array[index].visible = true; 
@@ -844,18 +840,34 @@ RobotKompis.Level.prototype = {
         this.func_edit.visible = false;
     },
     // OWN FUNCTION: click on "ÄNDRA" and edit the current function.
-    editFunctionBlockOnClick: function(index) {        
+    editFunctionBlockOnClick: function(index) {
         for (var i=1; i<7; i++) {
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = true;
-                this.func_create_array[i].visible = false;    
+              this.func_create_array[i].visible = false;                   
+            if (this.func_sprite_array[i]!=null){  
+                //...except for the chosen functions.              
+                if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
+                    this.func_sprite_array[i].visible = true;  
+                }
+                else{
+                    this.func_sprite_array[i].visible = false; 
+                }
+                       
             }
-            else {
-                this.func_create_array[i].visible = true;    
-            } 
         }
-        this.func_delete.visible = false;
-        this.func_edit.visible = false;
+        this.functionLine = this.func_ready_array[index];
+        for(i=0; i<this.functionLine.length; i++){
+            if(this.functionLine[i]!=null) {
+                this.functionLine[i].visible = true;  
+            }      
+        }
+        this.func_save = this.add.sprite(200, 400 , 'func_save');
+        this.func_save.inputEnabled = true;
+        this.func_save.input.useHandCursor = true;
+        this.func_save.events.onInputDown.add(function() {this.saveFunctionOnClick(index)}, this);  
+        this.func_cancel = this.add.sprite(376, 400, 'func_cancel');
+        this.func_cancel.inputEnabled = true;
+        this.func_cancel.input.useHandCursor = true;
+        this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this); 
     },
     // :D :D :D 
     inArray: function(needle,haystack) { // I hope someone brought a magnet. Or Tony will be very dissapointed. 
