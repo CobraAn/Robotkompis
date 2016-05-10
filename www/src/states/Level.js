@@ -263,53 +263,53 @@ RobotKompis.Level.prototype = {
     */
     // this.smallerThan = true
 
-        if (this.player.x >= this.finalPosX && this.smallerThan == false) {
-            this.player.body.velocity.x = 0; 
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
-            this.player.body.velocity.x = 0; 
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
-            //console.log("ladder here. Gravity value:");
-            //console.log(this.player.body.gravity.y);
-            this.player.body.velocity.y = 0; 
-            this.player.body.allowGravity = true; 
+        // if (this.player.x >= this.finalPosX && this.smallerThan == false) {
+        //     this.player.body.velocity.x = 0; 
+        //     this.comArrIndex = this.comArrIndex + 1; 
+        //     this.runInitiated = true;
+        // } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
+        //     this.player.body.velocity.x = 0; 
+        //     this.comArrIndex = this.comArrIndex + 1; 
+        //     this.runInitiated = true;
+        // } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
+        //     //console.log("ladder here. Gravity value:");
+        //     //console.log(this.player.body.gravity.y);
+        //     this.player.body.velocity.y = 0; 
+        //     this.player.body.allowGravity = true; 
         
-            this.comArrIndex = this.comArrIndex + 1; 
-            this.runInitiated = true;
-        }
+        //     this.comArrIndex = this.comArrIndex + 1; 
+        //     this.runInitiated = true;
+        // }
 
-        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
-            /*
-            console.log("We found a run-away!");
-            console.log("this.command_array:");
-            console.log(this.command_array);
-            console.log("this.comArrIndex:");
-            console.log(this.comArrIndex);
-            */
-            var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+        // if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
+            
+        //     console.log("We found a run-away!");
+        //     console.log("this.command_array:");
+        //     console.log(this.command_array);
+        //     console.log("this.comArrIndex:");
+        //     console.log(this.comArrIndex);
+            
+        //     var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
 
-            if (comKey == "walk_right_com") {
-                this.finalPosY = -20;
-                this.player.body.velocity.x = 100;
-                this.finalPosX = this.player.x + 32;
-                this.smallerThan = false;
-            } else if (comKey == "walk_left_com") {
-                this.finalPosY = -20;
-                this.finalPosX = this.player.x - 32;
-                this.player.body.velocity.x = -100;
-                this.smallerThan = true;
-            } else if (comKey == "ladder_com") {
-                this.finalPosX = -20;
-                this.finalPosY = this.player.y - 128;
-                this.player.body.allowGravity = false;
-                this.player.body.velocity.y = -100;
-                this.smallerThan = true; 
-            }
-            this.runInitiated = false; 
-        } 
+        //     if (comKey == "walk_right_com") {
+        //         this.finalPosY = -20;
+        //         this.player.body.velocity.x = 100;
+        //         this.finalPosX = this.player.x + 32;
+        //         this.smallerThan = false;
+        //     } else if (comKey == "walk_left_com") {
+        //         this.finalPosY = -20;
+        //         this.finalPosX = this.player.x - 32;
+        //         this.player.body.velocity.x = -100;
+        //         this.smallerThan = true;
+        //     } else if (comKey == "ladder_com") {
+        //         this.finalPosX = -20;
+        //         this.finalPosY = this.player.y - 128;
+        //         this.player.body.allowGravity = false;
+        //         this.player.body.velocity.y = -100;
+        //         this.smallerThan = true; 
+        //     }
+        //     this.runInitiated = false; 
+        // } 
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
@@ -438,119 +438,89 @@ RobotKompis.Level.prototype = {
     },
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     // RUN !
-    listener: function () {
-        // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
-        for (i = 0; i < this.commandGroup.length; i++) {
-            this.commandGroup.getAt(i).input.enabled = false;
-        }
-        this.rightArrow20.input.enabled = false;
-        this.leftArrow20.input.enabled = false;
-        this.newCommand.input.draggable = false;
-        this.new_btn.input.enabled = false; 
-        this.clear_btn.input.enabled = false;
-        // Start moving the sprite along the commands
-        // What I want: Send on index, check final position and so on. 
-
-        //this.player.velocity.x = 50; 
-        var noWalkRight = 0;
-        var noWalkUp = 0;
-        var noWalkLeft = 0;
-        var noWalkDown = 0;
-        var noJump = 0;
-        var noLadder; // Might be removed?
-        var noKey; // Might be removed?
-        //console.log(this.commandGroup.length);
-        //console.log(this.commandGroup.getAt(1));
-        this.stop_btn.visible = true;
-        this.run_btn.visible = false;
-        var temp;
-        this.command_array = []; 
-        for( i = 0; i < this.commandGroup.length; i++){
-            temp = this.commandGroup.getAt(i);
-            //console.log(temp.key)
-            if (this.inArray(temp,this.func_sprite_array)===true){
+     listener: function () {
+         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
+         for (i = 0; i < this.commandGroup.length; i++) {
+             this.commandGroup.getAt(i).input.enabled = false;
+         }
+         this.rightArrow20.input.enabled = false;
+         this.leftArrow20.input.enabled = false;
+         this.newCommand.input.draggable = false;
+         this.new_btn.input.enabled = false; 
+         this.clear_btn.input.enabled = false;
+         // Start moving the sprite along the commands
+         var noWalkRight = 0;
+         var noWalkUp = 0;
+         var noWalkLeft = 0;
+         var noWalkDown = 0;
+         var noJump = 0;
+         var noLadder; // Might be removed?
+         var noKey; // Might be removed?
+         console.log(this.commandGroup.length);
+         console.log(this.commandGroup.getAt(1));
+         this.stop_btn.visible = true;
+         this.run_btn.visible = false;
+         var temp;
+         for( i = 0; i < this.commandGroup.length; i++){
+              temp = this.commandGroup.getAt(i);
+              console.log(temp.key)
+              if (this.inArray(temp,this.func_sprite_array)===true){
 
                 console.log("Length of ready array", this.func_ready_array[this.func_sprite_array.indexOf(temp)].length)
+  
+                  for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
+                     this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)][y]);
 
-                for(y=0; y<this.func_ready_array[this.func_sprite_array.indexOf(temp)].length; y++) {
-                    this.command_array.push(this.func_ready_array[this.func_sprite_array.indexOf(temp)][y]);
+                      console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
+                  }
+              }
+              else {
 
-                    console.log(this.func_ready_array[this.func_sprite_array.indexOf(temp)])
-
-                }
-            }
-            else {
-
-                this.command_array.push(temp);    
-            }
-        }
-        this.comArrIndex = 0;
-        this.runInitiated = true;
-        /*
-        //console.log(this.command_array.length)
-        for (var i = 0; i < this.command_array.length; i++) {
-            var comKey = this.command_array[i].key; // Because ain't nobody got time to type that every single time. 
-            //TODO
-            //Change to switch-statement
-            if (comKey == "walk_right_com") {
-                finalPosX = this.player.x + 32;
-                while (this.player.x > finalPosX) {
-                    console.log("Hello there, handsome!");
-                    this.player.body.velocity.x = 50;
-                }
-            } else if (comKey == "walk_left_com") {
-                finalPosX = this.player.x - 32;
-                while (this.player.x < finalPosX) {
-                    this.player.body.velocity.x = -50;
-                }
-            }
-            /*
-            if (this.command_array[i].key === 'walk_right_com') {
-                // console.log('adding tween for walkRight CMD');
-                noWalkRight++;
-                this.player.body.moveTo()
-                this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
-            }
-            */
-            /*
-            else if (this.command_array[i].key === 'up_com') {
-                console.log('adding tween for jump cmd');
-                noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
-            }
-            /*
-            else if (this.command_array[i].key === 'walk_left_com') {
-                console.log('adding tween for walkLeft cmd');
-                noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
-            }
-            */
-            /*
-            else if (this.command_array[i].key === 'down_com') {
-                noWalkDown++;
-                this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_array[i].key === 'hop_left_com') {
-
-            }
-            else if (this.command_array[i].key === 'hop_right_com') {
-
-            }
-            else if (this.command_array[i].key === 'ladder_com') {
-                console.log('adding tween for jump cmd');
-                noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
-
+                  this.command_array.push(temp);    
+              }
+          }
+         console.log(this.command_array.length)
+         for (var i = 0; i < this.command_array.length; i++) {
+             //TODO
+             //Change to switch-statement
+             if (this.command_array[i].key === 'walk_right_com') {
+                 console.log('adding tween for walkRight CMD');
+                 noWalkRight++;
+                 this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
              }
-            else if (this.command_array[i].key === 'key_com') {
-            }
-            
-        }
-        this.tween.start();
-           // run: function(comKey, index, finalPosX, finalPosY) {
-            */
-        
-    },
+             else if (this.command_array[i].key === 'up_com') {
+                 console.log('adding tween for jump cmd');
+                 noWalkUp++;
+                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
+             }
+             else if (this.command_array[i].key === 'walk_left_com') {
+                 console.log('adding tween for walkLeft cmd');
+                 noWalkLeft++;
+                 this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
+             }
+             else if (this.command_array[i].key === 'down_com') {
+                 noWalkDown++;
+                 this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
+             }
+             else if (this.command_array[i].key === 'hop_left_com') {
+ 
+             }
+             else if (this.command_array[i].key === 'hop_right_com') {
+ 
+             }
+             else if (this.command_array[i].key === 'ladder_com') {
+                 console.log('adding tween for jump cmd');
+                 noWalkUp++;
+                 this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
+ 
+              }
+             else if (this.command_array[i].key === 'key_com') {
+             }
+             
+         }
+         this.tween.start();
+     },
+
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
