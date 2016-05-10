@@ -119,7 +119,7 @@ RobotKompis.MapOverview.prototype = {
         
         //titel
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis', 110);
-   
+        this.world.sendToBack(this.title);
     },
     startSettings: function () {
         'use strict';
