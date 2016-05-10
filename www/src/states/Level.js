@@ -126,10 +126,10 @@ RobotKompis.Level.prototype = {
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
-        /*this.player.animations.add('jump', [1, 0], 1, false);
-        this.player.animations.add('cheer', [2, 3, 4], 3, true);
-        this.player.animations.add('climb', [5], 10, true);
-        */
+        //this.player.animations.add('jump', [1, 0], 1, false);
+        this.player.animations.add('cheer', [0, 1, 2], 3, true);
+        //this.player.animations.add('climb', [5], 10, true);
+        
 
         // Block Library
         graphics.lineStyle(0);
@@ -244,6 +244,7 @@ RobotKompis.Level.prototype = {
     
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
+        this.player.animations.play('cheer');
 
         if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
         // pointer is down and is over our sprite, so do something here  

@@ -119,7 +119,7 @@ RobotKompis.Preloader.prototype = {
         this.load.spritesheet('else', '../../assets/robotsResized/else1.png', 30, 42);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1.png', 30, 49);
         this.load.spritesheet('if', '../../assets/robotsResized/if1.png', 30, 59);
-        this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 37);
+        //this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 37);
         this.load.spritesheet('while', '../../assets/robotsResized/while1.png', 30, 38);
         //spritesheet for switch med animation för att hoppa
         this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheet.png', 30, 37);
