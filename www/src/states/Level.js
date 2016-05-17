@@ -18,7 +18,7 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
-
+    
 
 
      // Making own functions
@@ -217,7 +217,9 @@ RobotKompis.Level.prototype = {
 
         //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
-        this.sound_btn = this.add.sprite(965, this.world.height - 530, 'sound_btn');
+        this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
+        this.sound_btn.scale.setTo(0.7,0.7)
+        //this.sound_btn = this.add.button(200,0,  'muteUnMute', this.Mute, this);
         this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
 
         // Pointer is active by default and does not need to be turned on by game.input :)
@@ -428,6 +430,19 @@ RobotKompis.Level.prototype = {
         this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
         this.newCommand.events.onDragStop.add(this.commandDragStop, this);// Not sure if the last add part is needed or not.
         this.newCommand.collideWorldBounds = true;
+    },
+    
+    MuteIt: function() {
+         if (this.sound.mute == false) {
+            this.sound.mute = true; 
+            this.sound_btn.frame = 1;
+            //this.mute_button = this.add.button(200,0,  'muteButton', this.Mute, this, 0, 0, 1);
+            
+        } else {
+            this.sound.mute = false;
+            this.sound_btn.frame = 0;
+        };
+    
     },
 
     newCycle: function(sprite) {
