@@ -31,8 +31,7 @@ RobotKompis.Preloader.prototype = {
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
-        //this.load.spritesheet('levelSelect', '../../assets/level_select_buttons/select_level.png', 100, 100, 6); < --Denna för stjärnor!!
-        this.load.spritesheet('levelSelect', '../../assets/level_select_buttons/select_level1.png', 100, 100, 3);
+        this.load.spritesheet('levelSelect', '../../assets/level_select_buttons/select_level.png', 100, 100, 6);
         this.load.image('settingsIcon', '../../images/settingIcon.png');
         this.load.spritesheet('menuArrows', '../../assets/level_select_buttons/menypilar.png', 116, 168);
         
@@ -140,7 +139,10 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f4', '../../assets/function/f4.png');
         this.load.image('f5', '../../assets/function/f5.png');
         this.load.image('f6', '../../assets/function/f6.png');
-        this.load.image('cloud','../../assets/function/func_cloud3.png');
+        this.load.image('f7', '../../assets/function/f7.png');
+        this.load.image('f8', '../../assets/function/f8.png');
+        this.load.image('cloud','../../assets/function/the_cloud.png');
+        this.load.image('func_title','../../assets/function/func_title.png');
         this.load.image('temp1','../../assets/function/TEMP1.png');
 
         //this.load.image('cloud','../../assets/favx_cloud1.png');       
