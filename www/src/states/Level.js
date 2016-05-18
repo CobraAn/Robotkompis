@@ -128,7 +128,7 @@ RobotKompis.Level.prototype = {
         
         //animation
         //this.player.animations.add('jump', [1, 0], 1, false);
-        this.player.animations.add('cheer', [0, 1, 2], 3, true);
+        this.player.animations.add('cheer', [0, 1, 2], 4.5, true);
         //this.player.animations.add('climb', [5], 10, true);
         
 
