@@ -31,6 +31,7 @@ RobotKompis.Level = function (game) {
     this.func_line_group;
     this.func_tree_group;
     this.newFunc;
+    this.func_title;
 
 
     //Oklar
@@ -52,6 +53,8 @@ RobotKompis.Level = function (game) {
     this.currentSpriteGroup; // BECAUSE YEAH, PHASER WANTS IT THAT WAY *HURR DURR DURR* (it's to be able to place sprites above the commandGroup)
     this.rightArrow20;
     this.leftArrow20;  
+    this.funcRightArrow20;
+    this.funcLeftArrow20; 
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -160,7 +163,10 @@ RobotKompis.Level.prototype = {
         this.func_btn = this.add.button(965, this.world.height - 410 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(140, 110, 'cloud');
         this.cloud.alpha = 0.6;
-        this.cloud.visible = false; 
+        this.cloud.visible = false;
+        this.func_title = this.add.sprite(200, 130, 'func_title');
+        this.func_title.alpha = 0.6;
+        this.func_title.visible = false;     
         this.createSixTransparrent();
 
 
@@ -177,14 +183,15 @@ RobotKompis.Level.prototype = {
         //this.body.allowGravity = false;
         //this.body.immovable = true;
         //  A mask is a Graphics object
-        var mask = this.game.add.graphics(0, 0);
+        
+        var commandMask = this.game.add.graphics(0, 0);
 
         //  Shapes drawn to the Graphics object must be filled.
-        mask.beginFill(0xffffff);
+        commandMask.beginFill(0xffffff);
 
         //  Here we'll draw a circle
-        mask.drawRect(10, 500, 800, 80);
-        this.commandGroup.mask = mask; // MASK :D :D :D (This took me half of my saturday to find...)
+        commandMask.drawRect(10, 500, 800, 80);
+        this.commandGroup.mask = commandMask; // MASK :D :D :D (This took me half of my saturday to find...)
         //this.functionGroup1.mask=mask;
 
         this.rightArrow20 = this.add.sprite(13, 500, 'left20');
@@ -226,6 +233,22 @@ RobotKompis.Level.prototype = {
         this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
         this.func_line_group.allowGravity = false; 
         this.func_line_group.immovable = true;
+        // Function line mask and arrows
+        var functionMask = this.game.add.graphics(0, 0);
+        functionMask.beginFill(0xffffff);
+        functionMask.drawRect(176, 185, 600, 80);
+        this.func_line_group.mask = functionMask; 
+        this.funcRightArrow20 = this.add.sprite(175, 180, 'left20');
+        this.funcRightArrow20.inputEnabled = true;
+        this.funcRightArrow20.alpha = 0.6;
+        this.funcRightArrow20.visible = false;
+        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
+        this.funcLeftArrow20 = this.add.sprite(755,180, 'right20');
+        this.funcLeftArrow20.inputEnabled = true;
+        this.funcLeftArrow20.alpha = 0.6;
+        this.funcLeftArrow20.visible = false;
+        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
+
         this.func_tree_group = this.add.group();
         for(i=0;i<9;i++){
             this.func_tree_group.add(this.add.group());
@@ -240,7 +263,7 @@ RobotKompis.Level.prototype = {
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.player.animations.play('cheer');
-
+        // Command arrows
         if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
         // pointer is down and is over our sprite, so do something here  
             this.commandGroup.setAll('body.velocity.x', -120);
@@ -248,8 +271,17 @@ RobotKompis.Level.prototype = {
             this.commandGroup.setAll('body.velocity.x', +120);
         } else {
             this.commandGroup.setAll('body.velocity.x', 0);
-
         }
+        // Function arrows
+        if (this.game.input.activePointer.isDown && this.funcRightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
+        // pointer is down and is over our sprite, so do something here  
+            this.func_line_group.setAll('body.velocity.x', -120);
+        } else if (this.game.input.activePointer.isDown && this.funcLeftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
+            this.func_line_group.setAll('body.velocity.x', +120);
+        } else {
+            this.func_line_group.setAll('body.velocity.x', 0);
+        }
+
 /* Adoptee keys: 
     this.finalPosX; 
     this.finalPosY;
@@ -639,6 +671,7 @@ RobotKompis.Level.prototype = {
     favxOnClick: function() {         
         if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
+            this.func_title.visible = true;
             // Everything what is supposed to be opened is opened, other stuff is closed
             for (var i = 1; i < 9; i++) {
                 if (this.func_sprite_array[i]!=null){
@@ -651,6 +684,7 @@ RobotKompis.Level.prototype = {
             }
         }
         else { //...*** and closes if opened ;)
+            this.func_title.visible = false;
             // Close everything except for the chosen function. 
             //this.newFunc.visible=false;
             for (var i = 1; i < 9; i++) {
@@ -714,7 +748,7 @@ RobotKompis.Level.prototype = {
 
     // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
     // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
-    makeNewFuncOnClick: function(index) {
+    makeNewFuncOnClick: function(index) {        
         // Closing the transparrent guys and everything...
         for (var i=1; i<9; i++) {
               this.func_create_array[i].visible = false;                   
@@ -727,7 +761,9 @@ RobotKompis.Level.prototype = {
                     this.func_sprite_array[i].visible = false; 
                 }                   
             }
-        }  
+        } 
+        this.funcRightArrow20.visible = true;
+        this.funcLeftArrow20.visible = true; 
         this.func_save = this.add.sprite(260, 265 , 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
@@ -744,6 +780,8 @@ RobotKompis.Level.prototype = {
     saveFunctionOnClick: function(index) {
         this.func_save.visible = false;  
         this.func_cancel.visible = false;
+        this.funcRightArrow20.visible = false;
+        this.funcLeftArrow20.visible = false; 
   
         this.func_tree_group.addAt(this.func_line_group, index);
         this.func_line_group.visible = false;
@@ -785,6 +823,8 @@ RobotKompis.Level.prototype = {
                 this.func_create_array[i].visible = true;
             }          
         }
+        this.funcRightArrow20.visible = false;
+        this.funcLeftArrow20.visible = false; 
         this.func_save.visible = false;
         this.func_cancel.visible = false;
         if(this.func_edit){this.func_edit.visible = false}
@@ -865,11 +905,12 @@ RobotKompis.Level.prototype = {
                 }                   
             }
         } 
-
         // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
         this.func_line_group = this.func_tree_group.children[index];
         this.func_line_group.visible=true;
         // ...and show the needed buttons! 
+        this.funcRightArrow20.visible = true;
+        this.funcLeftArrow20.visible = true; 
         this.func_save = this.add.sprite(260, 265, 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
