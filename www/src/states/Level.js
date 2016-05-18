@@ -129,7 +129,21 @@ RobotKompis.Level.prototype = {
         //this.player.animations.add('jump', [1, 0], 1, false);
         this.player.animations.add('cheer', [0, 1, 2], 3, true);
         //this.player.animations.add('climb', [5], 10, true);
-        
+
+        // LADDER LAYER COLLISION STUFFS
+        this.map.setCollisionBetween(1, 5000, true, 'ladder');
+
+        this.game.physics.arcade.enable(this.layer4); // The ladder layer
+        this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
+        this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
+
+
+        // DOOR LAYER COLLISION STUFFS
+        this.map.setCollisionBetween(1, 5000, true, 'door');
+
+        this.game.physics.arcade.enable(this.layer5); // The ladder layer
+        this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
+        this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
 
         // Block Library
         graphics.lineStyle(0);
@@ -240,9 +254,12 @@ RobotKompis.Level.prototype = {
         // this.functionGroup2.immovable = true;
 
 
+
     },
     
     update: function () {// LET'S UPDATE !
+        this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
+
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.player.animations.play('cheer');
 
@@ -254,7 +271,16 @@ RobotKompis.Level.prototype = {
         } else {
             this.commandGroup.setAll('body.velocity.x', 0);
 
-        }
+        }  
+        /*
+        if (this.game.physics.arcade.collide(this.player, this.layer4)) {
+            console.log("HI! I hit a ladder.");
+        ;  // Does it need to be in update instead of create?    
+        /*  
+        this.enemyGroup.forEach(function (enemy) {
+            this.game.physics.arcade.collide(this.player, enemy);
+            this.game.physics.arcade.collide(enemy, this.EnemyLayer);        
+        }, this);*/
 /* Adoptee keys: 
     this.finalPosX; 
     this.finalPosY;
@@ -310,11 +336,78 @@ RobotKompis.Level.prototype = {
         //     }
         //     this.runInitiated = false; 
         // } 
+
+        // HI THERE ! VELOCITY MOVERS BELOW!
+        
+        if (this.player.x >= this.finalPosX && this.smallerThan == false) {
+            this.player.body.velocity.x = 0; 
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
+        } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
+            this.player.body.velocity.x = 0; 
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
+        } 
+        else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
+            //console.log("ladder here. Gravity value:");
+            //console.log(this.player.body.gravity.y);
+            
+            this.player.body.allowGravity = true; 
+        
+            this.comArrIndex = this.comArrIndex + 1; 
+            this.runInitiated = true;
+        }
+        
+        
+        if (this.player.body.velocity.y == 0 && this.allowGravity == true) {
+            console.log("Hey");
+            this.allowGravity = false;
+            this.runInitiated = true;
+        }
+
+        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
+            /*
+            console.log("We found a run-away!");
+            console.log("this.command_array:");
+            console.log(this.command_array);
+            console.log("this.comArrIndex:");
+            console.log(this.comArrIndex);
+            */
+            var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+
+            if (comKey == "walk_right_com") {
+                this.finalPosY = -20;
+                this.player.body.velocity.x = 100;
+                this.finalPosX = this.player.x + 32;
+                this.smallerThan = false;
+            } else if (comKey == "walk_left_com") {
+                this.finalPosY = -20;
+                this.finalPosX = this.player.x - 32;
+                this.player.body.velocity.x = -100;
+                this.smallerThan = true;
+            } else if (comKey == "ladder_com") {
+                this.finalPosX = -20;
+                this.finalPosY = this.player.y - 128;
+                this.player.body.allowGravity = false;
+                //this.player.y = this.player.y + 128;
+                this.player.body.velocity.y = -100;
+                this.smallerThan = true; 
+            }
+            this.runInitiated = false; 
+        } 
+        
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
+    
+    ladderHit: function(sprite, tile) {
+        console.log("Hit a ladder!");
+    },
 
+    doorHit: function(sprite, tile) {
+        console.log("Found a door!");
+    },
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
