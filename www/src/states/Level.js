@@ -24,8 +24,8 @@ RobotKompis.Level = function (game) {
      // Making own functions
     this.func_btn; // Function button
     this.cloud;    // Cloud-window
-    this.func_create_array = []; // Array of 6 transparrent "KLICK ATT SKAPA"sprites
-    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6'];
+    this.func_create_array = []; // Array of 8 transparrent "KLICK ATT SKAPA"sprites
+    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6', 'f7', 'f8'];
     this.func_sprite_array = []; // Array of original function sprites (sometimes needed)
     this.command_array = [];
     this.func_line_group;
@@ -157,10 +157,9 @@ RobotKompis.Level.prototype = {
 
         // OWN FUNCTION DEFINING STUFF
 
-        // OWN FUNCTION DEFINING STUFF
-
-        this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
-        this.cloud = this.add.sprite(71, 107, 'cloud'); 
+        this.func_btn = this.add.button(965, this.world.height - 410 , 'func_button', this.favxOnClick, this, 2, 1, 0);
+        this.cloud = this.add.sprite(140, 110, 'cloud');
+        this.cloud.alpha = 0.6;
         this.cloud.visible = false; 
         this.createSixTransparrent();
 
@@ -198,10 +197,10 @@ RobotKompis.Level.prototype = {
         this.addNew(); // Add the newCommand variable sprite. 
 
 
-        this.run_btn = this.add.sprite(965, this.world.height - 410, 'run_btn');
+        this.run_btn = this.add.sprite(965, this.world.height - 345, 'run_btn');
         this.run_btn.inputEnabled = true;
 
-        this.stop_btn = this.add.sprite(965, this.world.height - 410, 'stop_btn');
+        this.stop_btn = this.add.sprite(965, this.world.height - 345, 'stop_btn');
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
 
@@ -228,7 +227,7 @@ RobotKompis.Level.prototype = {
         this.func_line_group.allowGravity = false; 
         this.func_line_group.immovable = true;
         this.func_tree_group = this.add.group();
-        for(i=0;i<7;i++){
+        for(i=0;i<9;i++){
             this.func_tree_group.add(this.add.group());
         }
         this.physics.arcade.enable(this.func_tree_group);
@@ -362,7 +361,7 @@ RobotKompis.Level.prototype = {
             }
         }
             //NIKO
-        else if (pointer.y > 80 && pointer.y < 430 && pointer.x > 160 && pointer.x < 515 ) {
+        else if (pointer.y > 100 && pointer.y < 350 && pointer.x > 140 && pointer.x < 800) {
             if (this.cloud.visible===true && this.func_save.visible===true){ 
 
                 if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
@@ -370,10 +369,10 @@ RobotKompis.Level.prototype = {
                 }
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
                 this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                this.newPosX = 235 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
                 this.newPosY = sprite.y;
                 console.log(this.commandLineIndex)
-                sprite.reset(this.newPosX, 160);
+                sprite.reset(this.newPosX, 190);
                 if (this.commandLineIndex <= this.func_line_group.length) {
                     this.func_line_group.addAt(sprite, this.commandLineIndex);
                 } else {
@@ -409,7 +408,7 @@ RobotKompis.Level.prototype = {
                 sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
                 this.commandGroupRender();
             }
-            else if (this.oldPosY > 80 && this.oldPosY < 430 && this.oldPosX > 160 && this.oldPosX < 515 ) {
+            else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) {
                 // Temporary solving...
                 if(this.inArray(sprite, this.func_sprite_array)===true){
                     this.func_create_array[index].visible = true;
@@ -434,8 +433,8 @@ RobotKompis.Level.prototype = {
                 sprite.reset(this.func_create_array[index].x, this.func_create_array[index].y); 
             }
 
-            else if(this.cloud.visible===true && this.func_save.visible===true){
-                sprite.reset(this.oldPosX, 160); 
+            else if(this.cloud.visible===true && this.func_save.visible===true && this.oldPosY<510){
+                sprite.reset(this.oldPosX, 190); 
                 this.functionGroupRender();
             }
             else {                
@@ -619,8 +618,8 @@ RobotKompis.Level.prototype = {
     // I am-m-m... b-b-bjutiful too... :S 
     functionGroupRender: function () { // What happens if the commandGroup is empty?
         for (var i = 0; i < this.func_line_group.length; i++) {
-            var comPosX = 235 + (70 * i); // Calculate the position.
-            this.func_line_group.getAt(i).reset(comPosX, 160);
+            var comPosX = 200 + (70 * i); // Calculate the position.
+            this.func_line_group.getAt(i).reset(comPosX, 190);
             //this.command_line[i].reset(comPosX, 510); // Reset the commands position to be where it SHOULD be, and not where it currently is.
         }
     },
@@ -641,7 +640,7 @@ RobotKompis.Level.prototype = {
         if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
             // Everything what is supposed to be opened is opened, other stuff is closed
-            for (var i = 1; i < 7; i++) {
+            for (var i = 1; i < 9; i++) {
                 if (this.func_sprite_array[i]!=null){
                     this.func_sprite_array[i].visible = true; 
                     this.func_create_array[i].visible = false;   
@@ -654,7 +653,7 @@ RobotKompis.Level.prototype = {
         else { //...*** and closes if opened ;)
             // Close everything except for the chosen function. 
             //this.newFunc.visible=false;
-            for (var i = 1; i < 7; i++) {
+            for (var i = 1; i < 9; i++) {
                 this.func_create_array[i].visible = false;
   
                 if (this.func_sprite_array[i]!=null){               
@@ -690,19 +689,16 @@ RobotKompis.Level.prototype = {
     // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
     createSixTransparrent: function() {
 
-        var xCoord = 235;
-        var yCoord = 160;
-        for(var i=1; i<7; i++){
-            if(xCoord==535){
-                xCoord=235;
-                yCoord=260;
-            }
+        var xCoord = 200;
+        var yCoord = 190;
+        for(var i=1; i<9; i++){
+
             this.func_create_array[i] = this.add.sprite(xCoord, yCoord, 'func_make');        
             this.func_create_array[i].inputEnabled = true;
             this.func_create_array[i].input.useHandCursor = true;
             this.func_create_array[i].alpha = 0.3; // Makes them transparrent
             this.func_create_array[i].visible=false; 
-            xCoord+=100;
+            xCoord+=70;
         }
             // OnClick sends the Index parameter to the Listener makeNewFuncOnClick.
             this.func_create_array[1].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[1]))}, this);
@@ -711,13 +707,16 @@ RobotKompis.Level.prototype = {
             this.func_create_array[4].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[4]))}, this);
             this.func_create_array[5].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[5]))}, this);
             this.func_create_array[6].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[6]))}, this);
+            this.func_create_array[7].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[7]))}, this);
+            this.func_create_array[8].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[8]))}, this);    
+
     },
 
     // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
     // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
     makeNewFuncOnClick: function(index) {
         // Closing the transparrent guys and everything...
-        for (var i=1; i<7; i++) {
+        for (var i=1; i<9; i++) {
               this.func_create_array[i].visible = false;                   
             if (this.func_sprite_array[i]!=null){  
                 //...except for the chosen functions.              
@@ -729,13 +728,15 @@ RobotKompis.Level.prototype = {
                 }                   
             }
         }  
-        this.func_save = this.add.sprite(200, 400 , 'func_save');
+        this.func_save = this.add.sprite(260, 265 , 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
+        this.func_save.alpha = 0.7;
         this.func_save.events.onInputDown.add(function() {this.saveFunctionOnClick(index)}, this);  
-        this.func_cancel = this.add.sprite(376, 400, 'func_cancel');
+        this.func_cancel = this.add.sprite(510, 265, 'func_cancel');
         this.func_cancel.inputEnabled = true;
         this.func_cancel.input.useHandCursor = true;
+        this.func_cancel.alpha = 0.7;
         this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this);               
     },  
 
@@ -760,7 +761,7 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
 
         // Close what to be closed and open what to be opened
-        for (var i=1; i<7; i++) {
+        for (var i=1; i<9; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
                 this.func_create_array[i].visible = false;    
@@ -775,7 +776,7 @@ RobotKompis.Level.prototype = {
     cancelCreateFunctionOnClick: function() {
 
         // Everything what is supposed to be opened is opened, other stuff is closed
-        for (var i = 1; i < 7; i++) {
+        for (var i=1; i<9; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true; 
                 this.func_create_array[i].visible = false;   
@@ -808,13 +809,15 @@ RobotKompis.Level.prototype = {
                 this.func_delete = null;
             }
             // And appear again connected to the current function. 
-            this.func_delete = this.add.sprite(376, 400 , 'func_delete');
+            this.func_delete = this.add.sprite(510, 265, 'func_delete');
             this.func_delete.inputEnabled = true;
-            this.func_delete.input.useHandCursor = true;        
+            this.func_delete.input.useHandCursor = true; 
+            this.func_delete.alpha = 0.7;       
             this.func_delete.events.onInputUp.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
-            this.func_edit = this.add.sprite(200, 400 , 'func_edit');
+            this.func_edit = this.add.sprite(260, 265, 'func_edit');
             this.func_edit.inputEnabled = true;
-            this.func_edit.input.useHandCursor = true;        
+            this.func_edit.input.useHandCursor = true;  
+            this.func_edit.alpha = 0.7;      
             this.func_edit.events.onInputUp.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
             
         }
@@ -837,7 +840,7 @@ RobotKompis.Level.prototype = {
         this.func_delete.visible = false;
         this.func_edit.visible = false;
 
-        for (var i=1; i<7; i++) {
+        for (var i=1; i<9; i++) {
             if (this.func_sprite_array[i]!=null){
                 this.func_sprite_array[i].visible = true;
                 this.func_create_array[i].visible = false;    
@@ -850,7 +853,7 @@ RobotKompis.Level.prototype = {
     // OWN FUNCTION: click on "ÄNDRA" and edit the current function.
     editFunctionBlockOnClick: function(index) {
         // Close unnecessary things and let the necessary remain. 
-        for (var i=1; i<7; i++) {
+        for (var i=1; i<9; i++) {
             this.func_create_array[i].visible = false;                   
             if (this.func_sprite_array[i]!=null){  
                 //...except for the chosen functions.              
@@ -867,13 +870,15 @@ RobotKompis.Level.prototype = {
         this.func_line_group = this.func_tree_group.children[index];
         this.func_line_group.visible=true;
         // ...and show the needed buttons! 
-        this.func_save = this.add.sprite(200, 400, 'func_save');
+        this.func_save = this.add.sprite(260, 265, 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
+        this.func_save.alpha = 0.7;
         this.func_save.events.onInputDown.add(function() {this.saveFunctionOnClick(index)}, this);  
-        this.func_cancel = this.add.sprite(376, 400, 'func_cancel');
+        this.func_cancel = this.add.sprite(510, 265, 'func_cancel');
         this.func_cancel.inputEnabled = true;
         this.func_cancel.input.useHandCursor = true;
+        this.func_cancel.alpha = 0.7;
         this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this); 
     },
     // :D :D :D 
