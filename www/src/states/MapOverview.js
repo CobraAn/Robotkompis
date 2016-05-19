@@ -284,7 +284,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.start('Tutorial');
         */
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com', 'ladder_com'];
         //, 'down_com', 
           //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
 
