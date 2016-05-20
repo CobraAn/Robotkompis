@@ -31,13 +31,13 @@ RobotKompis.MapOverview = function (game) {
     // space among buttons, in pixels
     this.buttonSpacing = 8;
     // array with finished levels and stars collected.
-    // 0 = Used for click interaction! don't use this in starsArray!!
-    // 1 = zero stars
-    // 2 = one star
-    // 3 = two stars
-    // 4 = three stars
+    // 0 = zero stars
+    // 1 = one star
+    // 2 = two stars
+    // 3 = three stars
+    // 4 = Used for click interaction! don't use this in starsArray!!
     // 5 = Locked level
-    this.starsArray = [1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    this.starsArray = [0, 1, 2, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
     
     // how many pages are needed to show all levels?
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
@@ -59,6 +59,7 @@ RobotKompis.MapOverview.prototype = {
     
     create: function () {
         'use strict';
+        console.log(this.starsArray);
         this.createLevelSelect();
         this.popupGroup = this.add.group();
         
@@ -172,7 +173,7 @@ RobotKompis.MapOverview.prototype = {
                     }
                     else {
                         //För stjärnor, byt sista 1:an mot en 0:a
-                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, null, 0);
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, this.starsArray[levelNumber], 4);
                     }
                     
                     //showing right frame
@@ -199,7 +200,7 @@ RobotKompis.MapOverview.prototype = {
     },
      buttonClicked: function (button) {
 	   // the level is playable, then play the level!!
-        if(button.frame < 4) {
+        if(button.frame < 5) {
             if (button.levelNumber == 1) {
                 this.startLevelOne();
             }
