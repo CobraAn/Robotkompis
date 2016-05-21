@@ -59,7 +59,6 @@ RobotKompis.MapOverview.prototype = {
     
     create: function () {
         'use strict';
-        console.log(this.starsArray);
         this.createLevelSelect();
         this.popupGroup = this.add.group();
         

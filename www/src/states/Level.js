@@ -128,9 +128,10 @@ RobotKompis.Level.prototype = {
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
-        //this.player.animations.add('jump', [1, 0], 1, false);
-        this.player.animations.add('cheer', [0, 1, 2], 4.5, true);
-        //this.player.animations.add('climb', [5], 10, true);
+        this.player.animations.add('jump', [6], 1, true);
+        this.player.animations.add('walk', [3, 4, 5], 4.5, false);
+        this.player.animations.add('idle', [0, 1, 2], 4.5, true);
+        this.player.animations.add('climb', [7], 1, true);
 
         // LADDER LAYER COLLISION STUFFS
         this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
@@ -281,7 +282,7 @@ RobotKompis.Level.prototype = {
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
 
-        this.player.animations.play('cheer');
+        this.player.animations.play('idle');
         // Command arrows 
         if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
         // pointer is down and is over our sprite, so do something here  
