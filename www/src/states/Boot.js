@@ -8,7 +8,7 @@ RobotKompis.Boot.prototype = {
 	preload: function () {
         'use strict';
 		this.load.image('preloadBar', '../../images/loader_bar.png');
-        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titlefont.png', '../../fonts/titleFont/titlefont.fnt');
+        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titleFont.png', '../../fonts/titleFont/titleFont.fnt');
 	},
 
 	create: function () {

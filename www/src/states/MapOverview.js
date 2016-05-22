@@ -18,6 +18,8 @@ RobotKompis.MapOverview = function (game) {
     this.popup;
     this.closebutton;
 
+    this.playerData = {};
+
     //Variabler för level select
     this.currentWorld;
     // number of button rows
@@ -56,6 +58,11 @@ RobotKompis.MapOverview = function (game) {
 };
 
 RobotKompis.MapOverview.prototype = {
+
+    init: function () {
+        this.playerData = loadData();
+        console.log(this.playerData);
+    },
     
     create: function () {
         'use strict';
@@ -163,20 +170,40 @@ RobotKompis.MapOverview.prototype = {
             //Looping through each level button
             for(var i = 0; i < this.buttonRows; i++) {
                 for(var j = 0; j < this.buttonCols; j++){
-                    
+
                     //which level does the button refer?
                     var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
+                    var dictKey = "Level" + (levelNumber+1).toString();
+                    var levelStars = 0;
+                    if (typeof this.playerData.levels !== "undefined" && this.playerData.levels !== null) {
+                        if (typeof this.playerData.levels[dictKey] !== "undefined" && this.playerData.levels[dictKey] !== null) {
+                            levelStars = this.playerData.levels[dictKey];
+                        }
+                    }
                     //adding button, calls the buttonClicked function
                     if (this.starsArray[levelNumber] == 5) {
-                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
+                            offsetY+i*(this.buttonHeight+this.buttonSpacing), '' +
+                            'levelSelect', this.buttonClicked, this);
                     }
                     else {
                         //För stjärnor, byt sista 1:an mot en 0:a
-                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, this.starsArray[levelNumber], 4);
+                        if (levelStars !== 0) {
+                            var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
+                                offsetY+i*(this.buttonHeight+this.buttonSpacing),
+                                'levelSelect', this.buttonClicked, this, null,
+                                this.playerData.levels[dictKey] , 4);
+                            //showing right frame
+                            levelButton.frame = this.playerData.levels[dictKey];
+                        } else {
+                            var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
+                                offsetY+i*(this.buttonHeight+this.buttonSpacing),
+                                'levelSelect', this.buttonClicked, this, null, 1, 4);
+                            //showing right frame
+                            levelButton.frame = this.starsArray[levelNumber];
+                        }
                     }
-                    
-                    //showing right frame
-                    levelButton.frame = this.starsArray[levelNumber];
+
                     // custom attribute 
 				    levelButton.levelNumber = levelNumber+1;
 				    // adding the level thumb to the group
@@ -288,7 +315,7 @@ RobotKompis.MapOverview.prototype = {
         //, 'down_com', 
           //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
 
-        this.state.start('Level', true, false, this.character);
+        this.state.start('Level', true, false, this.character, "Level1");
 
     },
     
@@ -297,7 +324,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap2'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_right_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
-        this.state.start('Level', true, false, this.character);
+        this.state.start('Level', true, false, this.character, "Level2");
     },
     
     startLevelThree: function () {
@@ -305,7 +332,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap3'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
-        this.state.start('Level', true, false, this.character);
+        this.state.start('Level', true, false, this.character, "Level3");
     },
     
     startLevelFour: function () {
@@ -313,7 +340,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap4'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
-        this.state.start('Level', true, false, this.character);
+        this.state.start('Level', true, false, this.character, "Level4");
     },
     
     startLevelFive: function () {
@@ -321,7 +348,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap5'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
-        this.state.start('Level', true, false, this.character);
+        this.state.start('Level', true, false, this.character, "Level5");
     },
     
     popuprobot: function () {

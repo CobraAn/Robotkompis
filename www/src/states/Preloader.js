@@ -23,7 +23,7 @@ RobotKompis.Preloader.prototype = {
         
         //Här laddas fonter om det behövs
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
-        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titlefont.png', '../../fonts/titleFont/titlefont.fnt');
+        this.load.bitmapFont('titleFont', '../../fonts/titleFont/titleFont.png', '../../fonts/titleFont/titleFont.fnt');
         this.load.bitmapFont('numberFont', '../../fonts/numberFont/font.png', '../../fonts/numberFont/font.fnt');
         
         //Bilder för StartMenu
@@ -31,7 +31,7 @@ RobotKompis.Preloader.prototype = {
         this.load.image('titleScreen', '../../images/startBG600.png');
         
         //Bilder för MapOverview
-        this.load.spritesheet('levelSelect', '../../assets/level_select_buttons/select_levelNY.png', 100, 100, 6);
+        this.load.spritesheet('levelSelect', '../../assets/level_select_buttons/select_levelNy.png', 100, 100, 6);
         this.load.image('settingsIcon', '../../images/settingIcon.png');
         this.load.spritesheet('menuArrows', '../../assets/level_select_buttons/menypilar.png', 116, 168);
         
@@ -107,16 +107,16 @@ RobotKompis.Preloader.prototype = {
         this.load.image('closeButton', '../../assets/close.png');
         this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
         this.load.image('whileChoise', '../../assets/robotar/while.png');
-        this.load.image('gotoChoise', '../../assets/robotar/goto.png');
+        this.load.image('gotoChoise', '../../assets/robotar/Goto.png');
         this.load.image('ifChoise', '../../assets/robotar/if.png');
         this.load.image('switchChoise', '../../assets/robotar/switch.png');
-        this.load.image('elseChoise', '../../assets/robotar/else.png');
+        this.load.image('elseChoise', '../../assets/robotar/Else.png');
         
         
         // Playable character
         //this.load.spritesheet('switch', '../../assets/Switch1_small.png', 80, 105);
 
-        this.load.spritesheet('else', '../../assets/robotsResized/else1Walk.png', 30, 42);
+        this.load.spritesheet('else', '../../assets/robotsResized/Else1Walk.png', 30, 42);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1Walk.png', 30, 49);
         this.load.spritesheet('if', '../../assets/robotsResized/if1Walk.png', 30, 59);
         //this.load.spritesheet('switch', '../../assets/robotsResized/switch1.png', 30, 37);

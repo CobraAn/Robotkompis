@@ -18,6 +18,8 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
+
+    this.saveDataArgs = {};
     
 
 
@@ -87,8 +89,10 @@ RobotKompis.Level = function (game) {
 };
 
 RobotKompis.Level.prototype = {
-    init: function (character){
+    init: function (character, levelName){
         this.robot = character;
+        this.saveDataArgs.robot = character;
+        this.saveDataArgs.levelName = levelName;
     },
     
     create: function () {
@@ -344,6 +348,9 @@ RobotKompis.Level.prototype = {
 
         // HI THERE ! VELOCITY MOVERS BELOW!
         if (this.runInitiated == false && this.comKey != "nope") {
+            console.log("comArrIndex: " + this.comArrIndex);
+            console.log("thisPlayerX: " + this.player.x);
+            console.log("finalPosX: " + this.finalPosX);
             //console.log("comKey?");
             //console.log(this.comKey);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
@@ -377,7 +384,9 @@ RobotKompis.Level.prototype = {
                 this.runInitiated = true;
             }
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
+                console.log("at door");
                 this.animationCheck = 0;
+                this.scoreFunction();
             }
         }
 
@@ -386,8 +395,8 @@ RobotKompis.Level.prototype = {
         }
         
         // HEY HO !
-        console.log(this.comArrIndex+' index');
-        console.log(this.command_array);
+        //console.log(this.comArrIndex+' index');
+        //console.log(this.command_array);
     
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
@@ -1064,6 +1073,11 @@ RobotKompis.Level.prototype = {
     homeFunction: function() {
         this.func_sprite_array = [];
         this.state.start('MapOverview');
+    },
+    
+    scoreFunction: function () {
+        var noBlocks = this.commandGroup.length;
+        saveScore(noBlocks, this.saveDataArgs);
     }
 
 };
