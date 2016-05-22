@@ -982,7 +982,11 @@ RobotKompis.Level.prototype = {
         this.func_line_group.visible=true;
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
-        this.funcLeftArrow20.visible = true; 
+        this.funcLeftArrow20.visible = true;                
+        this.func_edit.visible = false;
+        this.func_edit = null;
+        this.func_delete.visible = false;
+        this.func_delete = null; 
         this.func_save = this.add.sprite(260, 265, 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
