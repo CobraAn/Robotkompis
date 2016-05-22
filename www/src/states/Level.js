@@ -73,6 +73,7 @@ RobotKompis.Level = function (game) {
     this.wrongCommand = false;
     this.doorX = 0;
     this.doorY = 0;
+    this.downActive = false;
 
     this.newCommand;
 
@@ -323,26 +324,35 @@ RobotKompis.Level.prototype = {
 
         // HI THERE ! VELOCITY MOVERS BELOW!
         if (this.runInitiated == false && this.comKey != "nope") {
-            if (this.comKey == "walk_right_com" && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
+            console.log("comKey?");
+            console.log(this.comKey);
+            if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
+                this.player.body.velocity.y = 0;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-            } else if (this.comKey == "walk_left_com" && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
+                this.player.body.allowGravity = true; 
+            } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
+                console.log("downwards we go");
+                this.player.body.velocity.y = 80; // Downwards descent.
+                this.downActive = false;
+            }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk left stop");
                 this.player.body.velocity.x = 0; 
+                this.player.body.velocity.y = 0;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
+                this.player.body.allowGravity = true; 
             } 
             else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
-                console.log("ladder here. Gravity value:");
+                //console.log("ladder here. Gravity value:");
                 this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
-                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
+                this.player.body.allowGravity = true; 
             } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
                 console.log("Hi, I'm wrong");
-                this.wrongCommand = false;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             }
@@ -352,15 +362,6 @@ RobotKompis.Level.prototype = {
             this.state.start('Map Overview');
         }
         
-        //console.log("velocity in y:");
-        //console.log(this.player.body.velocity.y);
-        /*
-        if (this.player.body.velocity.y == 0 && this.allowGravity == true) {
-            console.log("Hey");
-            this.allowGravity = false;
-            this.runInitiated = true;
-        }
-        */
         // HEY HO !
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
@@ -391,23 +392,35 @@ RobotKompis.Level.prototype = {
                 if (this.ladderOverlap) {
                     console.log("Ladder overlap !");
                     this.finalPosX = -20;
-                    this.finalPosY = this.player.y - 128;
+                    this.finalPosY = this.player.y - 130;
                     this.player.body.allowGravity = false;
                     this.player.body.velocity.y = -100;
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
                 } else {
                     this.comKey = "wrong"
-                    this.wrongCommand = true;
                     //console.log("Make a question mark appear!");
                 }
-                //this.player.y = this.player.y + 128;
                 this.smallerThan = true; 
-            } else if (this.comKey == "up_com") {
+            } else if (this.comKey == "hop_left_com") {
+                this.finalPosX = this.player.x - 64;
+                this.finalPosY = this.player.y - 32;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -80;
+                this.player.body.velocity.x = -80;
+                this.downActive = true;
+            }
+            else if (this.comKey == "hop_right_com") {
+                this.finalPosX = this.player.x + 64;
+                this.finalPosY = this.player.y - 32;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -80;
+                this.player.body.velocity.x = 80;
+                this.downActive = true;
+            } else if (this.comKey == "down_com") {
                 this.finalPosX = -20;
                 this.finalPosY = this.player.y - 128;
                 this.player.body.allowGravity = false;
-                //this.player.y = this.player.y + 128;
                 this.player.body.velocity.y = -100;
                 this.smallerThan = true; 
             }
@@ -659,12 +672,6 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = true; 
         this.clear_btn.input.enabled = true;
 
-        // Something else
-        if (typeof this.tween._manager !== 'undefined') {
-            for (var i in this.tween._manager._tweens) {
-                this.tween._manager._tweens[i].stop();
-            }
-        }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
         //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
@@ -672,6 +679,7 @@ RobotKompis.Level.prototype = {
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.command_array = [];
+        this.comKey = "nope";
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
