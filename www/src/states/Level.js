@@ -33,7 +33,9 @@ RobotKompis.Level = function (game) {
     this.newFunc;
     this.func_title;
 
-
+    //Check used for animations, e.g 0 means idle animation
+    this.animationCheck = 0;
+    this.finalAnimationCounter = 0;
     //Oklar
     this.cursors;
 
@@ -133,10 +135,12 @@ RobotKompis.Level.prototype = {
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
-        this.player.animations.add('jump', [6], 1, true);
-        this.player.animations.add('walk', [3, 4, 5], 4.5, false);
-        this.player.animations.add('idle', [0, 1, 2], 4.5, true);
-        this.player.animations.add('climb', [7], 1, true);
+        this.player.animations.add('jumpRight', [6], 1, false);
+        this.player.animations.add('jumpLeft', [11], 1, false);
+        this.player.animations.add('walkRight', [3, 4, 5], 6, false);
+        this.player.animations.add('walkLeft', [8, 9, 10], 6, false);
+        this.player.animations.add('idle', [0, 1, 2], 4.5, false);
+        this.player.animations.add('climb', [7], 1, false);
 
         // LADDER LAYER COLLISION STUFFS
         this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
@@ -293,8 +297,23 @@ RobotKompis.Level.prototype = {
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
-
-        this.player.animations.play('idle');
+        
+        //Checks what animation to play
+        if (this.animationCheck == 1) {
+            this.player.animations.play('walkRight');
+        } else if (this.animationCheck == 2) {
+            this.player.animations.play('walkLeft');
+        } else if (this.animationCheck == 3) {
+            this.player.animations.play('climb');
+        } else if (this.animationCheck == 4) {
+            this.player.animations.play('jumpRight');
+        } else if (this.animationCheck == 5) {
+            this.player.animations.play('jumpLeft');
+        } else {
+            this.player.animations.play('idle');
+        }
+        
+        
         // Command arrows 
         if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
         // pointer is down and is over our sprite, so do something here  
@@ -325,8 +344,8 @@ RobotKompis.Level.prototype = {
 
         // HI THERE ! VELOCITY MOVERS BELOW!
         if (this.runInitiated == false && this.comKey != "nope") {
-            console.log("comKey?");
-            console.log(this.comKey);
+            //console.log("comKey?");
+            //console.log(this.comKey);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
@@ -357,6 +376,9 @@ RobotKompis.Level.prototype = {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             }
+            if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
+                this.animationCheck = 0;
+            }
         }
 
         if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
@@ -364,6 +386,9 @@ RobotKompis.Level.prototype = {
         }
         
         // HEY HO !
+        console.log(this.comArrIndex+' index');
+        console.log(this.command_array);
+    
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
             this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
@@ -373,12 +398,14 @@ RobotKompis.Level.prototype = {
             console.log(this.comArrIndex);
             if (this.comKey == "walk_right_com") {
                 //console.log("walk to the right");
+                this.animationCheck = 1;
                 this.finalPosY = -20;
                 this.player.body.velocity.x = 100;
                 this.finalPosX = this.player.x + 31;
                 this.smallerThan = false;
             } else if (this.comKey == "walk_left_com") {
                 //console.log("walk to the left");
+                this.animationCheck = 2;
                 this.finalPosY = -20;
                 this.finalPosX = this.player.x - 31;
                 this.player.body.velocity.x = -100;
@@ -392,6 +419,7 @@ RobotKompis.Level.prototype = {
                 }
                 if (this.ladderOverlap) {
                     console.log("Ladder overlap !");
+                    this.animationCheck = 3;
                     this.finalPosX = -20;
                     this.finalPosY = this.player.y - 130;
                     this.player.body.allowGravity = false;
@@ -404,6 +432,7 @@ RobotKompis.Level.prototype = {
                 }
                 this.smallerThan = true; 
             } else if (this.comKey == "hop_left_com") {
+                this.animationCheck = 5;
                 this.finalPosX = this.player.x - 64;
                 this.finalPosY = this.player.y - 32;
                 this.player.body.allowGravity = false;
@@ -412,6 +441,7 @@ RobotKompis.Level.prototype = {
                 this.downActive = true;
             }
             else if (this.comKey == "hop_right_com") {
+                this.animationCheck = 4;
                 this.finalPosX = this.player.x + 64;
                 this.finalPosY = this.player.y - 32;
                 this.player.body.allowGravity = false;
@@ -425,8 +455,9 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.y = -100;
                 this.smallerThan = true; 
             }
-            this.runInitiated = false; 
+            this.runInitiated = false;
         } 
+       
         
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
@@ -670,6 +701,7 @@ RobotKompis.Level.prototype = {
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
+        this.animationCheck = 0;
         // Re-activate commands and their input related functionality. 
         for (i = 0; i < this.commandGroup.length; i++) {
             //console.log("Hippity hoop, I'm in your for loop!");
