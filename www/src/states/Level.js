@@ -479,6 +479,12 @@ RobotKompis.Level.prototype = {
             // TEST
             if(this.inArray(sprite, this.func_sprite_array)===true){  
                 this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]=null;
+
+                this.func_edit.visible = false;
+                this.func_edit = null;
+                this.func_delete.visible = false;
+                this.func_delete = null;
+
                 this.addDuplicate(this.func_image_array.indexOf(sprite.key));
             }
         }
@@ -587,6 +593,7 @@ RobotKompis.Level.prototype = {
             this.func_sprite_array[index].input.enableDrag();
             this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
             this.func_sprite_array[index].events.onDragStop.add(this.commandDragStop, this);
+            this.game.input.onTap.add(function() {this.editFunctionBlockOnClick(unc_sprite_array[index])}, this);
             this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this); 
         }    
     },    
@@ -612,6 +619,7 @@ RobotKompis.Level.prototype = {
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     // RUN !
     listener: function () {
+        if(this.cloud.visible=true){this.favxOnClick();} //minipatch
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
         for (i = 0; i < this.commandGroup.length; i++) {
             this.commandGroup.getAt(i).input.enabled = false;
@@ -826,7 +834,7 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false; 
-  
+        this.func_tree_group.remove(this.func_tree_group.getAt(index));
         this.func_tree_group.addAt(this.func_line_group, index);
         this.func_line_group.visible = false;
         this.func_line_group = this.add.group();
@@ -840,6 +848,10 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array[index].input.enableDrag();
         this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
         this.func_sprite_array[index].events.onDragStop.add(this.commandDragStop, this);
+        // if (this.func_sprite_array[index].timeUp - this.func_sprite_array[index].previousTapTime < this.game.input.doubleTapRate) {
+        //     //  Yes, let's dispatch the signal then with the 2nd parameter set to true
+        //     this.game.input.onTap.dispatch(this.funcSpriteOnClick, true);
+        // }
         this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
 
         // Close what to be closed and open what to be opened
@@ -881,6 +893,22 @@ RobotKompis.Level.prototype = {
     // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
     // You may in that case eather edit you or function or delete the sprite.  
     funcSpriteOnClick: function(sprite, pointer) {
+
+
+        // var mylatesttap; 
+        // sprite.events.onInputDown.add(doubleclick,this); 
+        // function doubleclick(item,pointer){    
+        //     var now = new Date().getTime();   
+        //     var timesince = now - mylatesttap;    
+        //     if((timesince < 600) && (timesince > 0)){     
+        //         console.log("double tap");   
+        //     }
+        //     else{    console.log("don't");   
+        //     }    
+        //     mylatesttap = new Date().getTime();
+        // }
+        
+
         if(this.inArray(sprite, this.func_sprite_array)===true) {
             console.log("Herre Gud!")
             // Please, desappear, dear EDIT and DELETE. 
@@ -897,12 +925,12 @@ RobotKompis.Level.prototype = {
             this.func_delete.inputEnabled = true;
             this.func_delete.input.useHandCursor = true; 
             this.func_delete.alpha = 0.7;       
-            this.func_delete.events.onInputUp.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
             this.func_edit = this.add.sprite(260, 265, 'func_edit');
             this.func_edit.inputEnabled = true;
             this.func_edit.input.useHandCursor = true;  
             this.func_edit.alpha = 0.7;      
-            this.func_edit.events.onInputUp.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
             
         }
     },
@@ -998,6 +1026,7 @@ RobotKompis.Level.prototype = {
     
     //Home button function
     homeFunction: function() {
+        this.func_sprite_array = [];
         this.state.start('MapOverview');
     }
 
