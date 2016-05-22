@@ -37,7 +37,7 @@ RobotKompis.MapOverview = function (game) {
     // 3 = three stars
     // 4 = Used for click interaction! don't use this in starsArray!!
     // 5 = Locked level
-    this.starsArray = [0, 1, 2, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    this.starsArray = [0, 1, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
     
     // how many pages are needed to show all levels?
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
