@@ -10,14 +10,15 @@ function saveData(args) {
         saveObject.robot = args.robot;
 
         if (typeof storageObject !== "undefined" && storageObject !== null) {
-            storageObject.levels[args.levelName] = args.levelScore;
+            storageObject.levels.push({key: args.levelName, value: args.levelScore});
+            saveObject.totalStars += args.levelScore;
             saveObject.levels = storageObject.levels;
             console.log("Had levels");
             console.log(saveObject);
         } else {
-            var completedLevel = {};
-            completedLevel[args.levelName] = args.levelScore;
-            saveObject.levels = completedLevel;
+            saveObject.totalStars += args.levelScore;
+            saveObject.levels = [];
+            saveObject.levels.push({key: args.levelName, value: args.levelScore});
             console.log("New level data");
             console.log(saveObject);
         }
