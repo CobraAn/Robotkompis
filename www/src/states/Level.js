@@ -438,15 +438,17 @@ RobotKompis.Level.prototype = {
             }
             
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
+                console.log("at door");
                 //console.log("at door");
                 this.animationCheck = 0;
                 //this.scoreFunction();
             }
         }
 
-        if (this.doorX != 0 && (this.player.x > (this.doorX-15) && this.player.x < (this.doorX+45) && (this.player.y < (this.doorY-65) && this.player.y > (this.doorY + 65)))) {
-            console.log("I found me a door!");
-            this.state.start('Map Overview');
+        if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
+            // this.state.start('MapOverview');
+            console.log("at door2");
+
         }
         
         // HEY HO !
@@ -543,11 +545,19 @@ RobotKompis.Level.prototype = {
                 this.smallerThan = true; 
             }*/
             this.runInitiated = false;
-        } 
-       
+        }      
         
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
+
+
+    },
+
+    resultEstimation: function(){
+        this.state.start('WinScreen');        
+    },  
+
+     // Might be worth using a Phaser group instead of a Javascript Array.
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
@@ -572,6 +582,7 @@ RobotKompis.Level.prototype = {
         
     },
 
+>>>>>>> 08f14d637e7e20956928b99d0cad7b1e3557be27
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
