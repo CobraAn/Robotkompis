@@ -84,6 +84,7 @@ RobotKompis.Level = function (game) {
     this.smallerThan = false; 
     this.ladderPosX = 0; // NOT NEEDED
     this.ladderOverlap = false;
+    this.doorOverlap = false;
     this.wrongCommand = false;
     this.doorX = 0;
     this.doorY = 0;
@@ -174,18 +175,6 @@ RobotKompis.Level.prototype = {
         //this.game.physics.arcade.enable(this.layer5); // The ladder layer
         //this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
         //this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
-        var layer5tiles = this.layer5.getTiles();
-        for (i = 0; i < layer5tiles.length; i++) {
-            console.log("finding out door coords");
-            if (layer5tiles[i].index != (-1)) {
-                this.doorX = layer5tiles.x;
-                this.doorY = layer5tiles.y;
-            }
-        }
-        console.log("this.doorX");
-        console.log(this.doorX);
-        console.log("this.doorY");
-        console.log(this.doorY);
 
         // Block Library
         graphics.lineStyle(0);
@@ -535,13 +524,24 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.y = -80;
                 this.player.body.velocity.x = 80;
                 this.downActive = true;
-            }/* else if (this.comKey == "down_com") {
-                this.finalPosX = -20;
-                this.finalPosY = this.player.y - 128;
-                this.player.body.allowGravity = false;
-                this.player.body.velocity.y = -100;
-                this.smallerThan = true; 
-            }*/
+            } else if (this.comKey == "key_com") {
+                var layer5tiles = this.layer5.getTiles(this.player.x, this.player.y - 20, 20, 20);
+                for (i = 0; i < layer5tiles.length; i++) {
+                    if (layer5tiles[i].index != (-1)) {
+                        this.doorOverlap = true;
+                    }
+                }
+                if (this.doorOverlap) {
+                    console.log("Door overlap !");
+                    //this.animationCheck = 3;
+                    //this.finalPosX = -20;
+                    this.state.start('MapOverview');
+                    this.doorOverlap = false;
+                } else {
+                    this.comKey = "wrong"
+                    //console.log("Make a question mark appear!");
+                }
+            }
             this.runInitiated = false;
         } 
        
