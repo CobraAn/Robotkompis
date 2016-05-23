@@ -7,6 +7,13 @@ RobotKompis.Level = function (game) {
     this.layer3;
     this.layer4;
     this.layer5;
+    
+    this.commandopil;
+    this.funkpil;
+    this.gopil;
+    this.pilmute;
+    this.radpil;
+    this.pilar;
 
     // The robot player
     this.player;
@@ -18,6 +25,7 @@ RobotKompis.Level = function (game) {
     this.home_btn;
     this.sound_btn;
     this.help_btn;
+    this.cloud;
     
 
 
@@ -96,6 +104,9 @@ RobotKompis.Level.prototype = {
         this.add.image(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
+        this.cloud = this.add.image(430, 50, 'settingsCloud');
+        this.cloud.bringToTop();
+        this.cloud.visible = false;
 
         //  Set the world (global) gravity
         this.physics.arcade.gravity.y = 2500;
@@ -244,7 +255,32 @@ RobotKompis.Level.prototype = {
         this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
         this.sound_btn.scale.setTo(0.7,0.7)
         //this.sound_btn = this.add.button(200,0,  'muteUnMute', this.Mute, this);
-        this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
+        this.help_btn = this.add.button(965, this.world.height - 470, 'help_btn', this.seeTut, this);
+        
+        this.commandopil = this.add.image(200, this.world.height - 260, 'commandopil');
+        this.commandopil.scale.setTo(0.4,0.4);
+        this.commandopil.visible = false;
+        
+        this.pilmute = this.add.image(850, 70, 'pilmute');
+        this.pilmute.scale.setTo(0.4,0.4);
+        this.pilmute.visible = false;
+        
+        this.gopil = this.add.image(850, 250, 'gopil');
+        this.gopil.scale.setTo(0.4,0.4);
+        this.gopil.visible = false;
+        
+        
+        this.funkpil = this.add.image(850, 190, 'funkpil');
+        this.funkpil.scale.setTo(0.4,0.4);
+        this.funkpil.visible = false;
+        
+        this.radpil = this.add.image(830, 420, 'radpil');
+        this.radpil.scale.setTo(0.4,0.4);
+        this.radpil.visible = false;
+        
+        this.pilar = false;
+        
+        
 
         // Pointer is active by default and does not need to be turned on by game.input :)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -432,6 +468,28 @@ RobotKompis.Level.prototype = {
         // When a new command is added to it, it snaps back :(
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
+
+    seeTut: function() {
+        if (this.pilar ==false) {
+            this.pilar = true;
+            this.commandopil.visible = true;
+            this.gopil.visible = true;
+            this.funkpil.visible = true;
+            this.radpil.visible = true;
+            this.pilmute.visible = true;
+        }
+        else { //...*** and closes if opened ;)
+            this.pilar = false;
+            this.pilar = false;
+            this.commandopil.visible = false;
+            this.gopil.visible = false;
+            this.funkpil.visible = false;
+            this.radpil.visible = false;
+            this.pilmute.visible = false;
+        }
+        
+    },
+
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
