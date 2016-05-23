@@ -33,6 +33,14 @@ function saveData(args) {
 
 }
 
+function saveRobot(robot) {
+    var storageObject = loadData();
+    if (typeof robot !== "undefined" && robot !== null) {
+        storageObject.robot = robot;
+        localStorage.setItem(data, JSON.stringify(storageObject));
+    }
+}
+
 function loadData() {
 
     var storageObject = JSON.parse(localStorage.getItem(data));
