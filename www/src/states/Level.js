@@ -39,6 +39,7 @@ RobotKompis.Level = function (game) {
     this.func_line_group;
     this.func_tree_group;
     this.newFunc;
+    this.func_title;
 
 
     //Oklar
@@ -54,12 +55,13 @@ RobotKompis.Level = function (game) {
     //this.tilemapKey
 
     // Command_line array which contains all the commands.
-    //this.command_line = []; // The command line is an empty array.
     this.com_line; // This is just a graphics object. Kept to render things.
     this.commandGroup;
-    this.currentSpriteGroup; // BECAUSE YEAH, PHASER WANTS IT THAT WAY *HURR DURR DURR* (it's to be able to place sprites above the commandGroup)
+    this.currentSpriteGroup; // BECAUSE YEAH, PHASER WANTS IT THAT WAY *HURR DURR DURR* (it exists to be able to place sprites above the commandGroup)
     this.rightArrow20;
     this.leftArrow20;  
+    this.funcRightArrow20;
+    this.funcLeftArrow20; 
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
@@ -67,12 +69,19 @@ RobotKompis.Level = function (game) {
     this.newPosX;
     this.newPosY;
     this.commandLineIndex;
+    this.comKey = "nope";  
 
     this.finalPosX; 
     this.finalPosY;
     this.runInitiated = false;
     this.comArrIndex = 0;
     this.smallerThan = false; 
+    this.ladderPosX = 0; // NOT NEEDED
+    this.ladderOverlap = false;
+    this.wrongCommand = false;
+    this.doorX = 0;
+    this.doorY = 0;
+    this.downActive = false;
 
     this.newCommand;
 
@@ -135,10 +144,32 @@ RobotKompis.Level.prototype = {
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
         //animation
-        //this.player.animations.add('jump', [1, 0], 1, false);
-        this.player.animations.add('cheer', [0, 1, 2], 3, true);
-        //this.player.animations.add('climb', [5], 10, true);
-        
+        this.player.animations.add('jump', [6], 1, true);
+        this.player.animations.add('walk', [3, 4, 5], 4.5, false);
+        this.player.animations.add('idle', [0, 1, 2], 4.5, true);
+        this.player.animations.add('climb', [7], 1, true);
+
+        // LADDER LAYER COLLISION STUFFS
+        this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
+
+        this.game.physics.arcade.enable(this.layer4); // The ladder layer
+        this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
+        this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
+
+
+        // DOOR LAYER COLLISION STUFFS
+        //this.map.setCollisionBetween(1, 5000, true, 'door');
+
+        //this.game.physics.arcade.enable(this.layer5); // The ladder layer
+        //this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
+        //this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
+        var layer5tiles = this.layer5.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+        for (i = 0; i < layer5tiles.length; i++) {
+            if (layer5tiles[i].index != (-1)) {
+                this.doorX = layer5tiles.x;
+                this.doorY = layer5tiles.y;
+            }
+        }
 
         // Block Library
         graphics.lineStyle(0);
@@ -171,7 +202,10 @@ RobotKompis.Level.prototype = {
         this.func_btn = this.add.button(965, this.world.height - 410 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(140, 110, 'cloud');
         this.cloud.alpha = 0.6;
-        this.cloud.visible = false; 
+        this.cloud.visible = false;
+        this.func_title = this.add.sprite(200, 130, 'func_title');
+        this.func_title.alpha = 0.6;
+        this.func_title.visible = false;     
         this.createSixTransparrent();
 
 
@@ -188,14 +222,15 @@ RobotKompis.Level.prototype = {
         //this.body.allowGravity = false;
         //this.body.immovable = true;
         //  A mask is a Graphics object
-        var mask = this.game.add.graphics(0, 0);
+        
+        var commandMask = this.game.add.graphics(0, 0);
 
         //  Shapes drawn to the Graphics object must be filled.
-        mask.beginFill(0xffffff);
+        commandMask.beginFill(0xffffff);
 
         //  Here we'll draw a circle
-        mask.drawRect(10, 500, 800, 80);
-        this.commandGroup.mask = mask; // MASK :D :D :D (This took me half of my saturday to find...)
+        commandMask.drawRect(10, 500, 800, 80);
+        this.commandGroup.mask = commandMask; // MASK :D :D :D (This took me half of my saturday to find...)
         //this.functionGroup1.mask=mask;
 
         this.rightArrow20 = this.add.sprite(13, 500, 'left20');
@@ -262,6 +297,22 @@ RobotKompis.Level.prototype = {
         this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
         this.func_line_group.allowGravity = false; 
         this.func_line_group.immovable = true;
+        // Function line mask and arrows
+        var functionMask = this.game.add.graphics(0, 0);
+        functionMask.beginFill(0xffffff);
+        functionMask.drawRect(176, 185, 600, 80);
+        this.func_line_group.mask = functionMask; 
+        this.funcRightArrow20 = this.add.sprite(175, 180, 'left20');
+        this.funcRightArrow20.inputEnabled = true;
+        this.funcRightArrow20.alpha = 0.6;
+        this.funcRightArrow20.visible = false;
+        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
+        this.funcLeftArrow20 = this.add.sprite(755,180, 'right20');
+        this.funcLeftArrow20.inputEnabled = true;
+        this.funcLeftArrow20.alpha = 0.6;
+        this.funcLeftArrow20.visible = false;
+        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
+
         this.func_tree_group = this.add.group();
         for(i=0;i<9;i++){
             this.func_tree_group.add(this.add.group());
@@ -271,12 +322,16 @@ RobotKompis.Level.prototype = {
         this.func_tree_group.allowGravity = false;
         this.func_tree_group.immovable = true;
 
+
     },
     
     update: function () {// LET'S UPDATE !
         this.game.physics.arcade.collide(this.player, this.layer2);
-        this.player.animations.play('cheer');
+        this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
+        this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
 
+        this.player.animations.play('idle');
+        // Command arrows 
         if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
         // pointer is down and is over our sprite, so do something here  
             this.commandGroup.setAll('body.velocity.x', -120);
@@ -284,8 +339,18 @@ RobotKompis.Level.prototype = {
             this.commandGroup.setAll('body.velocity.x', +120);
         } else {
             this.commandGroup.setAll('body.velocity.x', 0);
-
         }
+        // Function arrows
+        if (this.game.input.activePointer.isDown && this.funcRightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
+        // pointer is down and is over our sprite, so do something here  
+            this.func_line_group.setAll('body.velocity.x', -120);
+        } else if (this.game.input.activePointer.isDown && this.funcLeftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
+            this.func_line_group.setAll('body.velocity.x', +120);
+        } else {
+            this.func_line_group.setAll('body.velocity.x', 0);
+        }
+
+
 /* Adoptee keys: 
     this.finalPosX; 
     this.finalPosY;
@@ -294,58 +359,116 @@ RobotKompis.Level.prototype = {
     */
     // this.smallerThan = true
 
-        // if (this.player.x >= this.finalPosX && this.smallerThan == false) {
-        //     this.player.body.velocity.x = 0; 
-        //     this.comArrIndex = this.comArrIndex + 1; 
-        //     this.runInitiated = true;
-        // } else if (this.player.x <= this.finalPosX && this.smallerThan == true) {
-        //     this.player.body.velocity.x = 0; 
-        //     this.comArrIndex = this.comArrIndex + 1; 
-        //     this.runInitiated = true;
-        // } else if (this.player.y <= this.finalPosY && this.smallerThan == true) {
-        //     //console.log("ladder here. Gravity value:");
-        //     //console.log(this.player.body.gravity.y);
-        //     this.player.body.velocity.y = 0; 
-        //     this.player.body.allowGravity = true; 
+        // HI THERE ! VELOCITY MOVERS BELOW!
+        if (this.runInitiated == false && this.comKey != "nope") {
+            console.log("comKey?");
+            console.log(this.comKey);
+            if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
+                console.log("walk right stop");
+                this.player.body.velocity.x = 0; 
+                this.player.body.velocity.y = 0;
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true;
+                this.player.body.allowGravity = true; 
+            } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
+                console.log("downwards we go");
+                this.player.body.velocity.y = 80; // Downwards descent.
+                this.downActive = false;
+            }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
+                console.log("walk left stop");
+                this.player.body.velocity.x = 0; 
+                this.player.body.velocity.y = 0;
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true;
+                this.player.body.allowGravity = true; 
+            } 
+            else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
+                //console.log("ladder here. Gravity value:");
+                this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true;
+                this.player.body.allowGravity = true; 
+            } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
+                console.log("Hi, I'm wrong");
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true;
+            }
+        }
+
+        if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
+            this.state.start('Map Overview');
+        }
         
-        //     this.comArrIndex = this.comArrIndex + 1; 
-        //     this.runInitiated = true;
-        // }
+        // HEY HO !
 
-        // if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
-            
-        //     console.log("We found a run-away!");
-        //     console.log("this.command_array:");
-        //     console.log(this.command_array);
-        //     console.log("this.comArrIndex:");
-        //     console.log(this.comArrIndex);
-            
-        //     var comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
-
-        //     if (comKey == "walk_right_com") {
-        //         this.finalPosY = -20;
-        //         this.player.body.velocity.x = 100;
-        //         this.finalPosX = this.player.x + 32;
-        //         this.smallerThan = false;
-        //     } else if (comKey == "walk_left_com") {
-        //         this.finalPosY = -20;
-        //         this.finalPosX = this.player.x - 32;
-        //         this.player.body.velocity.x = -100;
-        //         this.smallerThan = true;
-        //     } else if (comKey == "ladder_com") {
-        //         this.finalPosX = -20;
-        //         this.finalPosY = this.player.y - 128;
-        //         this.player.body.allowGravity = false;
-        //         this.player.body.velocity.y = -100;
-        //         this.smallerThan = true; 
-        //     }
-        //     this.runInitiated = false; 
-        // } 
+        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
+            this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+            console.log("We can run...");
+            console.log(this.comKey);
+            console.log("with comArrIndex...");
+            console.log(this.comArrIndex);
+            if (this.comKey == "walk_right_com") {
+                //console.log("walk to the right");
+                this.finalPosY = -20;
+                this.player.body.velocity.x = 100;
+                this.finalPosX = this.player.x + 31;
+                this.smallerThan = false;
+            } else if (this.comKey == "walk_left_com") {
+                //console.log("walk to the left");
+                this.finalPosY = -20;
+                this.finalPosX = this.player.x - 31;
+                this.player.body.velocity.x = -100;
+                this.smallerThan = true;
+            } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
+                var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+                for (i = 0; i < layer4tiles.length; i++) {
+                    if (layer4tiles[i].index != (-1)) {
+                        this.ladderOverlap = true;
+                    }
+                }
+                if (this.ladderOverlap) {
+                    console.log("Ladder overlap !");
+                    this.finalPosX = -20;
+                    this.finalPosY = this.player.y - 130;
+                    this.player.body.allowGravity = false;
+                    this.player.body.velocity.y = -100;
+                    this.ladderOverlap = false;
+                    this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
+                } else {
+                    this.comKey = "wrong"
+                    //console.log("Make a question mark appear!");
+                }
+                this.smallerThan = true; 
+            } else if (this.comKey == "hop_left_com") {
+                this.finalPosX = this.player.x - 64;
+                this.finalPosY = this.player.y - 32;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -80;
+                this.player.body.velocity.x = -80;
+                this.downActive = true;
+            }
+            else if (this.comKey == "hop_right_com") {
+                this.finalPosX = this.player.x + 64;
+                this.finalPosY = this.player.y - 32;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -80;
+                this.player.body.velocity.x = 80;
+                this.downActive = true;
+            } else if (this.comKey == "down_com") {
+                this.finalPosX = -20;
+                this.finalPosY = this.player.y - 128;
+                this.player.body.allowGravity = false;
+                this.player.body.velocity.y = -100;
+                this.smallerThan = true; 
+            }
+            this.runInitiated = false; 
+        } 
+        
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
-    
+
     seeTut: function() {
         if (this.pilar ==false) {
             this.pilar = true;
@@ -366,6 +489,7 @@ RobotKompis.Level.prototype = {
         }
         
     },
+
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
@@ -502,8 +626,7 @@ RobotKompis.Level.prototype = {
     addNew: function () {
         this.newCommand = this.add.sprite(850, 510, this.commandKeys[0]);
         this.physics.arcade.enable(this.newCommand);
-        this.newCommand.body.allowGravity = false; 
-        //this.newCommand.immovable = true; // Immovable necessary?        
+        this.newCommand.body.allowGravity = false;  
         this.newCommand.inputEnabled = true;
         this.newCommand.input.enableDrag(true);
         this.newCommand.events.onDragStart.add(this.commandDragStart, this); // this
@@ -546,7 +669,7 @@ RobotKompis.Level.prototype = {
     },
     //ändrar så att stopp-symbolen syns istället för play knappen, när man tryckt på play.
     // RUN !
-        listener: function () {
+    listener: function () {
         // Stop the commands from being accessed ! And buttons directly related to commands (clear_btn)
         for (i = 0; i < this.commandGroup.length; i++) {
             this.commandGroup.getAt(i).input.enabled = false;
@@ -564,61 +687,22 @@ RobotKompis.Level.prototype = {
         var noJump = 0;
         var noLadder; // Might be removed?
         var noKey; // Might be removed?
-        console.log(this.commandGroup.length);
-        console.log(this.commandGroup.getAt(1));
         this.stop_btn.visible = true;
         this.run_btn.visible = false;
         var spriteInCommand;
         for( i = 0; i < this.commandGroup.length; i++){
             spriteInCommand = this.commandGroup.getAt(i);
-            console.log(spriteInCommand.key)
+            //console.log(spriteInCommand.key)
             if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
                 this.withRecursive(spriteInCommand);
             }
             else {
-
                 this.command_array.push(spriteInCommand);    
             }
         }
-        console.log(this.command_array.length)
-        for (var i = 0; i < this.command_array.length; i++) {
-            //TODO
-            //Change to switch-statement
-            if (this.command_array[i].key === 'walk_right_com') {
-                console.log('adding tween for walkRight CMD');
-                noWalkRight++;
-                this.tween.to({x: this.player.x + (noWalkRight * 32)}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_array[i].key === 'up_com') {
-                console.log('adding tween for jump cmd');
-                noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_array[i].key === 'walk_left_com') {
-                console.log('adding tween for walkLeft cmd');
-                noWalkLeft++;
-                this.tween.to({x: this.player.x + ((noWalkRight * 32) - (noWalkLeft * 32))}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_array[i].key === 'down_com') {
-                noWalkDown++;
-                this.tween.to({y: this.player.y + ((noWalkUp * 128) - (noWalkDown * 128))}, 500, Phaser.Easing.Linear.None, false);
-            }
-            else if (this.command_array[i].key === 'hop_left_com') {
-            }
-            else if (this.command_array[i].key === 'hop_right_com') {
- 
-            }
-            else if (this.command_array[i].key === 'ladder_com') {
-                console.log('adding tween for jump cmd');
-                noWalkUp++;
-                this.tween.to({y: this.player.y - (noWalkUp * 128)}, 500, Phaser.Easing.Linear.None, false);
- 
-            }
-            else if (this.command_array[i].key === 'key_com') {
-            }
-             
-        }
-        this.tween.start();        
+        this.wrongCommand = false;
+        this.runInitiated = true;
+        this.comArrIndex = 0; // SOMEONE messed it up before we got to this point (no, I don't know who)
     },
 
     withRecursive: function(functionSprite) {
@@ -647,13 +731,6 @@ RobotKompis.Level.prototype = {
         this.new_btn.input.enabled = true; 
         this.clear_btn.input.enabled = true;
 
-
-        // Something else
-        if (typeof this.tween._manager !== 'undefined') {
-            for (var i in this.tween._manager._tweens) {
-                this.tween._manager._tweens[i].stop();
-            }
-        }
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
         //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
@@ -661,6 +738,7 @@ RobotKompis.Level.prototype = {
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.command_array = [];
+        this.comKey = "nope";
     },
 
     // I am a functions which re-renders all commands. Worship me, for I am beautiful.
@@ -695,6 +773,7 @@ RobotKompis.Level.prototype = {
     favxOnClick: function() {         
         if (this.cloud.visible==false) { // The cloud opens if closed...*** 
             this.cloud.visible = true; 
+            this.func_title.visible = true;
             // Everything what is supposed to be opened is opened, other stuff is closed
             for (var i = 1; i < 9; i++) {
                 if (this.func_sprite_array[i]!=null){
@@ -707,6 +786,7 @@ RobotKompis.Level.prototype = {
             }
         }
         else { //...*** and closes if opened ;)
+            this.func_title.visible = false;
             // Close everything except for the chosen function. 
             //this.newFunc.visible=false;
             for (var i = 1; i < 9; i++) {
@@ -770,7 +850,7 @@ RobotKompis.Level.prototype = {
 
     // OWN FUNCTION: click on a transparrent red Create Function object and appear in the functione making window.
     // Still needs work on it: make OnDrag, find some way to save the chosen sequence of code-blocks.
-    makeNewFuncOnClick: function(index) {
+    makeNewFuncOnClick: function(index) {        
         // Closing the transparrent guys and everything...
         for (var i=1; i<9; i++) {
               this.func_create_array[i].visible = false;                   
@@ -783,7 +863,9 @@ RobotKompis.Level.prototype = {
                     this.func_sprite_array[i].visible = false; 
                 }                   
             }
-        }  
+        } 
+        this.funcRightArrow20.visible = true;
+        this.funcLeftArrow20.visible = true; 
         this.func_save = this.add.sprite(260, 265 , 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;
@@ -800,6 +882,8 @@ RobotKompis.Level.prototype = {
     saveFunctionOnClick: function(index) {
         this.func_save.visible = false;  
         this.func_cancel.visible = false;
+        this.funcRightArrow20.visible = false;
+        this.funcLeftArrow20.visible = false; 
   
         this.func_tree_group.addAt(this.func_line_group, index);
         this.func_line_group.visible = false;
@@ -841,6 +925,8 @@ RobotKompis.Level.prototype = {
                 this.func_create_array[i].visible = true;
             }          
         }
+        this.funcRightArrow20.visible = false;
+        this.funcLeftArrow20.visible = false; 
         this.func_save.visible = false;
         this.func_cancel.visible = false;
         if(this.func_edit){this.func_edit.visible = false}
@@ -921,11 +1007,12 @@ RobotKompis.Level.prototype = {
                 }                   
             }
         } 
-
         // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
         this.func_line_group = this.func_tree_group.children[index];
         this.func_line_group.visible=true;
         // ...and show the needed buttons! 
+        this.funcRightArrow20.visible = true;
+        this.funcLeftArrow20.visible = true; 
         this.func_save = this.add.sprite(260, 265, 'func_save');
         this.func_save.inputEnabled = true;
         this.func_save.input.useHandCursor = true;

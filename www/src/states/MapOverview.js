@@ -31,14 +31,14 @@ RobotKompis.MapOverview = function (game) {
     // space among buttons, in pixels
     this.buttonSpacing = 8;
     // array with finished levels and stars collected.
-    // 0 = Used for click interaction! don't use this in starsArray!!
-    // 1 = playable yet unfinished level
-    // 2 = one star
-    // 3 = two stars
-    // 4 = three stars
+    // 0 = zero stars
+    // 1 = one star
+    // 2 = two stars
+    // 3 = three stars
+    // 4 = Used for click interaction! don't use this in starsArray!!
     // 5 = Locked level
-    //this.starsArray = [1, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]; <-- Denna för Stjärnor!
-    this.starsArray = [0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
+    this.starsArray = [0, 1, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    
     // how many pages are needed to show all levels?
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
     // group where to place all level buttons
@@ -61,14 +61,6 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         this.createLevelSelect();
         this.popupGroup = this.add.group();
-
-        //Knappar för att starta olika banor
-
-        /*this.LevelOne = this.add.button(240, 190, 'levelOne', this.startLevelOne, this, 0, 0, 1);
-        this.LevelTwo = this.add.button(440, 190, 'levelTwo', this.startLevelTwo, this, 0, 0, 1);
-        this.LevelThree = this.add.button(640, 190, 'levelThree', this.startLevelThree, this, 0, 0, 1);
-        this.LevelFour = this.add.button(315, 400, 'levelFour', this.startLevelFour, this, 0, 0, 1);
-        this.LevelFive = this.add.button(540, 400, 'levelFive', this.startLevelFive, this, 0, 0, 1);*/
         
         /*this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(71, 107, 'cloud'); 
@@ -175,13 +167,12 @@ RobotKompis.MapOverview.prototype = {
                     //which level does the button refer?
                     var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
                     //adding button, calls the buttonClicked function
-                    //if (this.starsArray[levelNumber] == 5) { <-- Denna för stjärnor!
-                    if (this.starsArray[levelNumber] == 2) {
+                    if (this.starsArray[levelNumber] == 5) {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this);
                     }
                     else {
                         //För stjärnor, byt sista 1:an mot en 0:a
-                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, null, 1);
+                        var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing), offsetY+i*(this.buttonHeight+this.buttonSpacing), 'levelSelect', this.buttonClicked, this, null, this.starsArray[levelNumber], 4);
                     }
                     
                     //showing right frame
@@ -190,20 +181,16 @@ RobotKompis.MapOverview.prototype = {
 				    levelButton.levelNumber = levelNumber+1;
 				    // adding the level thumb to the group
 				    this.levelButtonsGroup.add(levelButton);
-                    //if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) { <-- Denna för stjärnor!
-                    if(this.starsArray[levelNumber] < 2 && (levelNumber+1) < 10) {
+                    if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        //this.levelText = this.add.bitmapText(levelButton.x+35,levelButton.y+20, 'numberFont', printedNumber, 50); <-- För stjärnor!
-                        this.levelText = this.add.bitmapText(levelButton.x+30,levelButton.y+20, 'numberFont', printedNumber, 70);
+                        this.levelText = this.add.bitmapText(levelButton.x+35,levelButton.y+20, 'numberFont', printedNumber, 50);
                         this.levelButtonsGroup.add(this.levelText);
                     }
-                    //else if (this.starsArray[levelNumber] < 5){ <-- Denna för stjärnor!!
-                    else if (this.starsArray[levelNumber] < 2){
+                    else if (this.starsArray[levelNumber] < 5) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        //Ändra 70 till 50 för och 10 till 20 för stjärnor!
-                        this.levelText = this.add.bitmapText(levelButton.x+10,levelButton.y+20, 'numberFont', printedNumber, 70);
+                        this.levelText = this.add.bitmapText(levelButton.x+20,levelButton.y+20, 'numberFont', printedNumber, 50);
                         this.levelButtonsGroup.add(this.levelText);
                     }
                 }
@@ -212,8 +199,7 @@ RobotKompis.MapOverview.prototype = {
     },
      buttonClicked: function (button) {
 	   // the level is playable, then play the level!!
-        //if(button.frame < 4) { <-- Denna för stjärnor!!
-        if(button.frame < 2) {
+        if(button.frame < 5) {
             if (button.levelNumber == 1) {
                 this.startLevelOne();
             }
@@ -298,7 +284,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.start('Tutorial');
         */
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com'];
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com'];
         //, 'down_com', 
           //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
 
@@ -309,7 +295,7 @@ RobotKompis.MapOverview.prototype = {
     startLevelTwo: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap2'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_right_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
         this.state.start('Level', true, false, this.character);
     },
@@ -317,7 +303,7 @@ RobotKompis.MapOverview.prototype = {
     startLevelThree: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap3'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
         this.state.start('Level', true, false, this.character);
     },
@@ -325,7 +311,7 @@ RobotKompis.MapOverview.prototype = {
     startLevelFour: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap4'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
         this.state.start('Level', true, false, this.character);
     },
@@ -333,7 +319,7 @@ RobotKompis.MapOverview.prototype = {
     startLevelFive: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap5'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
-        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'up_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
                                                 
         this.state.start('Level', true, false, this.character);
     },
