@@ -559,7 +559,7 @@ RobotKompis.Level.prototype = {
 
      // Might be worth using a Phaser group instead of a Javascript Array.
 
-    }, // Might be worth using a Phaser group instead of a Javascript Array.
+
 
     seeTut: function() {
         if (this.pilar ==false) {
@@ -582,7 +582,7 @@ RobotKompis.Level.prototype = {
         
     },
 
->>>>>>> 08f14d637e7e20956928b99d0cad7b1e3557be27
+
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
@@ -591,8 +591,8 @@ RobotKompis.Level.prototype = {
             this.oldPosX = 850; // Same dimensions as when newCommand is created.
         }
         else {
-            // var remainder = sprite.x % 70; // Cleanse the input from faulty values.
-            // this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
+            var remainder = sprite.x % 70; // Cleanse the input from faulty values.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
             // this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
             this.oldPosX = sprite.x; // Seems to be easier to write so in DragStart because all the sprites start from fixed modified positions. 
             this.oldPosY = sprite.y;
@@ -646,19 +646,38 @@ RobotKompis.Level.prototype = {
                 if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                     this.addNew();
                 }
-                var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                this.newPosY = sprite.y;
+                // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                // this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                // this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                // this.newPosY = sprite.y;
                 //console.log(this.commandLineIndex)
-                sprite.reset(this.newPosX, 190);
-                if (this.commandLineIndex <= this.func_line_group.length) {
-                    this.func_line_group.addAt(sprite, this.commandLineIndex);
-                } else {
-                    this.func_line_group.add(sprite);
+                if(this.inArray(sprite.key,this.func_image_array)===true) {
+                    sprite.reset(this.oldPosX, 510);  
+                    this.commandGroup.addAt(sprite, this.commandLineIndex); 
+                    this.currentSpriteGroup.remove(sprite);                 
                 }
-                this.currentSpriteGroup.remove(sprite);
-                this.functionGroupRender();
+                else{
+                    var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                    this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                    this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                    this.newPosY = sprite.y;
+                    sprite.reset(this.newPosX, 190);
+                    if (this.commandLineIndex <= this.func_line_group.length) {
+                        this.func_line_group.addAt(sprite, this.commandLineIndex);
+                    } else {
+                        this.func_line_group.add(sprite);
+                    }
+                    this.currentSpriteGroup.remove(sprite);
+                    this.functionGroupRender();                    
+                }
+                // sprite.reset(this.newPosX, 190);
+                // if (this.commandLineIndex <= this.func_line_group.length) {
+                //     this.func_line_group.addAt(sprite, this.commandLineIndex);
+                // } else {
+                //     this.func_line_group.add(sprite);
+                // }
+                // this.currentSpriteGroup.remove(sprite);
+                // this.functionGroupRender();
             }
 
             else if(this.cloud.visible===true && this.func_save.visible===false){
@@ -795,28 +814,40 @@ RobotKompis.Level.prototype = {
             spriteInCommand = this.commandGroup.getAt(i);
             //console.log(spriteInCommand.key)
             if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
-                this.withRecursive(spriteInCommand);
+                for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].length; y++) {
+                        this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].getAt(y));               
+                }               
             }
             else {
                 this.command_array.push(spriteInCommand);    
             }
         }
+        // for( i = 0; i < this.commandGroup.length; i++){
+        //     spriteInCommand = this.commandGroup.getAt(i);
+        //     //console.log(spriteInCommand.key)
+        //     if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
+        //         this.withRecursive(spriteInCommand);
+        //     }
+        //     else {
+        //         this.command_array.push(spriteInCommand);    
+        //     }
+        // }
         this.wrongCommand = false;
         this.runInitiated = true;
         this.comArrIndex = 0; // SOMEONE messed it up before we got to this point (no, I don't know who)
     },
 
-    withRecursive: function(functionSprite) {
+    // withRecursive: function(functionSprite) {
         
-        for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].length; y++) {
-            if(this.inArray((this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y)).key,this.func_image_array)===true){
-                this.withRecursive(this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y));
-            }
-            else {
-                this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y));    
-            }            
-        }                    
-    },
+    //     for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].length; y++) {
+    //         if(this.inArray((this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y)).key,this.func_image_array)===true){
+    //             this.withRecursive(this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y));
+    //         }
+    //         else {
+    //             this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(functionSprite.key)].getAt(y));    
+    //         }            
+    //     }                    
+    // },
 
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
