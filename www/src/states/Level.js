@@ -550,7 +550,7 @@ RobotKompis.Level.prototype = {
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
-<<<<<<< HEAD
+
     },
 
     resultEstimation: function(){
@@ -558,7 +558,7 @@ RobotKompis.Level.prototype = {
     },  
 
      // Might be worth using a Phaser group instead of a Javascript Array.
-=======
+
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
     seeTut: function() {
