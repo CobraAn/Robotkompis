@@ -7,6 +7,13 @@ RobotKompis.Level = function (game) {
     this.layer3;
     this.layer4;
     this.layer5;
+    
+    this.commandopil;
+    this.funkpil;
+    this.gopil;
+    this.pilmute;
+    this.radpil;
+    this.pilar;
 
     // The robot player
     this.player;
@@ -19,7 +26,10 @@ RobotKompis.Level = function (game) {
     this.sound_btn;
     this.help_btn;
 
+
     this.saveDataArgs = {};
+    this.cloud;
+
     
 
 
@@ -102,6 +112,9 @@ RobotKompis.Level.prototype = {
         this.add.image(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
     
         var graphics = new Phaser.Graphics(this, 0, 0);
+        this.cloud = this.add.image(430, 50, 'settingsCloud');
+        this.cloud.bringToTop();
+        this.cloud.visible = false;
 
         //  Set the world (global) gravity
         this.physics.arcade.gravity.y = 2500;
@@ -126,6 +139,7 @@ RobotKompis.Level.prototype = {
     
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        this.map.setCollisionBetween(1, 5000, true, 'water');
 
         this.player = this.add.sprite(95, this.world.height - 280, this.robot);
       
@@ -160,13 +174,18 @@ RobotKompis.Level.prototype = {
         //this.game.physics.arcade.enable(this.layer5); // The ladder layer
         //this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
         //this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
-        var layer5tiles = this.layer5.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+        var layer5tiles = this.layer5.getTiles();
         for (i = 0; i < layer5tiles.length; i++) {
+            console.log("finding out door coords");
             if (layer5tiles[i].index != (-1)) {
                 this.doorX = layer5tiles.x;
                 this.doorY = layer5tiles.y;
             }
         }
+        console.log("this.doorX");
+        console.log(this.doorX);
+        console.log("this.doorY");
+        console.log(this.doorY);
 
         // Block Library
         graphics.lineStyle(0);
@@ -252,7 +271,32 @@ RobotKompis.Level.prototype = {
         this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
         this.sound_btn.scale.setTo(0.7,0.7)
         //this.sound_btn = this.add.button(200,0,  'muteUnMute', this.Mute, this);
-        this.help_btn = this.add.sprite(965, this.world.height - 470, 'help_btn');
+        this.help_btn = this.add.button(965, this.world.height - 470, 'help_btn', this.seeTut, this);
+        
+        this.commandopil = this.add.image(200, this.world.height - 260, 'commandopil');
+        this.commandopil.scale.setTo(0.4,0.4);
+        this.commandopil.visible = false;
+        
+        this.pilmute = this.add.image(850, 70, 'pilmute');
+        this.pilmute.scale.setTo(0.4,0.4);
+        this.pilmute.visible = false;
+        
+        this.gopil = this.add.image(850, 250, 'gopil');
+        this.gopil.scale.setTo(0.4,0.4);
+        this.gopil.visible = false;
+        
+        
+        this.funkpil = this.add.image(850, 190, 'funkpil');
+        this.funkpil.scale.setTo(0.4,0.4);
+        this.funkpil.visible = false;
+        
+        this.radpil = this.add.image(830, 420, 'radpil');
+        this.radpil.scale.setTo(0.4,0.4);
+        this.radpil.visible = false;
+        
+        this.pilar = false;
+        
+        
 
         // Pointer is active by default and does not need to be turned on by game.input :)
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -348,53 +392,63 @@ RobotKompis.Level.prototype = {
 
         // HI THERE ! VELOCITY MOVERS BELOW!
         if (this.runInitiated == false && this.comKey != "nope") {
+            /*
             console.log("comArrIndex: " + this.comArrIndex);
             console.log("thisPlayerX: " + this.player.x);
-            console.log("finalPosX: " + this.finalPosX);
+            console.log("finalPosX: " + this.finalPosX);*/
             //console.log("comKey?");
             //console.log(this.comKey);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
+                this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
-                this.runInitiated = true;
-                this.player.body.allowGravity = true; 
+                this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
                 console.log("downwards we go");
                 this.player.body.velocity.y = 80; // Downwards descent.
                 this.downActive = false;
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true; 
             }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk left stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
+                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-                this.player.body.allowGravity = true; 
-            } 
-            else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
+            } else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
                 //console.log("ladder here. Gravity value:");
                 this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
+            } else if (this.comKey == "down_com" && (this.player.y >= this.finalPosY || this.player.body.velocity.y == 0)) {
+                //console.log("ladder here. Gravity value:");
+                this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
                 this.player.body.allowGravity = true; 
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true;
             } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
                 console.log("Hi, I'm wrong");
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
+                
             }
+            
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
                 console.log("at door");
-                this.resultEstimation();
+                //console.log("at door");
                 this.animationCheck = 0;
-                this.scoreFunction();
+                //this.scoreFunction();
             }
         }
 
         if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
             // this.state.start('MapOverview');
-            this.resultEstimation();
             console.log("at door2");
+
         }
         
         // HEY HO !
@@ -423,7 +477,7 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
-                var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
@@ -433,8 +487,8 @@ RobotKompis.Level.prototype = {
                     console.log("Ladder overlap !");
                     this.animationCheck = 3;
                     this.finalPosX = -20;
-                    this.finalPosY = this.player.y - 130;
                     this.player.body.allowGravity = false;
+                    this.finalPosY = this.player.y - 130;
                     this.player.body.velocity.y = -100;
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
@@ -443,7 +497,30 @@ RobotKompis.Level.prototype = {
                     //console.log("Make a question mark appear!");
                 }
                 this.smallerThan = true; 
-            } else if (this.comKey == "hop_left_com") {
+            } else if (this.comKey == "down_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
+                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y + 64, 20, 20);
+                for (i = 0; i < layer4tiles.length; i++) {
+                    if (layer4tiles[i].index != (-1)) {
+                        this.ladderOverlap = true;
+                    }
+                }
+                if (this.ladderOverlap) {
+                    console.log("Ladder overlap !");
+                    this.animationCheck = 3;
+                    this.finalPosX = -20;
+                    this.player.body.allowGravity = false;
+                    this.finalPosY = this.player.y + 120;
+                    this.player.body.velocity.y = 100;
+                    this.ladderOverlap = false;
+                    this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
+                } else {
+                    this.comKey = "wrong"
+                    //console.log("Make a question mark appear!");
+                }
+                this.smallerThan = true; 
+            } 
+
+            else if (this.comKey == "hop_left_com") {
                 this.animationCheck = 5;
                 this.finalPosX = this.player.x - 64;
                 this.finalPosY = this.player.y - 32;
@@ -460,19 +537,20 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.y = -80;
                 this.player.body.velocity.x = 80;
                 this.downActive = true;
-            } else if (this.comKey == "down_com") {
+            }/* else if (this.comKey == "down_com") {
                 this.finalPosX = -20;
                 this.finalPosY = this.player.y - 128;
                 this.player.body.allowGravity = false;
                 this.player.body.velocity.y = -100;
                 this.smallerThan = true; 
-            }
+            }*/
             this.runInitiated = false;
         }      
         
         // Fix so it can't move beyond its parameters. 
         // When a new command is added to it, it snaps back :(
 
+<<<<<<< HEAD
     },
 
     resultEstimation: function(){
@@ -480,6 +558,31 @@ RobotKompis.Level.prototype = {
     },  
 
      // Might be worth using a Phaser group instead of a Javascript Array.
+=======
+    }, // Might be worth using a Phaser group instead of a Javascript Array.
+
+    seeTut: function() {
+        if (this.pilar ==false) {
+            this.pilar = true;
+            this.commandopil.visible = true;
+            this.gopil.visible = true;
+            this.funkpil.visible = true;
+            this.radpil.visible = true;
+            this.pilmute.visible = true;
+        }
+        else { //...*** and closes if opened ;)
+            this.pilar = false;
+            this.pilar = false;
+            this.commandopil.visible = false;
+            this.gopil.visible = false;
+            this.funkpil.visible = false;
+            this.radpil.visible = false;
+            this.pilmute.visible = false;
+        }
+        
+    },
+
+>>>>>>> 08f14d637e7e20956928b99d0cad7b1e3557be27
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
@@ -547,7 +650,7 @@ RobotKompis.Level.prototype = {
                 this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
                 this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
                 this.newPosY = sprite.y;
-                console.log(this.commandLineIndex)
+                //console.log(this.commandLineIndex)
                 sprite.reset(this.newPosX, 190);
                 if (this.commandLineIndex <= this.func_line_group.length) {
                     this.func_line_group.addAt(sprite, this.commandLineIndex);

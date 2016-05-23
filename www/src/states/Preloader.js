@@ -50,7 +50,7 @@ RobotKompis.Preloader.prototype = {
         //1.0x - 1.4x
         this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap1', '../../assets/maps/1.0x.json', null, Phaser.Tilemap.TILED_JSON);
-        this.load.tilemap('tilemap2', '../../assets/maps/1.1x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap2', '../../assets/maps/1.1xx.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap3', '../../assets/maps/1.2x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap4', '../../assets/maps/1.3x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap5', '../../assets/maps/1.4x.json', null, Phaser.Tilemap.TILED_JSON);
@@ -92,6 +92,12 @@ RobotKompis.Preloader.prototype = {
         this.load.image('sound_btn', '../../assets/sound_50.png');
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
+        
+        this.load.image('commandopil', '../../assets/pilar/commandopil.png');
+        this.load.image('funkpil', '../../assets/pilar/funkpil.png');
+        this.load.image('gopil', '../../assets/pilar/gopil.png');
+        this.load.image('pilmute', '../../assets/pilar/pilmute.png');
+        this.load.image('radpil', '../../assets/pilar/radpil.png');
         
         // Images for settings-state
         this.load.image('backButton', '../../images/bakpil.png');

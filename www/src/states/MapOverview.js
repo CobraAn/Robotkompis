@@ -62,6 +62,9 @@ RobotKompis.MapOverview.prototype = {
     init: function () {
         this.playerData = loadData();
         console.log(this.playerData);
+        if (typeof this.playerData !== "undefined" && this.playerData !== null) {
+            this.character = this.playerData.robot;
+        }
     },
     
     create: function () {
