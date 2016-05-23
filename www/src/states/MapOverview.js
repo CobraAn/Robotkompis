@@ -14,11 +14,13 @@ RobotKompis.MapOverview = function (game) {
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
-    this.character = 'switchAni';
+    this.character;
     this.popup;
     this.closebutton;
 
     this.playerData = {};
+    this.robotFrame = 0;
+    this.robotData = {};
 
     //Variabler för level select
     this.currentWorld;
@@ -40,7 +42,6 @@ RobotKompis.MapOverview = function (game) {
     // 4 = Used for click interaction! don't use this in starsArray!!
     // 5 = Locked level
     this.starsArray = [0, 1, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
-    
     // how many pages are needed to show all levels?
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
     // group where to place all level buttons
@@ -60,11 +61,15 @@ RobotKompis.MapOverview = function (game) {
 RobotKompis.MapOverview.prototype = {
 
     init: function () {
+
         this.playerData = loadData();
-        console.log(this.playerData);
+        console.log(this.playerData + '!!');
         if (typeof this.playerData !== "undefined" && this.playerData !== null) {
+            console.log(this.playerData.robot);
             this.character = this.playerData.robot;
+            this.robotFrame = this.playerData.robotFrame;
         }
+        
     },
     
     create: function () {
@@ -87,6 +92,7 @@ RobotKompis.MapOverview.prototype = {
         //for the robot-choosing-popup-menu
         //have to fix that the sprite sheet remembers its last frame so it chows the right chosen robot.
         this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
+        this.robotchoice.frame = this.robotFrame;
         
         //the background of the popup
         this.popup = this.add.sprite(200, 150, 'robotChoiseBackground');
@@ -122,6 +128,7 @@ RobotKompis.MapOverview.prototype = {
         //titel
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis', 110);
         this.world.sendToBack(this.title);
+        
     },
     startSettings: function () {
         'use strict';
@@ -375,23 +382,38 @@ RobotKompis.MapOverview.prototype = {
         
     whileButton: function () {
         this.character = 'while'; //changes the character
-        this.robotchoice.setFrames(1,1,1);
+        this.robotchoice.frame = 1;
+        this.robotData.robot = this.character;
+        this.robotData.robotFrame = 1;
+        saveRobot(this.robotData);
     },
     switchButton: function () {
         this.character = 'switchAni';
-        this.robotchoice.setFrames(0,0,0);
-    },
+        this.robotchoice.frame = 0;
+        this.robotData.robot = this.character;
+        this.robotData.robotFrame = 0;
+        saveRobot(this.robotData);    },
     elseButton: function () {
         this.character = 'else';
-        this.robotchoice.setFrames(4,4,4);
+        this.robotchoice.frame = 4;
+        this.robotData.robot = this.character;
+        this.robotData.robotFrame = 4;
+        saveRobot(this.robotData);
     },
     gotoButton: function () {
         this.character = 'goto';
+        this.robotchoice.frame = 2;
+        this.robotData.robot = this.character;
+        this.robotData.robotFrame = 2;
+        saveRobot(this.robotData);
         this.robotchoice.setFrames(2,2,2);
     },
     ifButton: function () {
         this.character = 'if';
-        this.robotchoice.setFrames(3,3,3);
+        this.robotchoice.frame = 3;
+        this.robotData.robot = this.character;
+        this.robotData.robotFrame = 3;
+        saveRobot(this.robotData);
     },  
     Mute: function(){
         if (this.sound.mute == false) {
