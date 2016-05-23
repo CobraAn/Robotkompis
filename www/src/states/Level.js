@@ -388,20 +388,17 @@ RobotKompis.Level.prototype = {
             //console.log("comKey?");
             //console.log(this.comKey);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
-                console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
-                console.log("downwards we go");
                 this.player.body.velocity.y = 80; // Downwards descent.
                 this.downActive = false;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
-            }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
-                console.log("walk left stop");
+            } else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true; 
@@ -420,25 +417,18 @@ RobotKompis.Level.prototype = {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
-                console.log("Hi, I'm wrong");
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
                 
             }
             
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
-                console.log("at door");
                 //console.log("at door");
                 this.animationCheck = 0;
                 //this.scoreFunction();
             }
         }
 
-        if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
-            // this.state.start('MapOverview');
-            console.log("at door2");
-
-        }
         
         // HEY HO !
         //console.log(this.comArrIndex+' index');
@@ -447,10 +437,6 @@ RobotKompis.Level.prototype = {
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
             this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
-            console.log("We can run...");
-            console.log(this.comKey);
-            console.log("with comArrIndex...");
-            console.log(this.comArrIndex);
             if (this.comKey == "walk_right_com") {
                 //console.log("walk to the right");
                 this.animationCheck = 1;
@@ -473,7 +459,6 @@ RobotKompis.Level.prototype = {
                     }
                 }
                 if (this.ladderOverlap) {
-                    console.log("Ladder overlap !");
                     this.animationCheck = 3;
                     this.finalPosX = -20;
                     this.player.body.allowGravity = false;
@@ -482,7 +467,7 @@ RobotKompis.Level.prototype = {
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
                 } else {
-                    this.comKey = "wrong"
+                    this.comKey = "wrong";
                     //console.log("Make a question mark appear!");
                 }
                 this.smallerThan = true; 
@@ -494,7 +479,6 @@ RobotKompis.Level.prototype = {
                     }
                 }
                 if (this.ladderOverlap) {
-                    console.log("Ladder overlap !");
                     this.animationCheck = 3;
                     this.finalPosX = -20;
                     this.player.body.allowGravity = false;
@@ -503,7 +487,7 @@ RobotKompis.Level.prototype = {
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
                 } else {
-                    this.comKey = "wrong"
+                    this.comKey = "wrong";
                     //console.log("Make a question mark appear!");
                 }
                 this.smallerThan = true; 
@@ -533,14 +517,11 @@ RobotKompis.Level.prototype = {
                         this.doorOverlap = true;
                     }
                 }
-                if (this.doorOverlap) {
-                    console.log("Door overlap !");
-                    //this.animationCheck = 3;
-                    //this.finalPosX = -20;
-                    this.state.start('MapOverview');
+                if (this.doorOverlap) {  // WE HAVE A DOOR !!!!!!!!!!!!!!!!!!!!!!!
+                    this.state.start('WinScreen');
                     this.doorOverlap = false;
                 } else {
-                    this.comKey = "wrong"
+                    this.comKey = "wrong";
                     //console.log("Make a question mark appear!");
                 }
             }
@@ -555,9 +536,6 @@ RobotKompis.Level.prototype = {
 
     resultEstimation: function(){
         this.state.start('WinScreen');        
-    },  
-
-     // Might be worth using a Phaser group instead of a Javascript Array.
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
 
@@ -582,7 +560,6 @@ RobotKompis.Level.prototype = {
         
     },
 
->>>>>>> 08f14d637e7e20956928b99d0cad7b1e3557be27
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
