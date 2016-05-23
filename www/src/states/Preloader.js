@@ -98,6 +98,10 @@ RobotKompis.Preloader.prototype = {
         this.load.image('gopil', '../../assets/pilar/gopil.png');
         this.load.image('pilmute', '../../assets/pilar/pilmute.png');
         this.load.image('radpil', '../../assets/pilar/radpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('clearpil', '../../assets/pilar/clearpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('movepil', '../../assets/pilar/movepil.png');
         
         // Images for settings-state
         this.load.image('backButton', '../../images/bakpil.png');
