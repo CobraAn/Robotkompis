@@ -126,6 +126,7 @@ RobotKompis.Level.prototype = {
     
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        this.map.setCollisionBetween(1, 5000, true, 'water');
 
         this.player = this.add.sprite(95, this.world.height - 280, this.robot);
       
