@@ -184,10 +184,12 @@ RobotKompis.MapOverview.prototype = {
                         }
                     }
                     //adding button, calls the buttonClicked function
+
                     if (this.starsArray[levelNumber] == 5) {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                             offsetY+i*(this.buttonHeight+this.buttonSpacing), '' +
                             'levelSelect', this.buttonClicked, this);
+                        levelButton.frame = this.starsArray[levelNumber];
                     }
                     else {
                         //För stjärnor, byt sista 1:an mot en 0:a
@@ -197,13 +199,13 @@ RobotKompis.MapOverview.prototype = {
                                 'levelSelect', this.buttonClicked, this, null,
                                 this.playerData.levels[dictKey] , 4);
                             //showing right frame
-                            levelButton.frame = this.playerData.levels[dictKey];
+                            levelButton.frame = levelStars;
                         } else {
                             var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                                 offsetY+i*(this.buttonHeight+this.buttonSpacing),
-                                'levelSelect', this.buttonClicked, this, null, 1, 4);
+                                'levelSelect', this.buttonClicked, this, null, 0, 4);
                             //showing right frame
-                            levelButton.frame = this.starsArray[levelNumber];
+                            levelButton.frame = 0;
                         }
                     }
 
