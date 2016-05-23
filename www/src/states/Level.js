@@ -84,6 +84,7 @@ RobotKompis.Level = function (game) {
     this.smallerThan = false; 
     this.ladderPosX = 0; // NOT NEEDED
     this.ladderOverlap = false;
+    this.doorOverlap = false;
     this.wrongCommand = false;
     this.doorX = 0;
     this.doorY = 0;
@@ -132,19 +133,21 @@ RobotKompis.Level.prototype = {
 
         this.layer0 = this.map.createLayer('background');
         this.layer1 = this.map.createLayer('water');
-        this.layer2 = this.map.createLayer('blocked');
         this.layer3 = this.map.createLayer('unblocked');
+        this.layer2 = this.map.createLayer('blocked');        
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
-        this.map.setCollisionBetween(1, 5000, true, 'water');
+        //this.map.setCollisionBetween(1, 5000, true, 'water');
 
         this.player = this.add.sprite(95, this.world.height - 280, this.robot);
       
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
+        // Centers the player in one 32x32 tile.
+        this.player.anchor.setTo(1.0, 1.0);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
         
@@ -162,6 +165,12 @@ RobotKompis.Level.prototype = {
 
         // LADDER LAYER COLLISION STUFFS
         this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
+        
+        this.map.setCollisionBetween(1, 5000, true, 'water'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
+        
+        this.game.physics.arcade.enable(this.layer1); // The water layer
+        this.physics.enable( [ this.layer1 ], Phaser.Physics.ARCADE);
+         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit);
 
         this.game.physics.arcade.enable(this.layer4); // The ladder layer
         this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
@@ -174,18 +183,6 @@ RobotKompis.Level.prototype = {
         //this.game.physics.arcade.enable(this.layer5); // The ladder layer
         //this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
         //this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
-        var layer5tiles = this.layer5.getTiles();
-        for (i = 0; i < layer5tiles.length; i++) {
-            console.log("finding out door coords");
-            if (layer5tiles[i].index != (-1)) {
-                this.doorX = layer5tiles.x;
-                this.doorY = layer5tiles.y;
-            }
-        }
-        console.log("this.doorX");
-        console.log(this.doorX);
-        console.log("this.doorY");
-        console.log(this.doorY);
 
         // Block Library
         graphics.lineStyle(0);
@@ -342,6 +339,9 @@ RobotKompis.Level.prototype = {
     },
     
     update: function () {// LET'S UPDATE !
+        this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit, null, this);
+        //this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
+        //this.game.physics.arcade.collide(this.player, this.layer1);
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
@@ -399,20 +399,17 @@ RobotKompis.Level.prototype = {
             //console.log("comKey?");
             //console.log(this.comKey);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
-                console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
-                console.log("downwards we go");
                 this.player.body.velocity.y = 80; // Downwards descent.
                 this.downActive = false;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
-            }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
-                console.log("walk left stop");
+            } else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true; 
@@ -431,25 +428,18 @@ RobotKompis.Level.prototype = {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
-                console.log("Hi, I'm wrong");
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
                 
             }
             
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
-                console.log("at door");
                 //console.log("at door");
                 this.animationCheck = 0;
                 //this.scoreFunction();
             }
         }
 
-        if (this.doorX != 0 && (this.player.x > (this.doorX-5) && this.player.x < (this.doorX+37) && (this.player.y < (this.doorY-32) && this.player.y > (this.doorY + 37)))) {
-            // this.state.start('MapOverview');
-            console.log("at door2");
-
-        }
         
         // HEY HO !
         //console.log(this.comArrIndex+' index');
@@ -458,10 +448,6 @@ RobotKompis.Level.prototype = {
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
             this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
-            console.log("We can run...");
-            console.log(this.comKey);
-            console.log("with comArrIndex...");
-            console.log(this.comArrIndex);
             if (this.comKey == "walk_right_com") {
                 //console.log("walk to the right");
                 this.animationCheck = 1;
@@ -477,14 +463,26 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
+
+                //var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+                var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+
                 var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
+
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
                     }
+                    
                 }
+                for (i = 0; i < layer1tiles.length; i++) {
+                    if (layer1tiles[i].index != (-1)) {
+                        this.waterOverlap = true;
+                    }
+                    
+                }
+                
                 if (this.ladderOverlap) {
-                    console.log("Ladder overlap !");
                     this.animationCheck = 3;
                     this.finalPosX = -20;
                     this.player.body.allowGravity = false;
@@ -493,8 +491,11 @@ RobotKompis.Level.prototype = {
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
                 } else {
-                    this.comKey = "wrong"
+                    this.comKey = "wrong";
                     //console.log("Make a question mark appear!");
+                }
+                if(this.waterOverlap){
+                    console.log("Water overlap");
                 }
                 this.smallerThan = true; 
             } else if (this.comKey == "down_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
@@ -505,7 +506,6 @@ RobotKompis.Level.prototype = {
                     }
                 }
                 if (this.ladderOverlap) {
-                    console.log("Ladder overlap !");
                     this.animationCheck = 3;
                     this.finalPosX = -20;
                     this.player.body.allowGravity = false;
@@ -514,7 +514,7 @@ RobotKompis.Level.prototype = {
                     this.ladderOverlap = false;
                     this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
                 } else {
-                    this.comKey = "wrong"
+                    this.comKey = "wrong";
                     //console.log("Make a question mark appear!");
                 }
                 this.smallerThan = true; 
@@ -537,13 +537,21 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.y = -80;
                 this.player.body.velocity.x = 80;
                 this.downActive = true;
-            }/* else if (this.comKey == "down_com") {
-                this.finalPosX = -20;
-                this.finalPosY = this.player.y - 128;
-                this.player.body.allowGravity = false;
-                this.player.body.velocity.y = -100;
-                this.smallerThan = true; 
-            }*/
+            } else if (this.comKey == "key_com") {
+                var layer5tiles = this.layer5.getTiles(this.player.x, this.player.y - 20, 20, 20);
+                for (i = 0; i < layer5tiles.length; i++) {
+                    if (layer5tiles[i].index != (-1)) {
+                        this.doorOverlap = true;
+                    }
+                }
+                if (this.doorOverlap) {  // WE HAVE A DOOR !!!!!!!!!!!!!!!!!!!!!!!
+                    this.state.start('WinScreen');
+                    this.doorOverlap = false;
+                } else {
+                    this.comKey = "wrong";
+                    //console.log("Make a question mark appear!");
+                }
+            }
             this.runInitiated = false;
         }      
         
@@ -555,9 +563,6 @@ RobotKompis.Level.prototype = {
 
     resultEstimation: function(){
         this.state.start('WinScreen');        
-    },  
-
-     // Might be worth using a Phaser group instead of a Javascript Array.
 
 
 
@@ -582,8 +587,36 @@ RobotKompis.Level.prototype = {
         
     },
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5f8d8edd5be5570a8220adc9fcb31574194ab889
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
+    waterHit: function(){
+        console.log("HITMEBABYONEMORETIME");
+   this.animationCheck = 0;
+        // Re-activate commands and their input related functionality. 
+        for (i = 0; i < this.commandGroup.length; i++) {
+            //console.log("Hippity hoop, I'm in your for loop!");
+            this.commandGroup.getAt(i).input.enabled = true;
+        }
+        this.rightArrow20.input.enabled = true;
+        this.leftArrow20.input.enabled = true;
+        this.newCommand.input.draggable = true;
+        this.new_btn.input.enabled = true; 
+        this.clear_btn.input.enabled = true;
+
+        this.stop_btn.visible = false;
+        this.run_btn.visible = true;
+        //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
+        this.player.reset(95, this.world.height - 280);
+        this.runInitiated = false; 
+        this.comArrIndex = 0;
+        this.command_array = [];
+        this.comKey = "nope";
+    },
+    
+    
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
         // y is always 510. Both oldPosY and newPosY.
@@ -603,7 +636,7 @@ RobotKompis.Level.prototype = {
     },
 
     // Hello! Someone has stopped dragging the command around. Try to add it to commandGroup if possible, and always adjust position.
-
+   
     commandDragStop: function(sprite, pointer) {
         var index = 0;
         if(this.inArray(sprite.key, this.func_image_array)===true){
