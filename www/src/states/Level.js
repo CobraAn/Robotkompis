@@ -119,19 +119,21 @@ RobotKompis.Level.prototype = {
 
         this.layer0 = this.map.createLayer('background');
         this.layer1 = this.map.createLayer('water');
-        this.layer2 = this.map.createLayer('blocked');
         this.layer3 = this.map.createLayer('unblocked');
+        this.layer2 = this.map.createLayer('blocked');        
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
         //Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
-        this.map.setCollisionBetween(1, 5000, true, 'water');
+        //this.map.setCollisionBetween(1, 5000, true, 'water');
 
         this.player = this.add.sprite(95, this.world.height - 280, this.robot);
       
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
+        // Centers the player in one 32x32 tile.
+        this.player.anchor.setTo(1.0, 1.0);
         // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
         
@@ -149,6 +151,12 @@ RobotKompis.Level.prototype = {
 
         // LADDER LAYER COLLISION STUFFS
         this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
+        
+        this.map.setCollisionBetween(1, 5000, true, 'water'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
+        
+        this.game.physics.arcade.enable(this.layer1); // The water layer
+        this.physics.enable( [ this.layer1 ], Phaser.Physics.ARCADE);
+         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit);
 
         this.game.physics.arcade.enable(this.layer4); // The ladder layer
         this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
@@ -304,6 +312,9 @@ RobotKompis.Level.prototype = {
     },
     
     update: function () {// LET'S UPDATE !
+        this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit, null, this);
+        //this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
+        //this.game.physics.arcade.collide(this.player, this.layer1);
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
@@ -436,11 +447,20 @@ RobotKompis.Level.prototype = {
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
                 var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+                var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
                     }
+                    
                 }
+                for (i = 0; i < layer1tiles.length; i++) {
+                    if (layer1tiles[i].index != (-1)) {
+                        this.waterOverlap = true;
+                    }
+                    
+                }
+                
                 if (this.ladderOverlap) {
                     console.log("Ladder overlap !");
                     this.animationCheck = 3;
@@ -453,6 +473,9 @@ RobotKompis.Level.prototype = {
                 } else {
                     this.comKey = "wrong"
                     //console.log("Make a question mark appear!");
+                }
+                if(this.waterOverlap){
+                    console.log("Water overlap");
                 }
                 this.smallerThan = true; 
             } else if (this.comKey == "down_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
@@ -511,6 +534,31 @@ RobotKompis.Level.prototype = {
 
     }, // Might be worth using a Phaser group instead of a Javascript Array.
     // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
+    waterHit: function(){
+        console.log("HITMEBABYONEMORETIME");
+   this.animationCheck = 0;
+        // Re-activate commands and their input related functionality. 
+        for (i = 0; i < this.commandGroup.length; i++) {
+            //console.log("Hippity hoop, I'm in your for loop!");
+            this.commandGroup.getAt(i).input.enabled = true;
+        }
+        this.rightArrow20.input.enabled = true;
+        this.leftArrow20.input.enabled = true;
+        this.newCommand.input.draggable = true;
+        this.new_btn.input.enabled = true; 
+        this.clear_btn.input.enabled = true;
+
+        this.stop_btn.visible = false;
+        this.run_btn.visible = true;
+        //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
+        this.player.reset(95, this.world.height - 280);
+        this.runInitiated = false; 
+        this.comArrIndex = 0;
+        this.command_array = [];
+        this.comKey = "nope";
+    },
+    
+    
     commandDragStart: function(sprite, pointer) {
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
         // y is always 510. Both oldPosY and newPosY.
@@ -530,7 +578,7 @@ RobotKompis.Level.prototype = {
     },
 
     // Hello! Someone has stopped dragging the command around. Try to add it to commandGroup if possible, and always adjust position.
-
+   
     commandDragStop: function(sprite, pointer) {
         var index = 0;
         if(this.inArray(sprite.key, this.func_image_array)===true){
