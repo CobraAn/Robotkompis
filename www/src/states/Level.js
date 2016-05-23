@@ -473,7 +473,7 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
-                var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
+                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
@@ -494,7 +494,7 @@ RobotKompis.Level.prototype = {
                 }
                 this.smallerThan = true; 
             } else if (this.comKey == "down_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
-                var layer4tiles = this.layer4.getTiles(this.player.x + 10, this.player.y + 64, 20, 20);
+                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y + 64, 20, 20);
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
