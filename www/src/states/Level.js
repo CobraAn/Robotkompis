@@ -402,32 +402,34 @@ RobotKompis.Level.prototype = {
                 console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
+                this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
-                this.runInitiated = true;
-                this.player.body.allowGravity = true; 
+                this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
                 console.log("downwards we go");
                 this.player.body.velocity.y = 80; // Downwards descent.
                 this.downActive = false;
+                this.comArrIndex = this.comArrIndex + 1; 
+                this.runInitiated = true; 
             }else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
                 console.log("walk left stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
+                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-                this.player.body.allowGravity = true; 
             } else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
                 //console.log("ladder here. Gravity value:");
                 this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-                this.player.body.allowGravity = true; 
             } else if (this.comKey == "down_com" && (this.player.y >= this.finalPosY || this.player.body.velocity.y == 0)) {
                 //console.log("ladder here. Gravity value:");
                 this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-                this.player.body.allowGravity = true; 
             } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
                 console.log("Hi, I'm wrong");
                 this.comArrIndex = this.comArrIndex + 1; 
