@@ -93,6 +93,12 @@ RobotKompis.Preloader.prototype = {
         this.load.image('home_btn', '../../assets/home_50.png');
         this.load.image('help_btn', '../../assets/help_50.png');
         
+        this.load.image('commandopil', '../../assets/pilar/commandopil.png');
+        this.load.image('funkpil', '../../assets/pilar/funkpil.png');
+        this.load.image('gopil', '../../assets/pilar/gopil.png');
+        this.load.image('pilmute', '../../assets/pilar/pilmute.png');
+        this.load.image('radpil', '../../assets/pilar/radpil.png');
+        
         // Images for settings-state
         this.load.image('backButton', '../../images/bakpil.png');
         //this.load.image('muteButton', '../../images/mute.png');
@@ -145,9 +151,10 @@ RobotKompis.Preloader.prototype = {
         this.load.image('func_title','../../assets/function/func_title.png');
         this.load.image('temp1','../../assets/function/TEMP1.png');
 
-        //this.load.image('cloud','../../assets/favx_cloud1.png');       
-
-    
+        // WinScreen stuff
+        this.load.image('starr','../../assets/da_star.png');       
+        this.load.image('you_won','../../assets/you_won.png');  
+        this.load.image('continue','../../assets/continue.png');      
 
 	},
 	create: function () {
