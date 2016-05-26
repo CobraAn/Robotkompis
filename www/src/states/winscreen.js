@@ -9,7 +9,7 @@ RobotKompis.WinScreen = function (game) {
 };
 
 RobotKompis.WinScreen.prototype = {
-
+    
     create: function () {
         'use strict';
         this.da_starr1 = this.add.sprite(140, 100, 'starr');
@@ -22,7 +22,6 @@ RobotKompis.WinScreen.prototype = {
         this.continue.events.onInputDown.add(this.goToMapOverview, this);
     },
     goToMapOverview: function(){
-        console.log("Va?")
         this.state.start('MapOverview');
     },
     update: function () {
@@ -31,5 +30,3 @@ RobotKompis.WinScreen.prototype = {
 
 
 };
-
-//390X165

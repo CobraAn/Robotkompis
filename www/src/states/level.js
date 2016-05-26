@@ -17,7 +17,8 @@ RobotKompis.Level = function (game) {
 
     // The robot player
     this.player;
-    this.robot; 
+    this.robot;
+
     // Button variables.
     this.run_btn;
     this.stop_btn;
@@ -26,16 +27,11 @@ RobotKompis.Level = function (game) {
     this.sound_btn;
     this.help_btn;
 
-
+    // Storage variable
     this.saveDataArgs = {};
-    this.cloud;
 
-    
-
-
-     // Making own functions
     this.func_btn; // Function button ( I <3 f(x) ).
-    this.cloud;    // Cloud-window of the function-edit-menu. 
+    this.cloud;    // Cloud-window of the function-edit-menu.
     this.func_create_array = []; // Array of 8 transparrent "KLICK ATT SKAPA"sprites
     this.func_image_array = [null,'f1','f2','f3','f4','f5','f6', 'f7', 'f8']; // Images served to create function sprites. They are put in array in order to ease indexing and avoid repeated code. 
     this.func_sprite_array = []; // Array of original function sprites (sometimes needed)
@@ -48,9 +44,6 @@ RobotKompis.Level = function (game) {
 
     //Check used for animations, e.g 0 means idle animation
     this.animationCheck = 0;
-    this.finalAnimationCounter = 0;
-    //Oklar
-    this.cursors;
 
     // Tween for animations
     this.tween;
@@ -101,6 +94,10 @@ RobotKompis.Level = function (game) {
 };
 
 RobotKompis.Level.prototype = {
+    /*
+     * Initiates variables needed for the level creation and storage
+     */
+
     init: function (character, levelName){
         this.robot = character;
         this.saveDataArgs.robot = character;
@@ -111,7 +108,7 @@ RobotKompis.Level.prototype = {
 
         this.physics.startSystem(Phaser.Physics.ARCADE);
         
-        this.add.image(0, 0, 'bg'); // Can use the offline prototypes instead of a wallpaper if you'd prefer.
+        this.add.image(0, 0, 'bg');
     
         var graphics = new Phaser.Graphics(this, 0, 0);
         this.cloud = this.add.image(430, 50, 'settingsCloud');
@@ -121,9 +118,7 @@ RobotKompis.Level.prototype = {
         //  Set the world (global) gravity
         this.physics.arcade.gravity.y = 2500;
 
-        // ADD COMMAND LINE AND RUN LINE !
-
-        graphics = this.add.graphics(0, 0); // Needed for fun stuff like having a sprite with gravity.
+        graphics = this.add.graphics(0, 0); // Needed for gravity
         this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
 
         // Tilesets
@@ -132,6 +127,7 @@ RobotKompis.Level.prototype = {
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
         this.map.addTilesetImage('newdesert', 'background');
 
+        // Layers
         this.layer0 = this.map.createLayer('background');
         this.layer1 = this.map.createLayer('water');
         this.layer3 = this.map.createLayer('unblocked');
@@ -139,24 +135,21 @@ RobotKompis.Level.prototype = {
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
-        //Activate collision tiles from blocked layer
+        // Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
-        //this.map.setCollisionBetween(1, 5000, true, 'water');
 
+        // Create the player
         this.player = this.add.sprite(95, this.world.height - 280, this.robot);
-      
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Centers the player in one 32x32 tile.
         this.player.anchor.setTo(1.0, 1.0);
-        // Does this line below really do that much? I assume it stops the sprite from going outside the window.
         this.player.body.collideWorldBounds = true;
-        
         this.player.body.moves = true;
         this.player.body.gravity.y = 1000;
         this.tween = this.add.tween(this.player); // For movement in listener. 
         
-        //animation
+        // Animation
         this.player.animations.add('jumpRight', [6], 1, false);
         this.player.animations.add('jumpLeft', [11], 1, false);
         this.player.animations.add('walkRight', [3, 4, 5], 6, false);
@@ -164,26 +157,16 @@ RobotKompis.Level.prototype = {
         this.player.animations.add('idle', [0, 1, 2], 4.5, false);
         this.player.animations.add('climb', [7], 1, false);
 
-        // LADDER LAYER COLLISION STUFFS
-        this.map.setCollisionBetween(1, 5000, false, 'ladder'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
-        
-        this.map.setCollisionBetween(1, 5000, true, 'water'); // CANNOT BE found when third parameter isn't true... FOR REASONS!
-        
+        // Ladder layer collisions
+        this.map.setCollisionBetween(1, 5000, false, 'ladder');
+        this.map.setCollisionBetween(1, 5000, true, 'water');
         this.game.physics.arcade.enable(this.layer1); // The water layer
         this.physics.enable( [ this.layer1 ], Phaser.Physics.ARCADE);
-         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit);
-
+        this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit);
         this.game.physics.arcade.enable(this.layer4); // The ladder layer
         this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
 
-
-        // DOOR LAYER COLLISION STUFFS
-        //this.map.setCollisionBetween(1, 5000, true, 'door');
-
-        //this.game.physics.arcade.enable(this.layer5); // The ladder layer
-        //this.physics.enable( [ this.layer5 ], Phaser.Physics.ARCADE);
-        //this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
 
         // Block Library
         graphics.lineStyle(0);
@@ -197,7 +180,7 @@ RobotKompis.Level.prototype = {
         graphics.drawRect(843, 503, 163, 73);
         graphics.endFill();
 
-        // New and trash. 
+        // "New" and trash buttons
         this.new_btn = this.add.sprite(930, 510, 'new');
         this.new_btn.inputEnabled = true;
         this.new_btn.events.onInputDown.add(this.newCycle, this);
@@ -211,8 +194,7 @@ RobotKompis.Level.prototype = {
         this.trash_100.visible = false;
 
 
-        // OWN FUNCTION DEFINING STUFF
-
+        // Settings for own functions
         this.func_btn = this.add.button(965, this.world.height - 410 , 'func_button', this.favxOnClick, this, 2, 1, 0);
         this.cloud = this.add.sprite(140, 110, 'cloud');
         this.cloud.alpha = 0.6;
@@ -222,40 +204,32 @@ RobotKompis.Level.prototype = {
         this.func_title.visible = false;     
         this.createSixTransparrent();
 
-
-
         // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
-        this.commandGroup = this.add.group(); // To house all the command children. And eventually hit (test) them. And kill them. 
+        this.commandGroup = this.add.group(); // To house all the command children
         this.physics.arcade.enable(this.commandGroup);
         this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
-        //this.game.physics.arcade.enableBody(this);
         this.commandGroup.allowGravity = false; 
         this.commandGroup.immovable = true;
-        //this.body.allowGravity = false;
-        //this.body.immovable = true;
+
         //  A mask is a Graphics object
-        
         var commandMask = this.game.add.graphics(0, 0);
 
         //  Shapes drawn to the Graphics object must be filled.
         commandMask.beginFill(0xffffff);
 
-        //  Here we'll draw a circle
+        //  Circle
         commandMask.drawRect(10, 500, 800, 80);
-        this.commandGroup.mask = commandMask; // MASK :D :D :D (This took me half of my saturday to find...)
-        //this.functionGroup1.mask=mask;
+        this.commandGroup.mask = commandMask;
 
+        // Buttons
         this.rightArrow20 = this.add.sprite(13, 500, 'left20');
         this.rightArrow20.inputEnabled = true;
-        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
         this.leftArrow20 = this.add.sprite(805,500, 'right20');
         this.leftArrow20.inputEnabled = true;
-        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
 
         this.addNew(); // Add the newCommand variable sprite. 
-
 
         this.run_btn = this.add.sprite(965, this.world.height - 345, 'run_btn');
         this.run_btn.inputEnabled = true;
@@ -264,11 +238,9 @@ RobotKompis.Level.prototype = {
         this.stop_btn.inputEnabled = true;
         this.stop_btn.visible = false;
 
-        //this.restart_btn = this.add.sprite(965, this.world.height - 350, 'restart_btn');
         this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
         this.sound_btn.scale.setTo(0.7,0.7)
-        //this.sound_btn = this.add.button(200,0,  'muteUnMute', this.Mute, this);
         this.help_btn = this.add.button(965, this.world.height - 470, 'help_btn', this.seeTut, this);
         
         this.commandopil = this.add.image(200, this.world.height - 260, 'commandopil');
@@ -282,8 +254,7 @@ RobotKompis.Level.prototype = {
         this.gopil = this.add.image(850, 250, 'gopil');
         this.gopil.scale.setTo(0.4,0.4);
         this.gopil.visible = false;
-        
-        
+
         this.funkpil = this.add.image(850, 190, 'funkpil');
         this.funkpil.scale.setTo(0.4,0.4);
         this.funkpil.visible = false;
@@ -291,26 +262,20 @@ RobotKompis.Level.prototype = {
         this.radpil = this.add.image(830, 420, 'radpil');
         this.radpil.scale.setTo(0.4,0.4);
         this.radpil.visible = false;
-        
         this.pilar = false;
-        
-        
-
-        // Pointer is active by default and does not need to be turned on by game.input :)
-        this.cursors = this.input.keyboard.createCursorKeys();
 
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
         this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
-        // FUNCTION GROUPS ARE CREATED HERE
-
+        // Function groups are created here
         this.func_line_group = this.add.group();
         this.physics.arcade.enable(this.func_line_group);
         this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
         this.func_line_group.allowGravity = false; 
         this.func_line_group.immovable = true;
+
         // Function line mask and arrows
         var functionMask = this.game.add.graphics(0, 0);
         functionMask.beginFill(0xffffff);
@@ -320,13 +285,10 @@ RobotKompis.Level.prototype = {
         this.funcRightArrow20.inputEnabled = true;
         this.funcRightArrow20.alpha = 0.6;
         this.funcRightArrow20.visible = false;
-        //this.rightArrow20.events.onInputDown.add(this.moveCommandGroupRight, this);
         this.funcLeftArrow20 = this.add.sprite(755,180, 'right20');
         this.funcLeftArrow20.inputEnabled = true;
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
-        //this.leftArrow20.events.onInputDown.add(this.moveCommandGroupLeft, this); 
-
         this.func_tree_group = this.add.group();
         for(i=0;i<9;i++){
             this.func_tree_group.add(this.add.group());
@@ -339,15 +301,13 @@ RobotKompis.Level.prototype = {
 
     },
     
-    update: function () {// LET'S UPDATE !
+    update: function () {
         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit, null, this);
-        //this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
-        //this.game.physics.arcade.collide(this.player, this.layer1);
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
         
-        //Checks what animation to play
+        // Checks what animation to play
         if (this.animationCheck == 1) {
             this.player.animations.play('walkRight');
         } else if (this.animationCheck == 2) {
@@ -364,17 +324,16 @@ RobotKompis.Level.prototype = {
         
         
         // Command arrows 
-        if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
-        // pointer is down and is over our sprite, so do something here  
+        if (this.game.input.activePointer.isDown && this.rightArrow20.input.checkPointerOver(this.game.input.activePointer)) {
             this.commandGroup.setAll('body.velocity.x', -120);
         } else if (this.game.input.activePointer.isDown && this.leftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
             this.commandGroup.setAll('body.velocity.x', +120);
         } else {
             this.commandGroup.setAll('body.velocity.x', 0);
         }
+
         // Function arrows
-        if (this.game.input.activePointer.isDown && this.funcRightArrow20.input.checkPointerOver(this.game.input.activePointer)) {    
-        // pointer is down and is over our sprite, so do something here  
+        if (this.game.input.activePointer.isDown && this.funcRightArrow20.input.checkPointerOver(this.game.input.activePointer)) {
             this.func_line_group.setAll('body.velocity.x', -120);
         } else if (this.game.input.activePointer.isDown && this.funcLeftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
             this.func_line_group.setAll('body.velocity.x', +120);
@@ -383,22 +342,17 @@ RobotKompis.Level.prototype = {
         }
 
 
-/* Adoptee keys: 
-    this.finalPosX; 
-    this.finalPosY;
-    this.runInitiated;
-    this.comArrIndex;
-    */
-    // this.smallerThan = true
 
-        // HI THERE ! VELOCITY MOVERS BELOW!
+        /* Adoptee keys:
+         * this.finalPosX;
+         * this.finalPosY;
+         * this.runInitiated;
+         * this.comArrIndex;
+        */
+
+        // Velocity control
         if (this.runInitiated == false && this.comKey != "nope") {
-            /*
-            console.log("comArrIndex: " + this.comArrIndex);
-            console.log("thisPlayerX: " + this.player.x);
-            console.log("finalPosX: " + this.finalPosX);*/
-            //console.log("comKey?");
-            //console.log(this.comKey);
+
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
@@ -406,7 +360,7 @@ RobotKompis.Level.prototype = {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
-                this.player.body.velocity.y = 80; // Downwards descent.
+                this.player.body.velocity.y = 80;
                 this.downActive = false;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
@@ -417,59 +371,47 @@ RobotKompis.Level.prototype = {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             } else if (this.comKey == "ladder_com" && (this.player.y <= this.finalPosY || this.player.body.velocity.y == 0)) {
-                //console.log("ladder here. Gravity value:");
-                this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.map.setCollisionBetween(1, 5000, true, 'blocked');
                 this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
             } else if (this.comKey == "down_com" && (this.player.y >= this.finalPosY || this.player.body.velocity.y == 0)) {
-                //console.log("ladder here. Gravity value:");
-                this.map.setCollisionBetween(1, 5000, true, 'blocked'); // So I've temporarily cheated. SO WHAT?! 
+                this.map.setCollisionBetween(1, 5000, true, 'blocked');
                 this.player.body.allowGravity = true; 
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-            } else if (this.comKey == "wrong") { // WHAT ABOUT THE QUESTION MARK?!
+            } else if (this.comKey == "wrong") {
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true;
-                
             }
-            
+
+            // Robot is idle
             if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
-                //console.log("at door");
                 this.animationCheck = 0;
-                //this.scoreFunction();
             }
         }
-
-        
-        // HEY HO !
-        //console.log(this.comArrIndex+' index');
-        //console.log(this.command_array);
-    
 
         if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
             this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
             if (this.comKey == "walk_right_com") {
-                //console.log("walk to the right");
                 this.animationCheck = 1;
                 this.finalPosY = -20;
                 this.player.body.velocity.x = 100;
                 this.finalPosX = this.player.x + 31;
                 this.smallerThan = false;
             } else if (this.comKey == "walk_left_com") {
-                //console.log("walk to the left");
                 this.animationCheck = 2;
                 this.finalPosY = -20;
                 this.finalPosX = this.player.x - 31;
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
-            } else if (this.comKey == "ladder_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
+            } else if (this.comKey == "ladder_com") {
 
-                //var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
                 var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
 
                 var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
 
+                // Two checks; one for if there's a ladder and one if there isn't.
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
@@ -490,17 +432,18 @@ RobotKompis.Level.prototype = {
                     this.finalPosY = this.player.y - 130;
                     this.player.body.velocity.y = -100;
                     this.ladderOverlap = false;
-                    this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
+                    this.map.setCollisionBetween(1, 5000, false, 'blocked');
                 } else {
                     this.comKey = "wrong";
-                    //console.log("Make a question mark appear!");
                 }
                 if(this.waterOverlap){
                     console.log("Water overlap");
                 }
                 this.smallerThan = true; 
-            } else if (this.comKey == "down_com") { // I'm going to need two checks here. One for if there's a ladder (overlap!) and one if there isn't.
+            } else if (this.comKey == "down_com") {
                 var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y + 64, 20, 20);
+
+                // Ladder overlap check
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
@@ -513,10 +456,9 @@ RobotKompis.Level.prototype = {
                     this.finalPosY = this.player.y + 120;
                     this.player.body.velocity.y = 100;
                     this.ladderOverlap = false;
-                    this.map.setCollisionBetween(1, 5000, false, 'blocked'); // Yes, I'm cheating. Resetting it to true when guy reaches finalPosY
+                    this.map.setCollisionBetween(1, 5000, false, 'blocked');
                 } else {
                     this.comKey = "wrong";
-                    //console.log("Make a question mark appear!");
                 }
                 this.smallerThan = true; 
             } 
@@ -540,30 +482,27 @@ RobotKompis.Level.prototype = {
                 this.downActive = true;
             } else if (this.comKey == "key_com") {
                 var layer5tiles = this.layer5.getTiles(this.player.x, this.player.y - 20, 20, 20);
+
+                // Door overlap check
                 for (i = 0; i < layer5tiles.length; i++) {
                     if (layer5tiles[i].index != (-1)) {
                         this.doorOverlap = true;
                     }
                 }
-                if (this.doorOverlap) {  // WE HAVE A DOOR !!!!!!!!!!!!!!!!!!!!!!!
+                if (this.doorOverlap) {
                     this.state.start('WinScreen');
                     this.doorOverlap = false;
                 } else {
                     this.comKey = "wrong";
-                    //console.log("Make a question mark appear!");
                 }
             }
             this.runInitiated = false;
-        }      
-        
-        // Fix so it can't move beyond its parameters. 
-        // When a new command is added to it, it snaps back :(
-
+        }
 
     },
 
 
-
+    // Function for displaying the tutorial
     seeTut: function() {
         if (this.pilar ==false) {
             this.pilar = true;
@@ -573,7 +512,7 @@ RobotKompis.Level.prototype = {
             this.radpil.visible = true;
             this.pilmute.visible = true;
         }
-        else { //...*** and closes if opened ;)
+        else {
             this.pilar = false;
             this.pilar = false;
             this.commandopil.visible = false;
@@ -586,15 +525,15 @@ RobotKompis.Level.prototype = {
     },
 
 
-    // Used to save the initial position of commands (sprites) before they are dragged off to neverneverland.
+    // Reset the player and inputs
     waterHit: function(){
-        console.log("HITMEBABYONEMORETIME");
-   this.animationCheck = 0;
+        this.animationCheck = 0;
+
         // Re-activate commands and their input related functionality. 
         for (i = 0; i < this.commandGroup.length; i++) {
-            //console.log("Hippity hoop, I'm in your for loop!");
             this.commandGroup.getAt(i).input.enabled = true;
         }
+
         this.rightArrow20.input.enabled = true;
         this.leftArrow20.input.enabled = true;
         this.newCommand.input.draggable = true;
@@ -603,7 +542,6 @@ RobotKompis.Level.prototype = {
 
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        //this.player = this.add.sprite(95, this.world.height - 280, 'switchAni');
         this.player.reset(95, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
@@ -611,28 +549,25 @@ RobotKompis.Level.prototype = {
         this.comKey = "nope";
     },
     
-    
+    // Two functions for handling dragging of commands to the command line
     commandDragStart: function(sprite, pointer) {
-        // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
-        // y is always 510. Both oldPosY and newPosY.
-        if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
-            this.oldPosX = 850; // Same dimensions as when newCommand is created.
+
+        // Checks if they're identical. Not to be confused with having the same key
+        if (sprite == this.newCommand) {
+            this.oldPosX = 850; // Same dimensions as when newCommand is created
         }
         else {
-            var remainder = sprite.x % 70; // Cleanse the input from faulty values.
-            this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
-            // this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
-            this.oldPosX = sprite.x; // Seems to be easier to write so in DragStart because all the sprites start from fixed modified positions. 
+            var remainder = sprite.x % 70; // Cleanse the input from faulty values
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
+            this.oldPosX = sprite.x;
             this.oldPosY = sprite.y;
-            this.commandGroup.remove(sprite); // It's no longer allowed to be in this group!
-            // this.currentSpriteGroup.visible=true;
+            this.commandGroup.remove(sprite);
             this.currentSpriteGroup.add(sprite);
         }
     },
 
-    // Hello! Someone has stopped dragging the command around. Try to add it to commandGroup if possible, and always adjust position.
-   
     commandDragStop: function(sprite, pointer) {
+
         var index = 0;
         if(this.inArray(sprite.key, this.func_image_array)===true){
             index = this.func_image_array.indexOf(sprite.key);   
@@ -642,10 +577,11 @@ RobotKompis.Level.prototype = {
             if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
-            var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-            this.newPosX = 40 + (this.commandLineIndex * 70);
-            // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+            var remainder = sprite.x % 70;
+            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index
+            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position
+
+            // Calculate the new position
             this.newPosY = sprite.y;
             sprite.reset(this.newPosX, 510);
             if (this.commandLineIndex <= this.commandGroup.length) {
@@ -655,7 +591,8 @@ RobotKompis.Level.prototype = {
             }
             this.currentSpriteGroup.remove(sprite);
             this.commandGroupRender();
-            // TEST
+
+
             if(this.inArray(sprite, this.func_sprite_array)===true){  
                 this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]=null;
 
@@ -667,7 +604,7 @@ RobotKompis.Level.prototype = {
                 this.addDuplicate(this.func_image_array.indexOf(sprite.key));
             }
         }
-            //NIKO
+
         else if (pointer.y > 100 && pointer.y < 350 && pointer.x > 140 && pointer.x < 800) {
             if (this.cloud.visible===true && this.func_save.visible===true){ 
 
@@ -676,10 +613,10 @@ RobotKompis.Level.prototype = {
                 }
                 // *** FROM HERE
                 var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
                 this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
                 this.newPosY = sprite.y;
-                console.log(this.commandLineIndex)
+
                 sprite.reset(this.newPosX, 190);
                 if (this.commandLineIndex <= this.func_line_group.length) {
                     this.func_line_group.addAt(sprite, this.commandLineIndex);
@@ -1234,7 +1171,6 @@ RobotKompis.Level.prototype = {
         this.func_cancel.alpha = 0.7;
         this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this); 
     },
-    // :D :D :D 
 
     // Returns Child Index (in the group)
     returnChildIndex: function(needle,haystack) {  
@@ -1269,7 +1205,8 @@ RobotKompis.Level.prototype = {
         this.func_sprite_array = [];
         this.state.start('MapOverview');
     },
-    
+
+    // Save score
     scoreFunction: function () {
         var noBlocks = this.commandGroup.length;
         saveScore(noBlocks, this.saveDataArgs);

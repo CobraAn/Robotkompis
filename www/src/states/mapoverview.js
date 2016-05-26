@@ -22,33 +22,44 @@ RobotKompis.MapOverview = function (game) {
     this.robotFrame = 0;
     this.robotData = {};
 
-    //Variabler för level select
+    // Vairabel for level select
     this.currentWorld;
-    // number of button rows
+
+    // Number of button rows
     this.buttonRows = 1;
-    // number of button columns
+
+    // Number of button columns
     this.buttonCols = 5;
-    // width of a button, in pixels
+
+    // Width of a button, in pixels
     this.buttonWidth = 100;
-    // height of a button, in pixels
+
+    // Height of a button, in pixels
     this.buttonHeight = 100;
-    // space among buttons, in pixels
+
+    // Space among buttons, in pixels
     this.buttonSpacing = 8;
-    // array with finished levels and stars collected.
-    // 0 = zero stars
-    // 1 = one star
-    // 2 = two stars
-    // 3 = three stars
-    // 4 = Used for click interaction! don't use this in starsArray!!
-    // 5 = Locked level
+
+    /* Array with finished levels and stars collected.
+     * 0 = zero stars
+     * 1 = one star
+     * 2 = two stars
+     * 3 = three stars
+     * 4 = Used for click interaction! don't use this in starsArray!!
+     * 5 = Locked level
+    */
     this.starsArray = [0, 1, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
-    // how many pages are needed to show all levels?
+
+    // Pages required to show all levels
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
-    // group where to place all level buttons
+
+    // Group where to place all level buttons
     this.levelButtonsGroup;
-    // current page
+
+    // Current page
     this.currentPage = 0;
-    // arrows to navigate through level pages
+
+    // Arrows to navigate through level pages
     this.leftArrow;
     this.rightArrow;
     this.levelText;
@@ -62,8 +73,11 @@ RobotKompis.MapOverview.prototype = {
 
     init: function () {
 
+        /*
+         * Loads data from localStorage and sets the saved robot as the current one, if data exists
+         */
+
         this.playerData = loadData();
-        console.log(this.playerData + '!!');
         if (typeof this.playerData !== "undefined" && this.playerData !== null) {
             console.log(this.playerData.robot);
             this.character = this.playerData.robot;
@@ -76,39 +90,40 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         this.createLevelSelect();
         this.popupGroup = this.add.group();
-        
-        /*this.func_btn = this.add.button(30, 450 , 'func_button', this.favxOnClick, this, 2, 1, 0);
-        this.cloud = this.add.sprite(71, 107, 'cloud'); 
-        this.cloud.visible = false;*/ 
+
         this.cloud = this.add.image(430, 50, 'settingsCloud');
         this.cloud.bringToTop();
         this.cloud.visible = false;
 
+        // Mute and Tutorial button initiation
         this.mute_button = this.add.button(500, 65,  'muteUnMute', this.Mute, this);
         this.tut_button = this.add.button(500, 300,  'tutBtn', this.LoadTutorial, this)
         this.mute_button.visible = false;
         this.tut_button.visible = false;
 
-        //for the robot-choosing-popup-menu
-        //have to fix that the sprite sheet remembers its last frame so it chows the right chosen robot.
+        // TODO
+        // Have to fix that the sprite sheet remembers its last frame so it chows the right chosen robot.
+
+        // Robot menu
         this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
         this.robotchoice.frame = this.robotFrame;
         
-        //the background of the popup
+        // The background of the popup
         this.popup = this.add.sprite(200, 150, 'robotChoiseBackground');
-        //postioner för close knappen.
+
+        // Positions for the "Close" button
         var pw = (this.popup.width) + 160;
         var ph = (this.popup.height/2) -10 ;
-        // click the close button to close it down again
         this.closebutton = this.add.button(pw, ph, 'closeButton', this.closeWindow, this, 0, 0, 1);
-        //alla robotar som knappar
+
+        // Robots as buttons
         this.while = this.make.button(220, 190, 'whileChoise', this.whileButton, this, 0, 0, 1);
         this.switch = this.make.button(410, 190, 'switchChoise', this.switchButton, this, 0, 0, 1);
         this.else = this.add.button(600, 190, 'elseChoise', this.elseButton, this, 0, 0, 1);
         this.goto = this.add.button(275, 360, 'gotoChoise', this.gotoButton, this, 0, 0, 1);
         this.if = this.add.button(500, 360, 'ifChoise', this.ifButton, this, 0, 0, 1); 
         
-        //lägger allt i en grupp för att enklara kunna stänga ner dem i closeWindow
+        // Add to group for easier control
         this.popup.addChild(this.closebutton);
         this.popupGroup.add(this.popup);
         this.popupGroup.add(this.closebutton);
@@ -120,42 +135,32 @@ RobotKompis.MapOverview.prototype = {
 
         this.popupGroup.visible = false;
 
-       
-	
-        //Gör om denna till knapp för inställningar
         this.settingsIcon = this.add.button(950, 5, 'settingsIcon', this.startSettings, this, 0, 0, 1);
         
-        //titel
+        // Title
         this.title = this.add.bitmapText(180, 40, 'titleFont', 'Robotkompis', 110);
         this.world.sendToBack(this.title);
         
     },
     startSettings: function () {
         'use strict';
-                  
-        if (this.cloud.visible==false) { // The cloud opens if closed...*** 
-            this.cloud.visible = true; 
-            // Everything what is supposed to be opened is opened, other stuff is closed
-            //this.tut_button.visible = true;
-            this.mute_button.visible = true;
-                
-                          
-            }
         
-        else { //...*** and closes if opened ;)
-            // Close everything except for the chosen function. 
+        if (this.cloud.visible==false) {
+            this.cloud.visible = true;
+            this.mute_button.visible = true;
+        }
+        
+        else {
             this.mute_button.visible = false;
-            this.tut_button.visible = false; 
-            
-            // To be sure that everything is closed (bugging without the following 4 guys).
-                  
+            this.tut_button.visible = false;
             this.cloud.visible = false;
   
          }
     },
     
     createLevelSelect: function() {
-        
+
+        // Create left and right arrows
         this.leftArrow = this.add.button(this.world.centerX - 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 0, 0, 1);
         this.leftArrow.anchor.setTo(0.5);
         this.leftArrow.frame = 0;
@@ -163,25 +168,29 @@ RobotKompis.MapOverview.prototype = {
         this.rightArrow = this.add.button(this.world.centerX + 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 2, 2, 3);
         this.rightArrow.anchor.setTo(0.5);
         this.rightArrow.frame = 2;
+
         //Creation of levelButton group
         this.levelButtonsGroup = this.add.group();
         var levelLength = this.buttonWidth*this.buttonCols+this.buttonSpacing*(this.buttonCols - 1);
         var levelHeight = this.buttonWidth*this.buttonRows+this.buttonSpacing*(this.buttonRows - 1);
+
         //Looping through each page
         for(var l = 0; l < this.pages; l++){
-            //position of grid
+            // Position of grid
             var offsetX = (this.world.width - levelLength)/2+this.world.width*l;
             var offsetY = (this.world.height - levelHeight)/2;
-            //What world?
+
+            // Current world
             var currentWorld = l + 1;
             var currentWorldString = currentWorld.toString();
             this.currentWorldText = this.add.text(offsetX + 180, 170, 'Värld ' + currentWorldString, this.style);
             this.levelButtonsGroup.add(this.currentWorldText);
-            //Looping through each level button
+
+            // Looping through each level button
             for(var i = 0; i < this.buttonRows; i++) {
                 for(var j = 0; j < this.buttonCols; j++){
 
-                    //which level does the button refer?
+                    // Check which level and load previously earned stars if they exist
                     var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
                     var dictKey = "Level" + (levelNumber+1).toString();
                     var levelStars = 0;
@@ -190,8 +199,8 @@ RobotKompis.MapOverview.prototype = {
                             levelStars = this.playerData.levels[dictKey];
                         }
                     }
-                    //adding button, calls the buttonClicked function
 
+                    // Adding button based on amount of stars, calls the buttonClicked function
                     if (this.starsArray[levelNumber] == 5) {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                             offsetY+i*(this.buttonHeight+this.buttonSpacing), '' +
@@ -199,26 +208,24 @@ RobotKompis.MapOverview.prototype = {
                         levelButton.frame = this.starsArray[levelNumber];
                     }
                     else {
-                        //För stjärnor, byt sista 1:an mot en 0:a
                         if (levelStars !== 0) {
                             var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                                 offsetY+i*(this.buttonHeight+this.buttonSpacing),
                                 'levelSelect', this.buttonClicked, this, null,
                                 this.playerData.levels[dictKey] , 4);
-                            //showing right frame
                             levelButton.frame = levelStars;
                         } else {
                             var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                                 offsetY+i*(this.buttonHeight+this.buttonSpacing),
                                 'levelSelect', this.buttonClicked, this, null, 0, 4);
-                            //showing right frame
                             levelButton.frame = 0;
                         }
                     }
 
-                    // custom attribute 
+                    // Custom attribute
 				    levelButton.levelNumber = levelNumber+1;
-				    // adding the level thumb to the group
+
+				    // Adding the level thumb to the group
 				    this.levelButtonsGroup.add(levelButton);
                     if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
@@ -237,7 +244,8 @@ RobotKompis.MapOverview.prototype = {
         }
     },
      buttonClicked: function (button) {
-	   // the level is playable, then play the level!!
+
+         // Start correct level
         if(button.frame < 5) {
 
             if (button.levelNumber == 1) {
@@ -256,10 +264,10 @@ RobotKompis.MapOverview.prototype = {
                 this.startLevelFive();
             }
             else {
-                console.log('Något är fel');
+                console.log('Something went wrong');
             }
         }
-        // else, let's shake the locked levels
+        // Else, shake the locked levels
         else{
             var buttonTween = this.add.tween(button)
             buttonTween.to({
@@ -281,30 +289,31 @@ RobotKompis.MapOverview.prototype = {
         }
     },
     arrowClicked: function (button) {
-        // touching right arrow and still not reached last page
+        // Touching right arrow and still not reached last page
         if(button.frame==3 && this.currentPage < this.pages-1){
             this.leftArrow.alpha = 1;
             this.currentPage++;
-            // fade out the button if we reached last page
+
+            // Fade out the button if we reached last page
             if(this.currentPage == this.pages-1){
                 button.alpha = 0.3;
             }
-            // scrolling level pages
+            // Scrolling level pages
             var buttonsTween = this.add.tween(this.levelButtonsGroup);
             buttonsTween.to({
                 x: this.currentPage * this.world.width * -1
             }, 500, Phaser.Easing.Cubic.None);
             buttonsTween.start();
         }
-        // touching left arrow and still not reached first page
+        // Touching left arrow and still not reached first page
         if(button.frame==1 && this.currentPage>0){
             this.rightArrow.alpha = 1;
             this.currentPage--;
-            // fade out the button if we reached first page
+            // Fade out the button if we reached first page
             if(this.currentPage == 0){
                 button.alpha = 0.3;
             }
-            // scrolling level pages
+            // Scrolling level pages
             var buttonsTween = this.add.tween(this.levelButtonsGroup);
             buttonsTween.to({
                 x: this.currentPage * this.world.width * -1
@@ -314,20 +323,12 @@ RobotKompis.MapOverview.prototype = {
 
    
      },
-    
-    //Funktioner kopplade till knapparna som ska föra spelet in i ett game-state
+    // Functions connected to the level buttons for loading correct game states
     startLevelOne: function () {
         'use strict';
-        /*
-        this.state.states['Tutorial'].tilemapKey = 'tilemap0';
-        this.state.states['Tutorial'].commandKeys = ['walk_left_com'];
-        this.state.start('Tutorial');
-        */
+
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'key_com'];
-        //, 'down_com', 
-          //                                      'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'];
-
         this.state.start('Level', true, false, this.character, "Level1");
 
     },
@@ -367,7 +368,6 @@ RobotKompis.MapOverview.prototype = {
     popuprobot: function () {
         this.levelButtonsGroup.visible = false;    
         this.popupGroup.visible = true;
-        //change to visible but not clickable when time. 
         this.leftArrow.visible = false;
         this.rightArrow.visible = false;
         return;
@@ -377,12 +377,12 @@ RobotKompis.MapOverview.prototype = {
     closeWindow: function() {
         this.popupGroup.visible = false;
         this.levelButtonsGroup.visible = true;
-        //change to visible but not clickable when time. 
         this.leftArrow.visible = true;
         this.rightArrow.visible = true;
         return;
     },
-        
+
+    // Buttons for the robots
     whileButton: function () {
         this.character = 'while'; //changes the character
         this.robotchoice.frame = 1;
@@ -421,18 +421,15 @@ RobotKompis.MapOverview.prototype = {
     Mute: function(){
         if (this.sound.mute == false) {
             this.sound.mute = true;
-           
             this.mute_button.frame = 1;
-            //this.mute_button = this.add.button(200,0,  'muteButton', this.Mute, this, 0, 0, 1);
-            
         } else {
             this.sound.mute = false;
             
             this.mute_button.frame = 0;
         };   
     },
-    LoadTutorial: function() {
-        //alert('finns ej');
-    }   
+
+    // Unused for now
+    LoadTutorial: function() {}
     
 };
