@@ -352,19 +352,23 @@ RobotKompis.Level.prototype = {
 
         // Velocity control
         if (this.runInitiated == false && this.comKey != "nope") {
-
+            //console.log("this.finalPosX:");
+            //console.log(this.finalPosX);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
+                //console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
-                this.player.body.velocity.y = 80;
+                //console.log("hop height reached");
+                this.player.body.velocity.y = 85;
                 this.downActive = false;
-                this.comArrIndex = this.comArrIndex + 1; 
-                this.runInitiated = true; 
+                //this.comArrIndex = this.comArrIndex + 1; 
+                //this.runInitiated = true; 
             } else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
+                //console.log("walk left stop!");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true; 
@@ -406,24 +410,24 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") {
+                // Uhm, why are there 2 getTiles? 
+                //var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
 
-                var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
-
-                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
-
+                var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 10, 10);
+                this.ladderOverlap = false;
                 // Two checks; one for if there's a ladder and one if there isn't.
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
                     }
                     
-                }
+                }/*
                 for (i = 0; i < layer1tiles.length; i++) {
                     if (layer1tiles[i].index != (-1)) {
                         this.waterOverlap = true;
                     }
                     
-                }
+                }*/
                 
                 if (this.ladderOverlap) {
                     this.animationCheck = 3;
@@ -464,6 +468,7 @@ RobotKompis.Level.prototype = {
             } 
 
             else if (this.comKey == "hop_left_com") {
+                //console.log("hippity hop, left!");
                 this.animationCheck = 5;
                 this.finalPosX = this.player.x - 64;
                 this.finalPosY = this.player.y - 32;
@@ -473,6 +478,7 @@ RobotKompis.Level.prototype = {
                 this.downActive = true;
             }
             else if (this.comKey == "hop_right_com") {
+                //console.log("hippity hop, right!");
                 this.animationCheck = 4;
                 this.finalPosX = this.player.x + 64;
                 this.finalPosY = this.player.y - 32;
