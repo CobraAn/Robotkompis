@@ -312,13 +312,43 @@ RobotKompis.Level.prototype = {
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
         this.func_tree_group = this.add.group();
-        // for(i=0;i<9;i++){
-        //     this.func_tree_group.add(this.add.group());
-        // }
-        var savedFuncArray = this.playerData.funcArray;
         for(i=0;i<9;i++){
-            
+            this.func_tree_group.add(this.add.group());
         }
+        // THIS COMMENTED CODE IS A PREPARATION FOR IMPLEMENTING LOADING THE SAVED FUNCTIONS. JUST UNCOMMENT IT. 
+
+        // var saveFuncArray = this.playerData.funcArray; // Get the functions saved from the previous time from the localStorage. 
+        // var tempCommand; // A temporary variable to create command sprites from the functions from the previous time.
+        // for(i=0;i<9;i++){
+        //     if(saveFuncArray[i]!==null){ //Go through array-elements
+        //         // Recreate the function sprites remained from previous time.
+        //         this.func_sprite_array[i] = this.add.sprite(200+70*(i-1), 190, this.func_image_array[i]); // Create and upt them at tha corresponding place in the function-cloud. 
+        //         this.func_sprite_array[i].visible = false; // At this stage they shouldn't be visible
+        //         this.physics.arcade.enable(this.func_sprite_array[i]); // It hould be possible to move them
+        //         this.func_sprite_array[i].body.allowGravity = false; // But the gravity has no power on them.    
+        //         //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
+        //         this.func_sprite_array[i].inputEnabled = true; // 
+        //         this.func_sprite_array[i].input.useHandCursor = true;
+        //         this.func_sprite_array[i].input.enableDrag();
+        //         this.func_sprite_array[i].events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+        //         this.func_sprite_array[i].events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+
+        //         for(y=0;y<saveFuncArray[i].length;y++){ // Now go 2D 
+        //             tempCommand = this.add.sprite(0, 0, saveFuncArray[i][y]); // From every key-string you find in the saveFuncArray, create a command sprite
+        //             tempCommand.visible = false;
+        //             this.physics.arcade.enable(tempCommand);
+        //             tempCommand.body.allowGravity = false;  
+        //             tempCommand.inputEnabled = true;
+        //             tempCommand.input.enableDrag(true);
+        //             tempCommand.events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+        //             tempCommand.events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+        //             tempCommand.collideWorldBounds = true;                    
+        //             this.func_tree_group.children[i].addAt(y, tempCommand); // ...and finally put the sprite at the corresponding position in the func_tree_group
+
+        //         }
+        //     }     
+        // }
+        // this.func_tree_group.visible = false;
         this.physics.arcade.enable(this.func_tree_group);
         this.physics.enable( [ this.func_tree_group ], Phaser.Physics.ARCADE);
         this.func_tree_group.allowGravity = false;
