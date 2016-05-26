@@ -612,41 +612,39 @@ RobotKompis.Level.prototype = {
                     this.addNew();
                 }
                 // *** FROM HERE
-                var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).
-                this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                this.newPosY = sprite.y;
-
-                sprite.reset(this.newPosX, 190);
-                if (this.commandLineIndex <= this.func_line_group.length) {
-                    this.func_line_group.addAt(sprite, this.commandLineIndex);
-                } else {
-                    this.func_line_group.add(sprite);
+                if(this.inArray(sprite.key,this.func_image_array)===true) {
+                    sprite.reset(this.oldPosX, 510);  
+                    this.commandGroup.addAt(sprite, this.commandLineIndex); 
+                    this.currentSpriteGroup.remove(sprite);                 
                 }
-                this.currentSpriteGroup.remove(sprite);
-                this.functionGroupRender();
-
-                // THIS UNCOMMENTED CODE BELOW IS IF YOU WANT TO TAKE AWAY RECURSION(FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
-
-                // if(this.inArray(sprite.key,this.func_image_array)===true) {
-                //     sprite.reset(this.oldPosX, 510);  
-                //     this.commandGroup.addAt(sprite, this.commandLineIndex); 
-                //     this.currentSpriteGroup.remove(sprite);                 
+                else{
+                    var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                    this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                    this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                    this.newPosY = sprite.y;
+                    sprite.reset(this.newPosX, 190);
+                    if (this.commandLineIndex <= this.func_line_group.length) {
+                        this.func_line_group.addAt(sprite, this.commandLineIndex);
+                    } else {
+                        this.func_line_group.add(sprite);
+                    }
+                    this.currentSpriteGroup.remove(sprite);
+                    this.functionGroupRender();                    
+                }
+                // THIS UNCOMMENTED CODE BELOW IS if YOU WANT TO WORK ON RECURSION(FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
+                // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
+                // this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
+                // this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
+                // this.newPosY = sprite.y;
+                // console.log(this.commandLineIndex)
+                // sprite.reset(this.newPosX, 190);
+                // if (this.commandLineIndex <= this.func_line_group.length) {
+                //     this.func_line_group.addAt(sprite, this.commandLineIndex);
+                // } else {
+                //     this.func_line_group.add(sprite);
                 // }
-                // else{
-                //     var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                //     this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                //     this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                //     this.newPosY = sprite.y;
-                //     sprite.reset(this.newPosX, 190);
-                //     if (this.commandLineIndex <= this.func_line_group.length) {
-                //         this.func_line_group.addAt(sprite, this.commandLineIndex);
-                //     } else {
-                //         this.func_line_group.add(sprite);
-                //     }
-                //     this.currentSpriteGroup.remove(sprite);
-                //     this.functionGroupRender();                    
-                // }
+                // this.currentSpriteGroup.remove(sprite);
+                // this.functionGroupRender();
             }
 
             else if(this.cloud.visible===true && this.func_save.visible===false){
@@ -758,6 +756,8 @@ RobotKompis.Level.prototype = {
         for (i = 0; i < this.commandGroup.length; i++) {
             this.commandGroup.getAt(i).input.enabled = false;
         }
+        this.funcRightArrow20.visible = false; // Patch
+        this.funcLeftArrow20.visible = false; // Patch
         this.rightArrow20.input.enabled = false;
         this.leftArrow20.input.enabled = false;
         this.newCommand.input.draggable = false;
@@ -775,71 +775,70 @@ RobotKompis.Level.prototype = {
         this.run_btn.visible = false;
  
         // *** FROM HERE
-        // Call the function that goes through the objects in commandGroup and and puts them in the command_array.
-        // The command_array is the ultimate array from which the the robot's movements are readed in the update-function above. 
-        this.goThroughCommandGroup(this.commandGroup, -1);
-        this.depthCount = 0;
-
-        // THIS UNCOMMENTED CODE BELOW IS IF YOU WANT TO TAKE AWAY RECURSION (FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
-
-        // var spriteInCommand;
-        // for( i = 0; i < this.commandGroup.length; i++){
-        //     spriteInCommand = this.commandGroup.getAt(i);
-        //     //console.log(spriteInCommand.key)
-        //     if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
-        //         for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].length; y++) {
-        //                 this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].getAt(y));               
-        //         }               
-        //     }
-        //     else {
-        //         this.command_array.push(spriteInCommand);    
-        //     }
-        // }
+        var spriteInCommand;
+        for( i = 0; i < this.commandGroup.length; i++){
+            spriteInCommand = this.commandGroup.getAt(i);
+            //console.log(spriteInCommand.key)
+            if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
+                for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].length; y++) {
+                        this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].getAt(y));               
+                }               
+            }
+            else {
+                this.command_array.push(spriteInCommand);    
+            }
+        }
+        // THIS UNCOMMENTED CODE BELOW IS IF YOU WANT TO WORK ON RECURSION (FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
+        // // Call the function that goes through the objects in commandGroup and and puts them in the command_array.
+        // // The command_array is the ultimate array from which the the robot's movements are readed in the update-function above. 
+        // this.goThroughCommandGroup(this.commandGroup, -1);
+        // this.depthCount = 0;
 
         this.wrongCommand = false;
         this.runInitiated = true;
         this.comArrIndex = 0; // SOMEONE messed it up before we got to this point (no, I don't know who)
     },
     
-    // This function that goes through the objects in commandGroup and and puts them in the command_array.
-    goThroughCommandGroup: function(commandGroup, currentChildIndex){ 
-            var spriteInCommand; // Temporary variable where the sprites in from the commandGroup are saved one by one. 
-            for(i=currentChildIndex+1; i<commandGroup.length; i++){ // Start/continue from the current sprite position in the commandGroup
-                spriteInCommand = this.commandGroup.getAt(i); // The current sprite is saved. 
-                if (this.inArray(spriteInCommand.key,this.func_image_array)===true){ // If the current sprite's key (its' picute) is in the array of function sprite pictures
-                    this.depthCount++; // This variable shows how deep in the recursion we went (how many cycles) (how deep we put functions)
-                    this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(spriteInCommand.key), i]; // Put the function number and its' place number in the current line corresponding to the current depth level. 
-                    this.withRec(spriteInCommand, -1); // Go recursive ;) 
-                }
-                else { // If the current sprite is not a function it might be a command then 
-                    this.command_array.push(spriteInCommand); // So put it in the command array
-                }
-            }       
-    },
-    // This is a recursive function which goes through all functions put in the commandGroup and functions which are put in those functions and functions which are put in those functions and functions which are put in those functions... i think, you got it :)
-    withRec: function(parentFuncSprite, currentChildIndex) { 
-        var childrenGroup = this.func_tree_group.getAt(this.func_image_array.indexOf(parentFuncSprite.key)); // Save the group of commands in the parent function (group of commands which are placed under the index corresponding to function number)
-        for(y=currentChildIndex+1; y<childrenGroup.length; y++) { // Start/continue from the current sprite position in the particular function group. 
-            if(this.inArray((childrenGroup.getAt(y)).key,this.func_image_array)===true){ // If the current sprite is a function...
-                this.depthCount++; // Let us go to the next depth level                
-                this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(childrenGroup.getAt(y).key), y]; // Put the function number and its' place number in the current line corresponding to the current depth level.
-                this.withRec(childrenGroup.getAt(y), -1); // And now it's time to go recursive again... and then again and again. 
-            }
-            else { // If the current sprite is not a function...
-                this.command_array.push(childrenGroup.getAt(y)); // There's nothing else than to put in in the command_array
-                if(y===childrenGroup.length-1){ // If that was the last sprite in the current function...
-                    if(this.depthCount===1){ // ...and if now we are located on the 1st function depth level...
-                        this.goThroughCommandGroup(this.commandGroup, this.index_tree_array[this.depthCount][1]); // ... go back to the commandGroup and continue from the next sprite in it. 
-                    }
-                    else{ // ... but if not yet the 1st depth level...
-                        this.depthCount--; // ... go to the previous depth level with recursive                   
-                        this.withRec(this.func_sprite_array[this.index_tree_array[this.depthCount][0]], this.index_tree_array[this.depthCount+1][1]); // Here's the place where we call the saved positions of the parent function numbers and their positions in corresponding lines. 
-                        // NB! In the withRec function parameters here we call the parent function on the previous depth level and the child's index on which we were interrupted by the recursive function previous time (that's why there's "+1" in the second parameter)
-                    }
-                }    
-            }            
-        }                              
-    },
+    // // This function that goes through the objects in commandGroup and and puts them in the command_array.
+    // goThroughCommandGroup: function(commandGroup, currentChildIndex){ 
+    //     var spriteInCommand; // Temporary variable where the sprites in from the commandGroup are saved one by one.  
+    //     for(i=currentChildIndex+1; i<commandGroup.length; i++){ // Start/continue from the current sprite position in the commandGroup
+    //         spriteInCommand = this.commandGroup.getAt(i); // The current sprite is saved. 
+    //         if (this.inArray(spriteInCommand.key,this.func_image_array)===true){ // If the current sprite's key (its' picute) is in the array of function sprite pictures
+    //             this.depthCount++; // This variable shows how deep in the recursion we went (how many cycles) (how deep we put functions)
+    //             this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(spriteInCommand.key), i]; // Put the function number and its' place number in the current line corresponding to the current depth level. 
+    //             this.withRec(spriteInCommand, -1); // Go recursive ;) 
+    //         }
+    //         else { // If the current sprite is not a function it might be a command then 
+    //             this.command_array.push(spriteInCommand); // So put it in the command array
+    //         }
+    //     }       
+    // },
+    // // This is a recursive function which goes through all functions put in the commandGroup and functions which are put in those functions and functions which are put in those functions and functions which are put in those functions... i think, you got it :)
+    // withRec: function(parentFuncSprite, currentChildIndex) { 
+    //     var childrenGroup = this.func_tree_group.getAt(this.func_image_array.indexOf(parentFuncSprite.key)); // Save the group of commands in the parent function (group of commands which are placed under the index corresponding to function number)
+    //     console.log("children group length",childrenGroup.length)
+    //     for(y=currentChildIndex+1; y<childrenGroup.length; y++) { // Start/continue from the current sprite position in the particular function group. 
+    //         if(this.inArray((childrenGroup.getAt(y)).key,this.func_image_array)===true){ // If the current sprite is a function...
+    //             this.depthCount++; // Let us go to the next depth level                
+    //             this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(childrenGroup.getAt(y).key), y]; // Put the function number and its' place number in the current line corresponding to the current depth level.
+    //             this.withRec(childrenGroup.getAt(y), -1); // And now it's time to go recursive again... and then again and again. 
+    //         }
+    //         else { // If the current sprite is not a function...
+    //             this.command_array.push(childrenGroup.getAt(y)); // There's nothing else than to put in in the command_array
+    //             if(y===childrenGroup.length-1){ // If that was the last sprite in the current function...
+    //                 if(this.depthCount===1){ // ...and if now we are located on the 1st function depth level...
+    //                     this.goThroughCommandGroup(this.commandGroup, this.index_tree_array[this.depthCount][1]); // ... go back to the commandGroup and continue from the next sprite in it. 
+    //                 }
+    //                 else{ // ... but if not yet the 1st depth level...
+    //                     this.depthCount--; // ... go to the previous depth level with recursive                   
+    //                     this.withRec(this.func_sprite_array[this.index_tree_array[this.depthCount][0]], this.index_tree_array[this.depthCount+1][1]); // Here's the place where we call the saved positions of the parent function numbers and their positions in corresponding lines. 
+    //                     // NB! In the withRec function parameters here we call the parent function on the previous depth level and the child's index on which we were interrupted by the recursive function previous time (that's why there's "+1" in the second parameter)
+    //                 }
+    //             }    
+    //         }            
+    //     }                              
+    // },
 
         //pausar spelet/i nuläget stoppar den run och återställer player/roboten till ursprungsläget.
     listenerStop: function () {
