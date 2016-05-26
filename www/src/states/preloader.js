@@ -40,16 +40,29 @@ RobotKompis.Preloader.prototype = {
         this.load.image('bg', '../../images/startBG600.png');
 
         //Maps
-        this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        //World 1
+        //this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap1', '../../assets/maps/1.0x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap2', '../../assets/maps/1.1xx.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap3', '../../assets/maps/1.2x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap4', '../../assets/maps/1.3x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap5', '../../assets/maps/1.4x.json', null, Phaser.Tilemap.TILED_JSON);
+        //World 2
+        //this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap6', '../../assets/maps/2.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap7', '../../assets/maps/2.1x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap8', '../../assets/maps/2.2x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap9', '../../assets/maps/2.3x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap10', '../../assets/maps/2.4x.json', null, Phaser.Tilemap.TILED_JSON);
+        
+        
         this.load.image('ground', '../../assets/kenney32/spritesheet_ground2.png');
         this.load.image('items', '../../assets/kenney32/spritesheet_items.png');
         this.load.image('tiles', '../../assets/kenney32/spritesheet_tiles.png');
-        this.load.image('background', '../../assets/backgrounds/newdesert.jpg');
+        this.load.image('desertbackground', '../../assets/backgrounds/newdesert.jpg');
+        this.load.image('icebackground', '../../assets/backgrounds/iceland.png');
+        this.load.image('icetiles', '../../assets/kenney32/ice32xx.png');
+        
 
         // Commands
         this.load.image('up_com', '../../images/actionicons/uparrow_60.png');
@@ -86,6 +99,11 @@ RobotKompis.Preloader.prototype = {
         this.load.image('gopil', '../../assets/pilar/gopil.png');
         this.load.image('pilmute', '../../assets/pilar/pilmute.png');
         this.load.image('radpil', '../../assets/pilar/radpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('clearpil', '../../assets/pilar/clearpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('movepil', '../../assets/pilar/movepil.png');
+        
         
         // Images for settings-state
         this.load.image('backButton', '../../images/bakpil.png');

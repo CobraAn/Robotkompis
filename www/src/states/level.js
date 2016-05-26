@@ -13,7 +13,10 @@ RobotKompis.Level = function (game) {
     this.gopil;
     this.pilmute;
     this.radpil;
+    this.homepil;
     this.pilar;
+    this.movepil;
+    this.clearpil;
 
     // The robot player
     this.player;
@@ -125,7 +128,9 @@ RobotKompis.Level.prototype = {
         this.map.addTilesetImage('spritesheet_ground2', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
-        this.map.addTilesetImage('newdesert', 'background');
+        this.map.addTilesetImage('newdesert', 'desertbackground');
+        this.map.addTilesetImage('iceland', 'icebackground');
+        this.map.addTilesetImage('ice32xx', 'icetiles');
 
         // Layers
         this.layer0 = this.map.createLayer('background');
@@ -134,6 +139,7 @@ RobotKompis.Level.prototype = {
         this.layer2 = this.map.createLayer('blocked');        
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
+        this.layer6 = this.map.createLayer('ice');
     
         // Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
@@ -241,27 +247,43 @@ RobotKompis.Level.prototype = {
         this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
         this.sound_btn.scale.setTo(0.7,0.7)
+       
         this.help_btn = this.add.button(965, this.world.height - 470, 'help_btn', this.seeTut, this);
         
         this.commandopil = this.add.image(200, this.world.height - 260, 'commandopil');
-        this.commandopil.scale.setTo(0.4,0.4);
+        this.commandopil.scale.setTo(0.5,0.5);
         this.commandopil.visible = false;
         
-        this.pilmute = this.add.image(850, 70, 'pilmute');
-        this.pilmute.scale.setTo(0.4,0.4);
+        this.pilmute = this.add.image(820, 70, 'pilmute');
+        this.pilmute.scale.setTo(0.5,0.5);
         this.pilmute.visible = false;
         
-        this.gopil = this.add.image(850, 250, 'gopil');
-        this.gopil.scale.setTo(0.4,0.4);
+        this.gopil = this.add.image(820, 250, 'gopil');
+        this.gopil.scale.setTo(0.5,0.5);
         this.gopil.visible = false;
-
-        this.funkpil = this.add.image(850, 190, 'funkpil');
-        this.funkpil.scale.setTo(0.4,0.4);
+        
+        
+        this.funkpil = this.add.image(820, 190, 'funkpil');
+        this.funkpil.scale.setTo(0.5,0.5);
         this.funkpil.visible = false;
         
-        this.radpil = this.add.image(830, 420, 'radpil');
-        this.radpil.scale.setTo(0.4,0.4);
+        this.radpil = this.add.image(810, 420, 'radpil');
+        this.radpil.scale.setTo(0.5,0.5);
         this.radpil.visible = false;
+        
+        this.homepil = this.add.image(820, 10, 'homepil');
+        this.homepil.scale.setTo(0.5,0.5);
+        this.homepil.visible = false;
+        
+        this.clearpil = this.add.image(820, 360, 'clearpil');
+        this.clearpil.scale.setTo(0.5,0.5);
+        this.clearpil.visible = false;
+        
+        this.movepil = this.add.image(700, 500, 'movepil');
+        this.movepil.scale.setTo(0.5,0.5);
+        this.movepil.visible = false;
+        
+        
         this.pilar = false;
 
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
@@ -356,19 +378,23 @@ RobotKompis.Level.prototype = {
 
         // Velocity control
         if (this.runInitiated == false && this.comKey != "nope") {
-
+            //console.log("this.finalPosX:");
+            //console.log(this.finalPosX);
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
+                //console.log("walk right stop");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true;
                 this.comArrIndex = this.comArrIndex + 1; 
                 this.runInitiated = true; 
             } else if ((this.comKey == "hop_right_com" || this.comKey == "hop_left_com") && this.player.y <= this.finalPosY && this.downActive == true) {
-                this.player.body.velocity.y = 80;
+                //console.log("hop height reached");
+                this.player.body.velocity.y = 85;
                 this.downActive = false;
-                this.comArrIndex = this.comArrIndex + 1; 
-                this.runInitiated = true; 
+                //this.comArrIndex = this.comArrIndex + 1; 
+                //this.runInitiated = true; 
             } else if ((this.comKey == "walk_left_com" || this.comKey == "hop_left_com") && (this.player.x <= this.finalPosX || this.player.body.velocity.x == 0)) {
+                //console.log("walk left stop!");
                 this.player.body.velocity.x = 0; 
                 this.player.body.velocity.y = 0;
                 this.player.body.allowGravity = true; 
@@ -410,24 +436,24 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") {
+                // Uhm, why are there 2 getTiles? 
+                //var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
 
-                var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
-
-                var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y - 20, 20, 20);
-
+                var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 10, 10);
+                this.ladderOverlap = false;
                 // Two checks; one for if there's a ladder and one if there isn't.
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
                     }
                     
-                }
+                }/*
                 for (i = 0; i < layer1tiles.length; i++) {
                     if (layer1tiles[i].index != (-1)) {
                         this.waterOverlap = true;
                     }
                     
-                }
+                }*/
                 
                 if (this.ladderOverlap) {
                     this.animationCheck = 3;
@@ -468,6 +494,7 @@ RobotKompis.Level.prototype = {
             } 
 
             else if (this.comKey == "hop_left_com") {
+                //console.log("hippity hop, left!");
                 this.animationCheck = 5;
                 this.finalPosX = this.player.x - 64;
                 this.finalPosY = this.player.y - 32;
@@ -477,6 +504,7 @@ RobotKompis.Level.prototype = {
                 this.downActive = true;
             }
             else if (this.comKey == "hop_right_com") {
+                //console.log("hippity hop, right!");
                 this.animationCheck = 4;
                 this.finalPosX = this.player.x + 64;
                 this.finalPosY = this.player.y - 32;
@@ -516,8 +544,11 @@ RobotKompis.Level.prototype = {
             this.funkpil.visible = true;
             this.radpil.visible = true;
             this.pilmute.visible = true;
+            this.homepil.visible = true;
+            this.clearpil.visible = true;
+            this.movepil.visible = true;
         }
-        else {
+        else { //...*** and closes if opened ;)
             this.pilar = false;
             this.pilar = false;
             this.commandopil.visible = false;
@@ -525,6 +556,9 @@ RobotKompis.Level.prototype = {
             this.funkpil.visible = false;
             this.radpil.visible = false;
             this.pilmute.visible = false;
+            this.homepil.visible = false;
+            this.clearpil.visible = false;
+            this.movepil.visible = false;
         }
         
     },

@@ -263,6 +263,9 @@ RobotKompis.MapOverview.prototype = {
              else if (button.levelNumber == 5) {
                 this.startLevelFive();
             }
+            else if (button.levelNumber == 6) {
+                this.startLevelSix();
+            }
             else {
                 console.log('Something went wrong');
             }
@@ -364,7 +367,13 @@ RobotKompis.MapOverview.prototype = {
                                                 
         this.state.start('Level', true, false, this.character, "Level5");
     },
-    
+    startLevelSix: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap6'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+                                                
+        this.state.start('Level', true, false, this.character, "Level6");
+    },
     popuprobot: function () {
         this.levelButtonsGroup.visible = false;    
         this.popupGroup.visible = true;
