@@ -13,7 +13,10 @@ RobotKompis.Level = function (game) {
     this.gopil;
     this.pilmute;
     this.radpil;
+    this.homepil;
     this.pilar;
+    this.movepil;
+    this.clearpil;
 
     // The robot player
     this.player;
@@ -241,27 +244,43 @@ RobotKompis.Level.prototype = {
         this.home_btn = this.add.button(965, this.world.height - 590, 'home_btn', this.homeFunction, this);
         this.sound_btn = this.add.button(965, this.world.height - 530, 'muteUnMute', this.MuteIt, this);
         this.sound_btn.scale.setTo(0.7,0.7)
+       
         this.help_btn = this.add.button(965, this.world.height - 470, 'help_btn', this.seeTut, this);
         
         this.commandopil = this.add.image(200, this.world.height - 260, 'commandopil');
-        this.commandopil.scale.setTo(0.4,0.4);
+        this.commandopil.scale.setTo(0.5,0.5);
         this.commandopil.visible = false;
         
-        this.pilmute = this.add.image(850, 70, 'pilmute');
-        this.pilmute.scale.setTo(0.4,0.4);
+        this.pilmute = this.add.image(820, 70, 'pilmute');
+        this.pilmute.scale.setTo(0.5,0.5);
         this.pilmute.visible = false;
         
-        this.gopil = this.add.image(850, 250, 'gopil');
-        this.gopil.scale.setTo(0.4,0.4);
+        this.gopil = this.add.image(820, 250, 'gopil');
+        this.gopil.scale.setTo(0.5,0.5);
         this.gopil.visible = false;
-
-        this.funkpil = this.add.image(850, 190, 'funkpil');
-        this.funkpil.scale.setTo(0.4,0.4);
+        
+        
+        this.funkpil = this.add.image(820, 190, 'funkpil');
+        this.funkpil.scale.setTo(0.5,0.5);
         this.funkpil.visible = false;
         
-        this.radpil = this.add.image(830, 420, 'radpil');
-        this.radpil.scale.setTo(0.4,0.4);
+        this.radpil = this.add.image(810, 420, 'radpil');
+        this.radpil.scale.setTo(0.5,0.5);
         this.radpil.visible = false;
+        
+        this.homepil = this.add.image(820, 10, 'homepil');
+        this.homepil.scale.setTo(0.5,0.5);
+        this.homepil.visible = false;
+        
+        this.clearpil = this.add.image(820, 360, 'clearpil');
+        this.clearpil.scale.setTo(0.5,0.5);
+        this.clearpil.visible = false;
+        
+        this.movepil = this.add.image(700, 500, 'movepil');
+        this.movepil.scale.setTo(0.5,0.5);
+        this.movepil.visible = false;
+        
+        
         this.pilar = false;
 
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
@@ -517,8 +536,11 @@ RobotKompis.Level.prototype = {
             this.funkpil.visible = true;
             this.radpil.visible = true;
             this.pilmute.visible = true;
+            this.homepil.visible = true;
+            this.clearpil.visible = true;
+            this.movepil.visible = true;
         }
-        else {
+        else { //...*** and closes if opened ;)
             this.pilar = false;
             this.pilar = false;
             this.commandopil.visible = false;
@@ -526,6 +548,9 @@ RobotKompis.Level.prototype = {
             this.funkpil.visible = false;
             this.radpil.visible = false;
             this.pilmute.visible = false;
+            this.homepil.visible = false;
+            this.clearpil.visible = false;
+            this.movepil.visible = false;
         }
         
     },
