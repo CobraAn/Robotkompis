@@ -290,8 +290,12 @@ RobotKompis.Level.prototype = {
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
         this.func_tree_group = this.add.group();
+        // for(i=0;i<9;i++){
+        //     this.func_tree_group.add(this.add.group());
+        // }
+        var savedFuncArray = this.playerData.funcArray;
         for(i=0;i<9;i++){
-            this.func_tree_group.add(this.add.group());
+            
         }
         this.physics.arcade.enable(this.func_tree_group);
         this.physics.enable( [ this.func_tree_group ], Phaser.Physics.ARCADE);
@@ -490,6 +494,7 @@ RobotKompis.Level.prototype = {
                     }
                 }
                 if (this.doorOverlap) {
+                    this.scoreFunction();
                     this.state.start('WinScreen');
                     this.doorOverlap = false;
                 } else {
@@ -559,9 +564,43 @@ RobotKompis.Level.prototype = {
         else {
             var remainder = sprite.x % 70; // Cleanse the input from faulty values
             this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
-            this.oldPosX = sprite.x;
+            this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
             this.oldPosY = sprite.y;
             this.commandGroup.remove(sprite);
+            this.currentSpriteGroup.add(sprite);
+        }
+    },
+    commandDragStart: function(sprite, pointer) {
+        // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
+        // y is always 510. Both oldPosY and newPosY.
+        if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
+            this.oldPosX = 850; // Same dimensions as when newCommand is created.
+        }
+        else {
+            var remainder = sprite.x % 70; // Cleanse the input from faulty values.
+            this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
+
+            //this.oldPosX = sprite.x; // Seems to be easier to write so in DragStart because all the sprites start from fixed modified positions. 
+            this.oldPosY = sprite.y;
+            if(this.oldPosY > 510 && this.oldPosY < 590){
+                this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+                this.commandGroup.remove(sprite); // It's no longer allowed to be in this group!                
+            }
+
+            else if(this.oldPosY > 100 && this.oldPosY < 350){
+                if(this.func_save.visible=true) {
+                    this.oldPosX = 200 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+                    this.func_line_group.remove(sprite);
+                }
+                else {
+                    this.oldPosX = sprite.x;                    
+                }
+                // else if(this.func_save.visible=false) {
+                //     this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]=null;
+                //     this.addDuplicate(this.func_image_array.indexOf(sprite.key));
+                // }
+            }
+            // this.currentSpriteGroup.visible=true;
             this.currentSpriteGroup.add(sprite);
         }
     },
@@ -694,7 +733,7 @@ RobotKompis.Level.prototype = {
             if (this.inArray(sprite, this.func_sprite_array)===true){ 
                 sprite.reset(this.func_create_array[index].x, this.func_create_array[index].y); 
             }
-            else if(this.cloud.visible===true && this.func_save.visible===true && this.oldPosY<510){
+            else if(this.cloud.visible===true && this.func_save.visible===true && this.oldPosY<470){
                 sprite.reset(this.oldPosX, 190); 
                 this.functionGroupRender();
             }
@@ -946,7 +985,6 @@ RobotKompis.Level.prototype = {
 
     // Makes 6 half-transparrent-red places for making own functions while clicking on the f(x)-button. 
     createSixTransparrent: function() {
-
         var xCoord = 200;
         var yCoord = 190;
         for(var i=1; i<9; i++){
@@ -1207,7 +1245,44 @@ RobotKompis.Level.prototype = {
 
     // Save score
     scoreFunction: function () {
-        var noBlocks = this.commandGroup.length;
+
+        // Save your result
+        var noBlocks = 0;
+        var funcRepeatArray = [0,0,0,0,0,0,0,0,0]; // Looks if functions repeat themselves in commandGroup (which is good). Otherwise it's pointless to use functions in the game. 
+        for(i=0;i<this.commandGroup.length;i++){ // Let's go through each sprite in the commandGroup
+            if(this.inArray(this.commandGroup.getAt(i).key, this.func_image_array)===true){ // If the current sprite from the commandLine is a function...
+                if(funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]===0){ // ... and moreover if this function is not repeated yet...
+                    noBlocks+=this.func_tree_group.children[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)].length; // Add the length of the function's commando sequence (integer) to the number of blocks.  
+                    funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]++; // Add 1 to funcRepeatArray under the index corresponding to the functions number, which means that the function is now used.            
+                }
+                else{ // if now the function repeants itself, which is good...
+                    noBlocks++; // ... just add 1 to  the number of blocks. 
+                    funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]++; // Add one more 1 to funcRepeatArray under the index corresponding to the functions number, to count how many times the function is used (might be useful in future)            
+                }
+            }
+            else{ // If the block/commando is not a function...
+                noBlocks++; // ... just add 1 to  the number of blocks.   
+            }
+        }
+        console.log("Number of blocks", noBlocks)
+        // Save your functions. 
+        var saveFuncArray = []; // This is a 2D matrix where the current (existing) funtions' commando sequences are saved as arrays of corresponding to the commandos' sprites key-strings (for example, "hop_right_com") under the index corresponding to the function numbers. 
+        for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
+            var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
+            if(this.func_tree_group.getAt(i).length===0){ // If the current function group in the func_tree_group is empty (function does not exist or is empty)...
+                saveFuncArray[i] = null; // save it as null... or maybe it's better to save it as en empty array? 
+            }
+            else { // If the current function group is not empty...
+                for(y=0;y<this.func_tree_group.getAt(i).length;y++){ // Go through it...
+                    commandoSequence.push(this.func_tree_group.children[i].getAt(y).key); // ... and push the key-string of every sprite in it into the temporary array
+                }
+                saveFuncArray[i] = commandoSequence; // Then put this temporary array into the less temporary (but still temporary) saveFuncArray under the index (i) corresponding to the current function
+            }
+        }
+
+        console.log("Number of blocks: " + noBlocks);
+        console.log("saveFuncArray: " + saveFuncArray);
+        this.saveDataArgs.funcArray = saveFuncArray;
         saveScore(noBlocks, this.saveDataArgs);
     }
 
