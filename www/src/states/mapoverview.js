@@ -15,7 +15,7 @@ RobotKompis.MapOverview = function (game) {
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
-    this.character;
+    this.character = 'switch';
     this.popup;
     this.closebutton;
 
@@ -80,7 +80,7 @@ RobotKompis.MapOverview.prototype = {
 
         this.playerData = loadData();
         if (typeof this.playerData !== "undefined" && this.playerData !== null) {
-            console.log(this.playerData.robot);
+            //console.log(this.playerData.robot);
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
         }
@@ -226,7 +226,7 @@ RobotKompis.MapOverview.prototype = {
                     // Custom attribute
 				    levelButton.levelNumber = levelNumber+1;
 
-				    // Adding the level thumb to the group
+				    // Adding the level button to the group
 				    this.levelButtonsGroup.add(levelButton);
                     if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
@@ -401,7 +401,7 @@ RobotKompis.MapOverview.prototype = {
         saveRobot(this.robotData);
     },
     switchButton: function () {
-        this.character = 'switchAni';
+        this.character = 'switch';
         this.robotchoice.frame = 0;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 0;

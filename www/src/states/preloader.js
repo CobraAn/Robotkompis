@@ -124,14 +124,13 @@ RobotKompis.Preloader.prototype = {
         this.load.image('elseChoise', '../../assets/robotar/Else.png');
         
         
-        // Playable character
+        // Playable characters
+        // Spritesheets containing assets for jump, walk, climb and idle animations
         this.load.spritesheet('else', '../../assets/robotsResized/Else1Walk.png', 30, 42);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1Walk.png', 30, 49);
         this.load.spritesheet('if', '../../assets/robotsResized/if1Walk.png', 30, 59);
         this.load.spritesheet('while', '../../assets/robotsResized/while1Walk.png', 30, 38);
-
-        // Spritesheet for switch with animation for jumping
-        this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheetWalk.png', 30, 37);
+        this.load.spritesheet('switch', '../../assets/robotsResized/switchSpritesheetWalk.png', 30, 37);
 
         // Own-defined functions
         this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
