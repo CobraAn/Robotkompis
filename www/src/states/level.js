@@ -7,6 +7,7 @@ RobotKompis.Level = function (game) {
     this.layer3;
     this.layer4;
     this.layer5;
+    this.layer6;
     
     this.commandopil;
     this.funkpil;
@@ -128,18 +129,23 @@ RobotKompis.Level.prototype = {
         this.map.addTilesetImage('spritesheet_ground2', 'ground');
         this.map.addTilesetImage('spritesheet_items', 'items');
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
-        this.map.addTilesetImage('newdesert', 'desertbackground');
-        this.map.addTilesetImage('iceland', 'icebackground');
-        this.map.addTilesetImage('ice32xx', 'icetiles');
-
+        this.map.addTilesetImage('newdesert', 'newdesert');
+        this.map.addTilesetImage('iceland', 'iceland');
+        this.map.addTilesetImage('ice32xx', 'ice32xx');
+        this.map.addTilesetImage('icetiles32', 'icetiles32');
+        this.map.addTilesetImage('icetiles32x', 'icetiles32x');
         // Layers
         this.layer0 = this.map.createLayer('background');
         this.layer1 = this.map.createLayer('water');
         this.layer3 = this.map.createLayer('unblocked');
+        
+        this.layer6 = this.map.createLayer('ice');
+        
         this.layer2 = this.map.createLayer('blocked');        
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
-        this.layer6 = this.map.createLayer('ice');
+        
+        
     
         // Activate collision tiles from blocked layer
         this.map.setCollisionBetween(1, 5000, true, 'blocked');

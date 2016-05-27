@@ -58,11 +58,13 @@ RobotKompis.Preloader.prototype = {
         
         this.load.image('ground', '../../assets/kenney32/spritesheet_ground2.png');
         this.load.image('items', '../../assets/kenney32/spritesheet_items.png');
-        this.load.image('tiles', '../../assets/kenney32/spritesheet_tiles.png');
-        this.load.image('desertbackground', '../../assets/backgrounds/newdesert.jpg');
-        this.load.image('icebackground', '../../assets/backgrounds/iceland.png');
-        this.load.image('icetiles', '../../assets/kenney32/ice32xx.png');
         
+        this.load.image('tiles', '../../assets/kenney32/spritesheet_tiles.png');
+        this.load.image('newdesert', '../../assets/backgrounds/newdesert.jpg');
+        this.load.image('iceland', '../../assets/backgrounds/iceland.png');
+        this.load.image('ice32xx', '../../assets/kenney32/ice32xx.png');
+        this.load.image('icetiles32', '../../assets/kenney32/icetiles32.png');
+        this.load.image('icetiles32x', '../../assets/kenney32/icetiles32x.png');
 
         // Commands
         this.load.image('up_com', '../../images/actionicons/uparrow_60.png');
