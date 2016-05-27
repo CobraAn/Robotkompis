@@ -641,6 +641,7 @@ RobotKompis.Level.prototype = {
         }
     },
     commandDragStart: function(sprite, pointer) {
+        console.log("hej från Dragstart")
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
         // y is always 510. Both oldPosY and newPosY.
         if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
@@ -676,7 +677,7 @@ RobotKompis.Level.prototype = {
     },
 
     commandDragStop: function(sprite, pointer) {
-
+        console.log("hej från DragStop")
         var index = 0;
         if(this.inArray(sprite.key, this.func_image_array)===true){
             index = this.func_image_array.indexOf(sprite.key);   
@@ -1173,7 +1174,7 @@ RobotKompis.Level.prototype = {
     // The function sprites are dragable and clickable. If you click on it, you get 2 buttons for working with a current function.
     // You may in that case eather edit you or function or delete the sprite.  
     funcSpriteOnClick: function(sprite, pointer) {
-
+        console.log("hej från FuncSprite")
 
         // var mylatesttap; 
         // sprite.events.onInputDown.add(doubleclick,this); 
@@ -1190,7 +1191,6 @@ RobotKompis.Level.prototype = {
         
 
         if(this.inArray(sprite, this.func_sprite_array)===true) {
-            console.log("Herre Gud!")
             // Please, desappear, dear EDIT and DELETE. 
             if(this.func_edit){
                 this.func_edit.visible = false;
