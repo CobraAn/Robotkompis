@@ -79,7 +79,7 @@ RobotKompis.MapOverview.prototype = {
          */
         
         this.playerData = loadData();
-        if (typeof this.playerData !== "undefined" && jQuery.isEmptyObject(this.playerData) !== true && this.playerData.robot !== undefined) {
+        if (typeof this.playerData !== "undefined" && jQuery.isEmptyObject(this.playerData) !== true && this.playerData.robot) {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
             // this.funcArray = this.playerData.funcArray;

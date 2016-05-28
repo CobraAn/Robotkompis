@@ -13,16 +13,29 @@ function saveData(args) {
 
         saveObject.robot = args.robot;
 
+        // Controls for setting correct values to the saveObject to be stored in localStorage
         if (typeof storageObject !== "undefined" && storageObject !== null) {
             saveObject.levels = storageObject.levels;
-            saveObject.totalStars = storageObject.totalStars + args.levelScore;
-            saveObject.levels[args.levelName] = args.levelScore;
+            if (saveObject.levels[args.levelName]) {
+                if (args.levelScore >= saveObject.levels[args.levelName]) {
+                    saveObject.levels[args.levelName] = args.levelScore;
+                }
+            } else {
+                saveObject.levels[args.levelName] = args.levelScore;
+            }
             saveObject.funcArray = args.funcArray;
         } else {
-            saveObject.totalStars = args.levelScore;
             saveObject.levels = {};
             saveObject.levels[args.levelName] = args.levelScore;
             saveObject.funcArray = args.funcArray;
+        }
+
+        // Sets the correct number of totalStars, based on every level value in saveObject.levels dictionary
+
+        var keys = Object.keys(saveObject.levels);
+        saveObject.totalStars = 0;
+        for (var i = 0; i < keys.length; i++) {
+            saveObject.totalStars = saveObject.totalStars + saveObject.levels[keys[i]];
         }
 
         localStorage.setItem(data, JSON.stringify(saveObject));
@@ -57,6 +70,12 @@ function loadData() {
     if (typeof storageObject !== "undefined" && storageObject !== null) {
         return storageObject;
     } else {
-        return {};
+        var returnObject = {};
+        returnObject.levels = {};
+        returnObject.funcArray = [];
+        returnObject.robot = "";
+        returnObject.totalStars = 0;
+
+        return returnObject;
     }
 }
