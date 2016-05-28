@@ -17,10 +17,12 @@ function saveData(args) {
             saveObject.levels = storageObject.levels;
             saveObject.totalStars = storageObject.totalStars + args.levelScore;
             saveObject.levels[args.levelName] = args.levelScore;
+            saveObject.funcArray = args.funcArray;
         } else {
             saveObject.totalStars = args.levelScore;
             saveObject.levels = {};
             saveObject.levels[args.levelName] = args.levelScore;
+            saveObject.funcArray = args.funcArray;
         }
 
         localStorage.setItem(data, JSON.stringify(saveObject));

@@ -37,7 +37,7 @@ RobotKompis.Level = function (game) {
     this.func_btn; // Function button ( I <3 f(x) ).
     this.cloud;    // Cloud-window of the function-edit-menu.
     this.func_create_array = []; // Array of 8 transparrent "KLICK ATT SKAPA"sprites
-    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6', 'f7', 'f8']; // Images served to create function sprites. They are put in array in order to ease indexing and avoid repeated code. 
+    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6','f7','f8']; // Images served to create function sprites. They are put in array in order to ease indexing and avoid repeated code. 
     this.func_sprite_array = []; // Array of original function sprites (sometimes needed)
     this.depthCount = 0; // Counts how deep we are located in the function in the function in the function in the function......
     this.func_line_group; // This is the tempopary group where the sequence of command or/and function sprites are stored then tobe saved in a particular place corresponding to a paticular function number in func_tree_group.
@@ -106,6 +106,7 @@ RobotKompis.Level.prototype = {
         this.robot = character;
         this.saveDataArgs.robot = character;
         this.saveDataArgs.levelName = levelName;
+        // this.saveDataArgs.funcArray = funcArray;
     },
     
     create: function () {
@@ -317,44 +318,49 @@ RobotKompis.Level.prototype = {
         this.funcLeftArrow20.inputEnabled = true;
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
-        this.func_tree_group = this.add.group();
-        for(i=0;i<9;i++){
+        this.func_tree_group = this.add.group(); // Create a group tree to store function groups
+        for(i=0;i<9;i++){ // Fill the tree with empty groups 
             this.func_tree_group.add(this.add.group());
         }
-        // THIS COMMENTED CODE IS A PREPARATION FOR IMPLEMENTING LOADING THE SAVED FUNCTIONS. JUST UNCOMMENT IT. 
+        // 
 
-        // var saveFuncArray = this.playerData.funcArray; // Get the functions saved from the previous time from the localStorage. 
-        // var tempCommand; // A temporary variable to create command sprites from the functions from the previous time.
-        // for(i=0;i<9;i++){
-        //     if(saveFuncArray[i]!==null){ //Go through array-elements
-        //         // Recreate the function sprites remained from previous time.
-        //         this.func_sprite_array[i] = this.add.sprite(200+70*(i-1), 190, this.func_image_array[i]); // Create and upt them at tha corresponding place in the function-cloud. 
-        //         this.func_sprite_array[i].visible = false; // At this stage they shouldn't be visible
-        //         this.physics.arcade.enable(this.func_sprite_array[i]); // It hould be possible to move them
-        //         this.func_sprite_array[i].body.allowGravity = false; // But the gravity has no power on them.    
-        //         //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
-        //         this.func_sprite_array[i].inputEnabled = true; // 
-        //         this.func_sprite_array[i].input.useHandCursor = true;
-        //         this.func_sprite_array[i].input.enableDrag();
-        //         this.func_sprite_array[i].events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
-        //         this.func_sprite_array[i].events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+        var saveFuncArray = this.playerData.funcArray; // Get the functions saved from the previous time from the localStorage. 
+        console.log("saveFunction length in beginning", saveFuncArray.length)
 
-        //         for(y=0;y<saveFuncArray[i].length;y++){ // Now go 2D 
-        //             tempCommand = this.add.sprite(0, 0, saveFuncArray[i][y]); // From every key-string you find in the saveFuncArray, create a command sprite
-        //             tempCommand.visible = false;
-        //             this.physics.arcade.enable(tempCommand);
-        //             tempCommand.body.allowGravity = false;  
-        //             tempCommand.inputEnabled = true;
-        //             tempCommand.input.enableDrag(true);
-        //             tempCommand.events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
-        //             tempCommand.events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
-        //             tempCommand.collideWorldBounds = true;                    
-        //             this.func_tree_group.children[i].addAt(y, tempCommand); // ...and finally put the sprite at the corresponding position in the func_tree_group
+        var tempCommand; // A temporary variable to create command sprites from the functions from the previous time.
+        for(i=0;i<9;i++){
+            if(saveFuncArray.length>1){ // If there's something in the saved funcArray
+                if(saveFuncArray[i]!==null){ //Go through array-elements
+                    // Recreate the function sprites remained from previous time.
+                    this.func_sprite_array[i] = this.add.sprite(200+70*(i-1), 190, this.func_image_array[i]); // Create and upt them at tha corresponding place in the function-cloud. 
+                    this.func_sprite_array[i].visible = false; // At this stage they shouldn't be visible
+                    this.physics.arcade.enable(this.func_sprite_array[i]); // It hould be possible to move them
+                    this.func_sprite_array[i].body.allowGravity = false; // But the gravity has no power on them.    
+                    //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
+                    this.func_sprite_array[i].inputEnabled = true; // 
+                    this.func_sprite_array[i].input.useHandCursor = true;
+                    this.func_sprite_array[i].input.enableDrag();
+                    this.func_sprite_array[i].events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+                    this.func_sprite_array[i].events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+                    this.func_sprite_array[i].events.onInputDown.add(this.funcSpriteOnClick, this); 
+                    for(y=0;y<saveFuncArray[i].length;y++){ // Now go 2D 
+                        tempCommand = this.add.sprite(200+70*(y), 190, saveFuncArray[i][y]); // From every key-string you find in the saveFuncArray, create a command sprite
+                        //tempCommand.visible = false;
+                        this.physics.arcade.enable(tempCommand);
+                        tempCommand.body.allowGravity = false;  
+                        tempCommand.inputEnabled = true;
+                        tempCommand.input.enableDrag(true);
+                        tempCommand.events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+                        tempCommand.events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+                        tempCommand.collideWorldBounds = true;                    
+                        this.func_tree_group.children[i].add(tempCommand); // ...and finally put the sprite at the corresponding position in the func_tree_group
+                    }
+                    this.func_tree_group.children[i].visible = false; // Let us now make every group of commands invisible then to be able to see them in the edit-menu.                     
+                }
+            }
 
-        //         }
-        //     }     
-        // }
-        // this.func_tree_group.visible = false;
+        }
+            //this.func_tree_group.visible = false;
         this.physics.arcade.enable(this.func_tree_group);
         this.physics.enable( [ this.func_tree_group ], Phaser.Physics.ARCADE);
         this.func_tree_group.allowGravity = false;
@@ -558,7 +564,13 @@ RobotKompis.Level.prototype = {
                     }
                 }
                 if (this.doorOverlap) {
+                    //this.saveAllFunctions();
+
+
+
                     this.scoreFunction();
+                    this.func_sprite_array = [];
+                    this.func_tree_group.destroy();
                     this.state.start('WinScreen');
                     this.doorOverlap = false;
                 } else {
@@ -625,21 +637,21 @@ RobotKompis.Level.prototype = {
     },
     
     // Two functions for handling dragging of commands to the command line
-    commandDragStart: function(sprite, pointer) {
+    // commandDragStart: function(sprite, pointer) {
 
-        // Checks if they're identical. Not to be confused with having the same key
-        if (sprite == this.newCommand) {
-            this.oldPosX = 850; // Same dimensions as when newCommand is created
-        }
-        else {
-            var remainder = sprite.x % 70; // Cleanse the input from faulty values
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
-            this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
-            this.oldPosY = sprite.y;
-            this.commandGroup.remove(sprite);
-            this.currentSpriteGroup.add(sprite);
-        }
-    },
+    //     // Checks if they're identical. Not to be confused with having the same key
+    //     if (sprite == this.newCommand) {
+    //         this.oldPosX = 850; // Same dimensions as when newCommand is created
+    //     }
+    //     else {
+    //         var remainder = sprite.x % 70; // Cleanse the input from faulty values
+    //         this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
+    //         this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
+    //         this.oldPosY = sprite.y;
+    //         this.commandGroup.remove(sprite);
+    //         this.currentSpriteGroup.add(sprite);
+    //     }
+    // },
     commandDragStart: function(sprite, pointer) {
         console.log("hej från Dragstart")
         // STOP THE MASKING! FOR THE LOVE OF ALL THAT IS WINE!
@@ -1256,10 +1268,15 @@ RobotKompis.Level.prototype = {
                     this.func_sprite_array[i].visible = false; 
                 }                   
             }
-        } 
-        // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
-        this.func_line_group = this.func_tree_group.children[index];
+        }
+        this.func_line_group = this.func_tree_group.getAt(index);
         this.func_line_group.visible=true;
+        // for(i=0;i<this.func_tree_group.getAt(index).length;i++){
+        //     this.func_line_group.getAt(i).visible=true;
+        // } 
+        // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
+
+
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true;                
@@ -1307,10 +1324,34 @@ RobotKompis.Level.prototype = {
         return false;
     },     
     
-    //Home button function
+    // Home button function
     homeFunction: function() {
+        this.commandGroup.destroy();
+        this.scoreFunction();
         this.func_sprite_array = [];
+        this.func_tree_group.destroy();
+
         this.state.start('MapOverview');
+    },
+
+    // Function saves all the current functions into the local storage
+    saveAllFunctions: function() {
+        // Save your functions. 
+        var saveFuncArray = []; // This is a 2D matrix where the current (existing) funtions' commando sequences are saved as arrays of corresponding to the commandos' sprites key-strings (for example, "hop_right_com") under the index corresponding to the function numbers. 
+        for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
+            var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
+            if(this.func_tree_group.getAt(i).length===0){ // If the current function group in the func_tree_group is empty (function does not exist or is empty)...
+                saveFuncArray[i] = null; // save it as null... or maybe it's better to save it as en empty array? 
+            }
+            else { // If the current function group is not empty...
+                for(y=0;y<this.func_tree_group.getAt(i).length;y++){ // Go through it...
+                    commandoSequence.push(this.func_tree_group.children[i].getAt(y).key); // ... and push the key-string of every sprite in it into the temporary array
+                }
+                saveFuncArray[i] = commandoSequence; // Then put this temporary array into the less temporary (but still temporary) saveFuncArray under the index (i) corresponding to the current function
+            }
+        }
+        
+        this.saveDataArgs.funcArray = saveFuncArray; // Put the fuction array as an argument to the this.saveDataArgs
     },
 
     // Save score
@@ -1335,7 +1376,9 @@ RobotKompis.Level.prototype = {
             }
         }
         console.log("Number of blocks", noBlocks)
-        // Save your functions. 
+
+
+
         var saveFuncArray = []; // This is a 2D matrix where the current (existing) funtions' commando sequences are saved as arrays of corresponding to the commandos' sprites key-strings (for example, "hop_right_com") under the index corresponding to the function numbers. 
         for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
             var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
@@ -1349,10 +1392,8 @@ RobotKompis.Level.prototype = {
                 saveFuncArray[i] = commandoSequence; // Then put this temporary array into the less temporary (but still temporary) saveFuncArray under the index (i) corresponding to the current function
             }
         }
-
-        console.log("Number of blocks: " + noBlocks);
-        console.log("saveFuncArray: " + saveFuncArray);
-        this.saveDataArgs.funcArray = saveFuncArray;
+        
+        this.saveDataArgs.funcArray = saveFuncArray; // Put the fuction array as an argument to the this.saveDataArgs
         saveScore(noBlocks, this.saveDataArgs);
     }
 
