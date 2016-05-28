@@ -77,9 +77,9 @@ RobotKompis.MapOverview.prototype = {
         /*
          * Loads data from localStorage and sets the saved robot as the current one, if data exists
          */
-
+        
         this.playerData = loadData();
-        if (this.playerData != undefined && this.playerData != null && this.playerData.robot != undefined) {
+        if (typeof this.playerData !== "undefined" && jQuery.isEmptyObject(this.playerData) !== true && this.playerData.robot !== undefined) {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
         }
@@ -243,7 +243,7 @@ RobotKompis.MapOverview.prototype = {
             }
         }
     },
-     buttonClicked: function (button) {
+     buttonClicked: function (button, pointer) {
 
          // Start correct level
         if(button.frame < 5) {
@@ -271,24 +271,27 @@ RobotKompis.MapOverview.prototype = {
             }
         }
         // Else, shake the locked levels
-        else{
-            var buttonTween = this.add.tween(button)
-            buttonTween.to({
-                x: button.x+this.buttonWidth/15
-            }, 20, Phaser.Easing.Cubic.None);
-            buttonTween.to({
-                x: button.x-this.buttonWidth/15
-            }, 20, Phaser.Easing.Cubic.None);
-            buttonTween.to({
-                x: button.x+this.buttonWidth/15
-            }, 20, Phaser.Easing.Cubic.None);
-            buttonTween.to({
-                x: button.x-this.buttonWidth/15
-            }, 20, Phaser.Easing.Cubic.None);
-            buttonTween.to({
-                x: button.x
-            }, 20, Phaser.Easing.Cubic.None);
-            buttonTween.start();
+        else {
+            //Can't click more often than every 0.5 secs
+            if (pointer.msSinceLastClick > 500) {
+                var buttonTween = this.add.tween(button)
+                buttonTween.to({
+                    x: button.x+this.buttonWidth/15
+                }, 20, Phaser.Easing.Cubic.None);
+                buttonTween.to({
+                    x: button.x-this.buttonWidth/15
+                }, 20, Phaser.Easing.Cubic.None);
+                buttonTween.to({
+                    x: button.x+this.buttonWidth/15
+                }, 20, Phaser.Easing.Cubic.None);
+                buttonTween.to({
+                    x: button.x-this.buttonWidth/15
+                }, 20, Phaser.Easing.Cubic.None);
+                buttonTween.to({
+                    x: button.x
+                }, 20, Phaser.Easing.Cubic.None);
+                buttonTween.start();
+            }
         }
     },
     arrowClicked: function (button) {
