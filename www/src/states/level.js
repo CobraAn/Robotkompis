@@ -1375,6 +1375,7 @@ RobotKompis.Level.prototype = {
         this.saveDataArgs.funcArray = saveFuncArray; // Put the fuction array as an argument to the this.saveDataArgs
         saveScore(noBlocks, this.saveDataArgs);
 
+        // Show WinScreen if the level is finished
         if (shouldSaveScore) {
             this.state.start('WinScreen', true, false, noBlocks, this.saveDataArgs);
         }
