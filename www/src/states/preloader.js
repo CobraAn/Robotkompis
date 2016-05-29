@@ -150,7 +150,9 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f8', '../../assets/function/f8.png');
         this.load.image('cloud','../../assets/function/the_cloud.png');
         this.load.image('func_title','../../assets/function/func_title.png');
+        this.load.image('func_line','../../assets/function/func_line.png');
         this.load.image('temp1','../../assets/function/TEMP1.png');
+
 
         // Win Screen
         this.load.image('starr','../../assets/da_star.png');       

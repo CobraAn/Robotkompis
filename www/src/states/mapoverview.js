@@ -82,16 +82,16 @@ RobotKompis.MapOverview.prototype = {
         if (typeof this.playerData !== "undefined" && jQuery.isEmptyObject(this.playerData) !== true && this.playerData.robot) {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
-            // this.funcArray = this.playerData.funcArray;
+            this.funcArray = this.playerData.funcArray;
         
 
 
-        // console.log("saveFunction length in beginning", this.playerData.funcArray)
-        // if(this.playerData.funcArray!=="undefined"){
-        //                                             for(i=0;i<this.playerData.funcArray.length; i++){ 
-        //                                             console.log("saveFuncArray: ", i, this.playerData.funcArray[i])
-        //                                         }        
-        // }
+        console.log("saveFunction length in beginning", this.playerData.funcArray)
+        if(this.playerData.funcArray!=="undefined"){
+                                                    for(i=0;i<this.playerData.funcArray.length; i++){ 
+                                                    console.log("saveFuncArray: ", i, this.playerData.funcArray[i])
+                                                }        
+        }
 
 
         }

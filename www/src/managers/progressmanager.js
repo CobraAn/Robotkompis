@@ -5,7 +5,7 @@ var data = "DATA";
  *  Takes an object args and saves the data contained to localStorage
  */
 function saveData(args) {
-
+    console.log("FuncArray in saveData", args.funcArray)
     var saveObject = {};
     var storageObject = JSON.parse(localStorage.getItem(data));
 
@@ -19,15 +19,20 @@ function saveData(args) {
             if (saveObject.levels[args.levelName]) {
                 if (args.levelScore >= saveObject.levels[args.levelName]) {
                     saveObject.levels[args.levelName] = args.levelScore;
+                    console.log("saveObject.levels[args.levelName]", saveObject.levels[args.levelName]);
                 }
             } else {
                 saveObject.levels[args.levelName] = args.levelScore;
             }
             saveObject.funcArray = args.funcArray;
+
+            console.log("FuncArray in saveData", saveObject.funcArray)
+
         } else {
             saveObject.levels = {};
             saveObject.levels[args.levelName] = args.levelScore;
             saveObject.funcArray = args.funcArray;
+            console.log("FuncArray in saveData", saveObject.funcArray)
         }
 
         // Sets the correct number of totalStars, based on every level value in saveObject.levels dictionary
