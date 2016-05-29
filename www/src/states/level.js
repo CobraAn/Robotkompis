@@ -622,24 +622,6 @@ RobotKompis.Level.prototype = {
         this.comKey = "nope";
     },
     
-    // Two functions for handling dragging of commands to the command line
-    // commandDragStart: function(sprite, pointer) {
-
-    //     // Checks if they're identical. Not to be confused with having the same key
-    //     if (sprite == this.newCommand) {
-    //         this.oldPosX = 850; // Same dimensions as when newCommand is created
-    //     }
-    //     else {
-    //         var remainder = sprite.x % 70; // Cleanse the input from faulty values
-    //         this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
-    //         this.oldPosX = 40 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
-    //         this.oldPosY = sprite.y;
-    //         this.commandGroup.remove(sprite);
-    //         this.currentSpriteGroup.add(sprite);
-    //     }
-    // },
-
-
     // This function saves the coordinates of the start position of the sprite you are dragging at the moment and adjusting it according to it's position. 
     commandDragStart: function(sprite, pointer) {
         this.oldPosY = sprite.y;
@@ -776,7 +758,11 @@ RobotKompis.Level.prototype = {
                     this.func_create_array[index].visible = true; // Replace the function sprite with the transparent "KLICK ATT SKAPA" sprite. 
                     this.func_sprite_array[index].kill(); 
                     this.func_sprite_array[index] = null; // Remove the sprite from the func_sprite_array
-                    this.func_tree_group.children[index]=this.add.group(); // And cleanse the corresponding command group in the func_tree_group.  
+                    this.func_tree_group.addAt(this.add.group(), index); // Replace the corresponding place in the func_tree_group with an empty group
+                    this.func_edit.visible = false; // Close the unnecessary buttons. 
+                    this.func_delete.visible = false; // Close the unnecessary buttons. 
+                    this.func_edit = null; // And kill 'em all!!! 
+                    this.func_delete = null;
                 }
                 else{ //... then it must have been the function editor...
                     this.func_line_group.remove(sprite, true); // So remove the sprite from the function line
@@ -796,17 +782,18 @@ RobotKompis.Level.prototype = {
             }
             else if(this.cloud.visible===true && this.func_line.visible===true && this.oldPosY<470){
                 sprite.reset(this.oldPosX, 190); 
-                    if (this.commandLineIndex <= this.func_line_group.length) { 
-                        this.func_line_group.addAt(sprite, this.commandLineIndex);
-                    } else {
-                        this.func_line_group.add(sprite);
-                    }
-                    this.currentSpriteGroup.remove(sprite); 
-                    this.functionGroupRender();  // ...and a control ajustment won't be excessive... 
+                // Put it according to the calculated position index
+                if (this.commandLineIndex <= this.func_line_group.length) { // If the position index is less than the length of the function line group...
+                    this.func_line_group.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the functionGroup according to the index
+                } else { // If the position index is bigger...
+                    this.func_line_group.add(sprite); // Just put the sprite at the end of the functionGroup.
+                }
+                this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
+                this.functionGroupRender();  // ...and a control ajustment won't be excessive... 
             }
             else {                
                 sprite.reset(this.oldPosX, 510);                
-            // Put it according to the calculated position index
+                // Put it according to the calculated position index
                 if (this.commandLineIndex <= this.commandGroup.length) { // If the position index is less than the length of the commandGroup...
                     this.commandGroup.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the commandGroup according to the index
                 } else { // If the position index is bigger...
@@ -832,7 +819,7 @@ RobotKompis.Level.prototype = {
 
     // If you move a particular function sprite from its place in f(x)-PopUp to the commandGroup, a dublicate of it appears on its old place. 
     addDuplicate: function (index) {
-        if(this.func_sprite_array[index]===null){
+        if(this.func_sprite_array[index]===null){ 
             this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
             this.physics.arcade.enable(this.func_sprite_array[index]);
             this.func_sprite_array[index].body.allowGravity = false;        
@@ -1166,6 +1153,8 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         this.func_line_group.destroy();
         this.func_line_group.visible=false;
+        this.func_line_group = this.add.group(); // Empty the temporary function line group 
+
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false;     
         if(this.func_edit){this.func_edit.visible = false}
@@ -1179,15 +1168,7 @@ RobotKompis.Level.prototype = {
                 this.func_create_array[i].visible = true;
             }          
         }
-        // for(i=0;i<this.func_line_group.length;i++){
-        //     this.func_line_group.children[i].kill();
-        //     this.func_line_group.remove(this.func_line_group.children[i]);
-        // }
-        this.func_line_group = this.add.group(); // Make  
-        //this.func_tree_group.remove(this.func_tree_group.getAt(index));
-        //this.func_tree_group.addAt(this.func_line_group, index);
-        this.func_line_group.visible = false; // Close all unnecessary commands and cleanse the func_line_group
-        //this.func_line_group = this.add.group(); // Probably can be done with NaN, but seems to work even without it.
+        //this.func_line_group = this.add.group(); // Empty the temporary function line group 
 
     },
 
@@ -1234,21 +1215,18 @@ RobotKompis.Level.prototype = {
     },
 
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
-    deleteFunctionBlockOnClick: function(index) {  
-        this.func_tree_group.children[index] = this.add.group();
-
+    deleteFunctionBlockOnClick: function(index) {     
+        this.func_line.visible = false;
         this.func_line_group.visible = false;
-        this.func_line_group=NaN;
-        this.func_line_group = this.add.group();
-        this.physics.arcade.enable(this.func_line_group);
-        this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
-        this.func_line_group.allowGravity = false; 
-        this.func_line_group.immovable = true;        
+        this.func_line_group = this.add.group(); 
+        this.func_create_array[index].visible = true;         
         this.func_sprite_array[index].kill();
         this.func_sprite_array[index] = null;
-        this.func_create_array[index].visible = true; 
-        this.func_delete.visible = false;
+        this.func_tree_group.addAt(this.add.group(), index);
+        this.func_delete.visible = false; // Close unnecessary buttons. 
         this.func_edit.visible = false;
+        this.func_edit = null; // And kill 'em all!!! 
+        this.func_delete = null;
 
         for (var i=1; i<9; i++) {
             if (this.func_sprite_array[i]!=null){
@@ -1275,15 +1253,11 @@ RobotKompis.Level.prototype = {
                 }                   
             }
         }
-        this.func_line.visible = true; 
-        this.func_line_group = this.func_tree_group.getAt(index);
-        this.func_line_group.visible=true;
-        // for(i=0;i<this.func_tree_group.getAt(index).length;i++){
-        //     this.func_line_group.getAt(i).visible=true;
-        // } 
         // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
-
-
+        this.func_line.visible = true; 
+        this.func_line_group.visible=true;
+        this.func_tree_group.getAt(index).visible = true;
+        this.func_line_group = this.func_tree_group.getAt(index);
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true;                
@@ -1391,6 +1365,7 @@ RobotKompis.Level.prototype = {
         for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
             var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
             if(this.func_tree_group.getAt(i).length===0){ // If the current function group in the func_tree_group is empty (function does not exist or is empty)...
+            // if(this.func_sprite_array[i]===null){
                 saveFuncArray[i] = null; // save it as null... or maybe it's better to save it as en empty array? 
             }
             else { // If the current function group is not empty...
