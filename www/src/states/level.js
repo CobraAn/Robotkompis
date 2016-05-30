@@ -73,7 +73,7 @@
     this.dragOffset = 0;
 
     //
-    this.robotSpawnPosX = 97; // since one block is 32 px and robot 30 px wide
+    this.robotSpawnPosX = 95;
 
     this.finalPosX; 
     this.finalPosY;
