@@ -5,10 +5,19 @@ RobotKompis.WinScreen = function (game) {
     this.da_starr3;
     this.you_won;
     this.continue;
+    
+    this.levelName;
+    this.levelScore;
 
 };
 
 RobotKompis.WinScreen.prototype = {
+    
+    init: function(noBlocks, dataArgs) {
+        this.levelName = dataArgs.levelName;
+        this.levelScore = calculateScore(noBlocks, dataArgs.levelName);
+        
+    },
     
     create: function () {
         'use strict';
@@ -20,6 +29,24 @@ RobotKompis.WinScreen.prototype = {
         this.da_starr3 = this.add.sprite(780, 180, 'starr');
         this.da_starr3.anchor.setTo(0.5, 0.5);
         this.da_starr3.angle = -45;
+
+        switch (this.levelScore) {
+            case 1:
+                this.da_starr1.visible = true;
+                this.da_starr2.visible = false;
+                this.da_starr3.visible = false;
+                break;
+            case 2:
+                this.da_starr1.visible = true;
+                this.da_starr2.visible = true;
+                this.da_starr3.visible = false;
+                break;
+            case 3:
+                this.da_starr1.visible = true;
+                this.da_starr2.visible = true;
+                this.da_starr3.visible = true;
+        }
+
         this.you_won = this.add.sprite(220, 280, 'you_won');
         this.continue = this.add.sprite(300,430, 'continue');
         this.continue.inputEnabled = true;
