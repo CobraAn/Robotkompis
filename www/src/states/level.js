@@ -36,16 +36,20 @@ RobotKompis.Level = function (game) {
 
     this.func_btn; // Function button ( I <3 f(x) ).
     this.cloud;    // Cloud-window of the function-edit-menu.
-    this.func_create_array = []; // Array of 8 transparrent "KLICK ATT SKAPA"sprites
-    this.func_image_array = [null,'f1','f2','f3','f4','f5','f6','f7','f8']; // Images served to create function sprites. They are put in array in order to ease indexing and avoid repeated code. 
-    this.func_sprite_array = []; // Array of original function sprites (sometimes needed)
+    this.funcCreateArray = []; // Array of 8 transparrent "KLICK ATT SKAPA"sprites
+    this.funcImageKeyArray = [null,'f1','f2','f3','f4','f5','f6','f7','f8']; // Images served to create function sprites. They are put in array in order to ease indexing and avoid repeated code. 
+    this.funcSpriteArray = []; // Array of original function sprites (sometimes needed)
     // this.depthCount = 0; // Counts how deep we are located in the function in the function in the function in the function......
-    this.func_line_group; // This is the tempopary group where the sequence of command or/and function sprites are stored then tobe saved in a particular place corresponding to a paticular function number in func_tree_group.
-    this.func_tree_group; // In this group the sequences (groups) of sprites are stored under the index corresponding to the particular function number. NB! Groups in Phaser work as "trees". 
-    // this.index_tree_array = []; // This array serves as a 2D matrix to follow the the function recursion process. Objects of this array are 2-object-long arrays: 1st object in them is index/number of the function in func_image_array; 2nd object is index of the place of this function in the current line.  
+    this.funcLineGroup; // This is the tempopary group where the sequence of command or/and function sprites are stored then tobe saved in a particular place corresponding to a paticular function number in funcTreeGroup.
+    this.funcTreeGroup; // In this group the sequences (groups) of sprites are stored under the index corresponding to the particular function number. NB! Groups in Phaser work as "trees". 
+    // this.index_tree_array = []; // This array serves as a 2D matrix to follow the the function recursion process. Objects of this array are 2-object-long arrays: 1st object in them is index/number of the function in funcImageKeyArray; 2nd object is index of the place of this function in the current line.  
     this.func_title; // Title sprite in the function edit popUp.
     this.func_line; // This is the sprite for the function group where you put commands. 
-    this.command_array = []; // This is the ultimate array from which robot's movement commands are readed in the update-function.
+    this.commandArray = []; // This is the ultimate array from which robot's movement commands are readed in the update-function.
+
+
+    this.a;
+
 
     //Check used for animations, e.g 0 means idle animation
     this.animationCheck = 0;
@@ -298,17 +302,17 @@ RobotKompis.Level.prototype = {
         this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
         // Function groups are created here
-        this.func_line_group = this.add.group();
-        this.physics.arcade.enable(this.func_line_group);
-        this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
-        this.func_line_group.allowGravity = false; 
-        this.func_line_group.immovable = true;
+        this.funcLineGroup = this.add.group();
+        this.physics.arcade.enable(this.funcLineGroup);
+        this.physics.enable( [ this.funcLineGroup ], Phaser.Physics.ARCADE);
+        this.funcLineGroup.allowGravity = false; 
+        this.funcLineGroup.immovable = true;
 
         // Function line mask and arrows
         var functionMask = this.game.add.graphics(0, 0);
         functionMask.beginFill(0xffffff);
         functionMask.drawRect(176, 185, 600, 80);
-        this.func_line_group.mask = functionMask; 
+        this.funcLineGroup.mask = functionMask; 
         this.funcRightArrow20 = this.add.sprite(175, 180, 'left20');
         this.funcRightArrow20.inputEnabled = true;
         this.funcRightArrow20.alpha = 0.6;
@@ -317,9 +321,9 @@ RobotKompis.Level.prototype = {
         this.funcLeftArrow20.inputEnabled = true;
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
-        this.func_tree_group = this.add.group(); // Create a group tree to store function groups
+        this.funcTreeGroup = this.add.group(); // Create a group tree to store function groups
         for(i=0;i<9;i++){ // Fill the tree with empty groups 
-            this.func_tree_group.add(this.add.group());
+            this.funcTreeGroup.add(this.add.group());
         }
         // 
 
@@ -332,17 +336,17 @@ RobotKompis.Level.prototype = {
                 if(saveFuncArray.length>1){ // If there's something in the saved funcArray
                     if(saveFuncArray[i]!==null){ //Go through array-elements
                         // Recreate the function sprites remained from previous time.
-                        this.func_sprite_array[i] = this.add.sprite(200+70*(i-1), 190, this.func_image_array[i]); // Create and upt them at tha corresponding place in the function-cloud.
-                        this.func_sprite_array[i].visible = false; // At this stage they shouldn't be visible
-                        this.physics.arcade.enable(this.func_sprite_array[i]); // It hould be possible to move them
-                        this.func_sprite_array[i].body.allowGravity = false; // But the gravity has no power on them.
-                        //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?
-                        this.func_sprite_array[i].inputEnabled = true; //
-                        this.func_sprite_array[i].input.useHandCursor = true;
-                        this.func_sprite_array[i].input.enableDrag();
-                        this.func_sprite_array[i].events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
-                        this.func_sprite_array[i].events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
-                        this.func_sprite_array[i].events.onInputDown.add(this.funcSpriteOnClick, this);
+                        this.funcSpriteArray[i] = this.add.sprite(200+70*(i-1), 190, this.funcImageKeyArray[i]); // Create and upt them at tha corresponding place in the function-cloud.
+                        this.funcSpriteArray[i].visible = false; // At this stage they shouldn't be visible
+                        this.physics.arcade.enable(this.funcSpriteArray[i]); // It hould be possible to move them
+                        this.funcSpriteArray[i].body.allowGravity = false; // But the gravity has no power on them.
+                        //this.this.funcSpriteArray[index].immovable = true; // Immovable necessary?
+                        this.funcSpriteArray[i].inputEnabled = true; //
+                        this.funcSpriteArray[i].input.useHandCursor = true;
+                        this.funcSpriteArray[i].input.enableDrag();
+                        this.funcSpriteArray[i].events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+                        this.funcSpriteArray[i].events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+                        this.funcSpriteArray[i].events.onInputDown.add(this.funcSpriteOnClick, this);
                         for(y=0;y<saveFuncArray[i].length;y++){ // Now go 2D
                             tempCommand = this.add.sprite(200+70*(y), 190, saveFuncArray[i][y]); // From every key-string you find in the saveFuncArray, create a command sprite
                             //tempCommand.visible = false;
@@ -353,19 +357,19 @@ RobotKompis.Level.prototype = {
                             tempCommand.events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
                             tempCommand.events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
                             tempCommand.collideWorldBounds = true;
-                            this.func_tree_group.children[i].add(tempCommand); // ...and finally put the sprite at the corresponding position in the func_tree_group
+                            this.funcTreeGroup.children[i].add(tempCommand); // ...and finally put the sprite at the corresponding position in the funcTreeGroup
                         }
-                        this.func_tree_group.children[i].visible = false; // Let us now make every group of commands invisible then to be able to see them in the edit-menu.
+                        this.funcTreeGroup.children[i].visible = false; // Let us now make every group of commands invisible then to be able to see them in the edit-menu.
                     }
                 }
 
             }
         }
 
-        this.physics.arcade.enable(this.func_tree_group);
-        this.physics.enable( [ this.func_tree_group ], Phaser.Physics.ARCADE);
-        this.func_tree_group.allowGravity = false;
-        this.func_tree_group.immovable = true;
+        this.physics.arcade.enable(this.funcTreeGroup);
+        this.physics.enable( [ this.funcTreeGroup ], Phaser.Physics.ARCADE);
+        this.funcTreeGroup.allowGravity = false;
+        this.funcTreeGroup.immovable = true;
 
 
     },
@@ -403,11 +407,11 @@ RobotKompis.Level.prototype = {
 
         // Function arrows
         if (this.game.input.activePointer.isDown && this.funcRightArrow20.input.checkPointerOver(this.game.input.activePointer)) {
-            this.func_line_group.setAll('body.velocity.x', -120);
+            this.funcLineGroup.setAll('body.velocity.x', -120);
         } else if (this.game.input.activePointer.isDown && this.funcLeftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
-            this.func_line_group.setAll('body.velocity.x', +120);
+            this.funcLineGroup.setAll('body.velocity.x', +120);
         } else {
-            this.func_line_group.setAll('body.velocity.x', 0);
+            this.funcLineGroup.setAll('body.velocity.x', 0);
         }
 
 
@@ -452,13 +456,13 @@ RobotKompis.Level.prototype = {
             }
 
             // Robot is idle
-            if (this.comArrIndex == this.command_array.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
+            if (this.comArrIndex == this.commandArray.length && (this.player.body.velocity.x == 0 && this.player.x >= this.finalPosX)){
                 this.animationCheck = 0;
             }
         }
 
-        if (this.runInitiated == true && this.comArrIndex < this.command_array.length) {
-            this.comKey = this.command_array[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+        if (this.runInitiated == true && this.comArrIndex < this.commandArray.length) {
+            this.comKey = this.commandArray[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
             if (this.comKey == "walk_right_com") {
                 this.animationCheck = 1;
                 this.finalPosY = -20;
@@ -556,8 +560,8 @@ RobotKompis.Level.prototype = {
                 // The player has reached the door with a key, save all data
                 if (this.doorOverlap) {
                     this.scoreFunction(true);
-                    this.func_sprite_array = [];
-                    this.func_tree_group.destroy();
+                    this.funcSpriteArray = [];
+                    this.funcTreeGroup.destroy();
                     this.doorOverlap = false;
                 } else {
                     this.comKey = "wrong";
@@ -618,7 +622,7 @@ RobotKompis.Level.prototype = {
         this.player.reset(95, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
-        this.command_array = [];
+        this.commandArray = [];
         this.comKey = "nope";
     },
     
@@ -639,7 +643,7 @@ RobotKompis.Level.prototype = {
             else if(this.oldPosY > 100 && this.oldPosY < 350){ // If the original position of the sprite was in the function menu... 
                 if(this.func_line.visible===true) { // If the sprite was in the very function editor, i.e. in the function line...
                     this.oldPosX = 200 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)
-                    this.func_line_group.remove(sprite); // Now it's no longer allowed to be in this group! 
+                    this.funcLineGroup.remove(sprite); // Now it's no longer allowed to be in this group! 
                 }
                 else { // Ortherwise i assume that this sprite is a function sprite taken from the function menu...
                     this.oldPosX = 200 + (this.commandLineIndex * 70); // Set a more exact x-value than sprite.x or sprite.position.x gives (I assume due to the ListenerEvent known as commandDragStart being slightly delayed.)                    
@@ -651,8 +655,8 @@ RobotKompis.Level.prototype = {
     // This function anjusts the sprite, which you're dragging, according to where it was taken from and where you you're going to drop it.
     commandDragStop: function(sprite, pointer) {
         var index = 0; // It the sprite is a function, we might need it's order number. 
-        if(this.inArray(sprite.key, this.func_image_array)===true){ 
-            index = this.func_image_array.indexOf(sprite.key);   
+        if(this.inArray(sprite.key, this.funcImageKeyArray)===true){ 
+            index = this.funcImageKeyArray.indexOf(sprite.key);   
         }
         // If the pointer drops it inside of the com_line square IN HEIGHT (relevant for the Library buttons)
         if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
@@ -674,13 +678,13 @@ RobotKompis.Level.prototype = {
             this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
             this.commandGroupRender(); // ...and a control ajustment won't be excessive... 
             // What if the sprite you have put in the command line is a function...? 
-            if(this.inArray(sprite, this.func_sprite_array)===true){ // ...if it is true...
-                this.func_sprite_array[this.func_sprite_array.indexOf(sprite)]=null; // Delete it from the function sprite array.
+            if(this.inArray(sprite, this.funcSpriteArray)===true){ // ...if it is true...
+                this.funcSpriteArray[this.funcSpriteArray.indexOf(sprite)]=null; // Delete it from the function sprite array.
                 this.func_edit.visible = false; // Cease the "ÄNDRA" button
                 this.func_edit = null; // We have to remove the button because every button is connected to a particular function with it's index as the parameter. 
                 this.func_delete.visible = false; // Cease the "TA BORT" button
                 this.func_delete = null;
-                this.addDuplicate(this.func_image_array.indexOf(sprite.key)); // Create a function duplicate and put it on the original place of its' tween
+                this.addDuplicate(this.funcImageKeyArray.indexOf(sprite.key)); // Create a function duplicate and put it on the original place of its' tween
             }
         }
 
@@ -691,7 +695,7 @@ RobotKompis.Level.prototype = {
                     this.addNew();
                 }
                 // *** FROM HERE
-                if(this.inArray(sprite.key,this.func_image_array)===true) { // If the taken sprite is a function....
+                if(this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function....
                     sprite.reset(this.oldPosX, 510); // Just return it back to the command line.
                     this.commandGroup.addAt(sprite, this.commandLineIndex); // Put it at the corresponding position in the command group. 
                     this.currentSpriteGroup.remove(sprite); 
@@ -706,10 +710,10 @@ RobotKompis.Level.prototype = {
                     this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
                     this.newPosY = sprite.y;
                     sprite.reset(this.newPosX, 190); // Put the sprite on the visually proper place in the function line
-                    if (this.commandLineIndex <= this.func_line_group.length) { 
-                        this.func_line_group.addAt(sprite, this.commandLineIndex);
+                    if (this.commandLineIndex <= this.funcLineGroup.length) { 
+                        this.funcLineGroup.addAt(sprite, this.commandLineIndex);
                     } else {
-                        this.func_line_group.add(sprite);
+                        this.funcLineGroup.add(sprite);
                     }
                     this.currentSpriteGroup.remove(sprite); 
                     this.functionGroupRender();  // ...and a control ajustment won't be excessive...                 
@@ -721,20 +725,20 @@ RobotKompis.Level.prototype = {
                 // this.newPosY = sprite.y;
                 // console.log(this.commandLineIndex)
                 // sprite.reset(this.newPosX, 190);
-                // if (this.commandLineIndex <= this.func_line_group.length) {
-                //     this.func_line_group.addAt(sprite, this.commandLineIndex);
+                // if (this.commandLineIndex <= this.funcLineGroup.length) {
+                //     this.funcLineGroup.addAt(sprite, this.commandLineIndex);
                 // } else {
-                //     this.func_line_group.add(sprite);
+                //     this.funcLineGroup.add(sprite);
                 // }
                 // this.currentSpriteGroup.remove(sprite);
                 // this.functionGroupRender();
             }
             else if(this.cloud.visible===true && this.func_save.visible===false){
 
-                if(this.inArray(sprite, this.func_sprite_array)===true){
-                    sprite.reset(this.func_create_array[index].x, this.func_create_array[index].y);  
+                if(this.inArray(sprite, this.funcSpriteArray)===true){
+                    sprite.reset(this.funcCreateArray[index].x, this.funcCreateArray[index].y);  
                 }
-                else if(this.inArray(sprite.key, this.func_image_array)===true && this.inArray(sprite, this.func_sprite_array)===false){
+                else if(this.inArray(sprite.key, this.funcImageKeyArray)===true && this.inArray(sprite, this.funcSpriteArray)===false){
                     sprite.kill();
                 }
             }
@@ -754,18 +758,18 @@ RobotKompis.Level.prototype = {
             }
             else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // It the sprite was in the function window
                 // Temporary solving...
-                if(this.inArray(sprite, this.func_sprite_array)===true){ // If it was in the function menu...
-                    this.func_create_array[index].visible = true; // Replace the function sprite with the transparent "KLICK ATT SKAPA" sprite. 
-                    this.func_sprite_array[index].kill(); 
-                    this.func_sprite_array[index] = null; // Remove the sprite from the func_sprite_array
-                    this.func_tree_group.addAt(this.add.group(), index); // Replace the corresponding place in the func_tree_group with an empty group
+                if(this.inArray(sprite, this.funcSpriteArray)===true){ // If it was in the function menu...
+                    this.funcCreateArray[index].visible = true; // Replace the function sprite with the transparent "KLICK ATT SKAPA" sprite. 
+                    this.funcSpriteArray[index].kill(); 
+                    this.funcSpriteArray[index] = null; // Remove the sprite from the funcSpriteArray
+                    this.funcTreeGroup.addAt(this.add.group(), index); // Replace the corresponding place in the funcTreeGroup with an empty group
                     this.func_edit.visible = false; // Close the unnecessary buttons. 
                     this.func_delete.visible = false; // Close the unnecessary buttons. 
                     this.func_edit = null; // And kill 'em all!!! 
                     this.func_delete = null;
                 }
                 else{ //... then it must have been the function editor...
-                    this.func_line_group.remove(sprite, true); // So remove the sprite from the function line
+                    this.funcLineGroup.remove(sprite, true); // So remove the sprite from the function line
                     sprite.kill();
                     this.functionGroupRender();  // ...and a control ajustment won't be excessive...  
                 }
@@ -777,21 +781,22 @@ RobotKompis.Level.prototype = {
 
         }
         else { // So it was moved outside of the commandLine area or function window area, eh? SNAP IT BACK !
-            if (this.inArray(sprite, this.func_sprite_array)===true){ 
-                sprite.reset(this.func_create_array[index].x, this.func_create_array[index].y); 
+            if (this.inArray(sprite, this.funcSpriteArray)===true){ 
+                sprite.reset(this.funcCreateArray[index].x, this.funcCreateArray[index].y); 
             }
-            else if(this.cloud.visible===true && this.func_line.visible===true && this.oldPosY<470){
+            else if(this.cloud.visible===true && this.func_line.visible===true && this.oldPosY<500){
                 sprite.reset(this.oldPosX, 190); 
                 // Put it according to the calculated position index
-                if (this.commandLineIndex <= this.func_line_group.length) { // If the position index is less than the length of the function line group...
-                    this.func_line_group.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the functionGroup according to the index
+                if (this.commandLineIndex <= this.funcLineGroup.length) { // If the position index is less than the length of the function line group...
+                    this.funcLineGroup.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the functionGroup according to the index
                 } else { // If the position index is bigger...
-                    this.func_line_group.add(sprite); // Just put the sprite at the end of the functionGroup.
+                    this.funcLineGroup.add(sprite); // Just put the sprite at the end of the functionGroup.
                 }
                 this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
                 this.functionGroupRender();  // ...and a control ajustment won't be excessive... 
             }
-            else {                
+            
+            else if(this.oldPosX<830 && this.oldPosY>500) {                
                 sprite.reset(this.oldPosX, 510);                
                 // Put it according to the calculated position index
                 if (this.commandLineIndex <= this.commandGroup.length) { // If the position index is less than the length of the commandGroup...
@@ -802,6 +807,9 @@ RobotKompis.Level.prototype = {
                 this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
                 this.commandGroupRender(); // ...and a control ajustment won't be excessive...            
             } // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
+            else {
+                sprite.reset(this.oldPosX, 510);
+            }
         }
     },
 
@@ -819,18 +827,18 @@ RobotKompis.Level.prototype = {
 
     // If you move a particular function sprite from its place in f(x)-PopUp to the commandGroup, a dublicate of it appears on its old place. 
     addDuplicate: function (index) {
-        if(this.func_sprite_array[index]===null){ 
-            this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
-            this.physics.arcade.enable(this.func_sprite_array[index]);
-            this.func_sprite_array[index].body.allowGravity = false;        
-            //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
-            this.func_sprite_array[index].inputEnabled = true;
-            this.func_sprite_array[index].input.useHandCursor = true;
-            this.func_sprite_array[index].input.enableDrag();
-            this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
-            this.func_sprite_array[index].events.onDragStop.add(this.commandDragStop, this);
+        if(this.funcSpriteArray[index]===null){ 
+            this.funcSpriteArray[index] = this.add.sprite(this.funcCreateArray[index].x, this.funcCreateArray[index].y, this.funcImageKeyArray[index]);
+            this.physics.arcade.enable(this.funcSpriteArray[index]);
+            this.funcSpriteArray[index].body.allowGravity = false;        
+            //this.this.funcSpriteArray[index].immovable = true; // Immovable necessary?         
+            this.funcSpriteArray[index].inputEnabled = true;
+            this.funcSpriteArray[index].input.useHandCursor = true;
+            this.funcSpriteArray[index].input.enableDrag();
+            this.funcSpriteArray[index].events.onDragStart.add(this.commandDragStart, this); // this
+            this.funcSpriteArray[index].events.onDragStop.add(this.commandDragStop, this);
             this.game.input.onTap.add(function() {this.editFunctionBlockOnClick(unc_sprite_array[index])}, this);
-            this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this); 
+            this.funcSpriteArray[index].events.onInputDown.add(this.funcSpriteOnClick, this); 
         }    
     },
 
@@ -883,18 +891,18 @@ RobotKompis.Level.prototype = {
         var spriteInCommand;
         for( i = 0; i < this.commandGroup.length; i++){
             spriteInCommand = this.commandGroup.getAt(i);
-            if (this.inArray(spriteInCommand.key,this.func_image_array)===true){
-                for(y=0; y<this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].length; y++) {
-                        this.command_array.push(this.func_tree_group.children[this.func_image_array.indexOf(spriteInCommand.key)].getAt(y));               
+            if (this.inArray(spriteInCommand.key,this.funcImageKeyArray)===true){
+                for(y=0; y<this.funcTreeGroup.children[this.funcImageKeyArray.indexOf(spriteInCommand.key)].length; y++) {
+                        this.commandArray.push(this.funcTreeGroup.children[this.funcImageKeyArray.indexOf(spriteInCommand.key)].getAt(y));               
                 }               
             }
             else {
-                this.command_array.push(spriteInCommand);    
+                this.commandArray.push(spriteInCommand);    
             }
         }
         // THIS UNCOMMENTED CODE BELOW IS IF YOU WANT TO WORK ON RECURSION (FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
-        // // Call the function that goes through the objects in commandGroup and and puts them in the command_array.
-        // // The command_array is the ultimate array from which the the robot's movements are readed in the update-function above. 
+        // // Call the function that goes through the objects in commandGroup and and puts them in the commandArray.
+        // // The commandArray is the ultimate array from which the the robot's movements are readed in the update-function above. 
         // this.goThroughCommandGroup(this.commandGroup, -1);
         // this.depthCount = 0;
 
@@ -903,40 +911,40 @@ RobotKompis.Level.prototype = {
         this.comArrIndex = 0; // SOMEONE messed it up before we got to this point (no, I don't know who)
     },
     
-    // // This function that goes through the objects in commandGroup and and puts them in the command_array.
+    // // This function that goes through the objects in commandGroup and and puts them in the commandArray.
     // goThroughCommandGroup: function(commandGroup, currentChildIndex){ 
     //     var spriteInCommand; // Temporary variable where the sprites in from the commandGroup are saved one by one.  
     //     for(i=currentChildIndex+1; i<commandGroup.length; i++){ // Start/continue from the current sprite position in the commandGroup
     //         spriteInCommand = this.commandGroup.getAt(i); // The current sprite is saved. 
-    //         if (this.inArray(spriteInCommand.key,this.func_image_array)===true){ // If the current sprite's key (its' picute) is in the array of function sprite pictures
+    //         if (this.inArray(spriteInCommand.key,this.funcImageKeyArray)===true){ // If the current sprite's key (its' picute) is in the array of function sprite pictures
     //             this.depthCount++; // This variable shows how deep in the recursion we went (how many cycles) (how deep we put functions)
-    //             this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(spriteInCommand.key), i]; // Put the function number and its' place number in the current line corresponding to the current depth level. 
+    //             this.index_tree_array[this.depthCount] = [this.funcImageKeyArray.indexOf(spriteInCommand.key), i]; // Put the function number and its' place number in the current line corresponding to the current depth level. 
     //             this.withRec(spriteInCommand, -1); // Go recursive ;) 
     //         }
     //         else { // If the current sprite is not a function it might be a command then 
-    //             this.command_array.push(spriteInCommand); // So put it in the command array
+    //             this.commandArray.push(spriteInCommand); // So put it in the command array
     //         }
     //     }       
     // },
     // // This is a recursive function which goes through all functions put in the commandGroup and functions which are put in those functions and functions which are put in those functions and functions which are put in those functions... i think, you got it :)
     // withRec: function(parentFuncSprite, currentChildIndex) { 
-    //     var childrenGroup = this.func_tree_group.getAt(this.func_image_array.indexOf(parentFuncSprite.key)); // Save the group of commands in the parent function (group of commands which are placed under the index corresponding to function number)
+    //     var childrenGroup = this.funcTreeGroup.getAt(this.funcImageKeyArray.indexOf(parentFuncSprite.key)); // Save the group of commands in the parent function (group of commands which are placed under the index corresponding to function number)
     //     console.log("children group length",childrenGroup.length)
     //     for(y=currentChildIndex+1; y<childrenGroup.length; y++) { // Start/continue from the current sprite position in the particular function group. 
-    //         if(this.inArray((childrenGroup.getAt(y)).key,this.func_image_array)===true){ // If the current sprite is a function...
+    //         if(this.inArray((childrenGroup.getAt(y)).key,this.funcImageKeyArray)===true){ // If the current sprite is a function...
     //             this.depthCount++; // Let us go to the next depth level                
-    //             this.index_tree_array[this.depthCount] = [this.func_image_array.indexOf(childrenGroup.getAt(y).key), y]; // Put the function number and its' place number in the current line corresponding to the current depth level.
+    //             this.index_tree_array[this.depthCount] = [this.funcImageKeyArray.indexOf(childrenGroup.getAt(y).key), y]; // Put the function number and its' place number in the current line corresponding to the current depth level.
     //             this.withRec(childrenGroup.getAt(y), -1); // And now it's time to go recursive again... and then again and again. 
     //         }
     //         else { // If the current sprite is not a function...
-    //             this.command_array.push(childrenGroup.getAt(y)); // There's nothing else than to put in in the command_array
+    //             this.commandArray.push(childrenGroup.getAt(y)); // There's nothing else than to put in in the commandArray
     //             if(y===childrenGroup.length-1){ // If that was the last sprite in the current function...
     //                 if(this.depthCount===1){ // ...and if now we are located on the 1st function depth level...
     //                     this.goThroughCommandGroup(this.commandGroup, this.index_tree_array[this.depthCount][1]); // ... go back to the commandGroup and continue from the next sprite in it. 
     //                 }
     //                 else{ // ... but if not yet the 1st depth level...
     //                     this.depthCount--; // ... go to the previous depth level with recursive                   
-    //                     this.withRec(this.func_sprite_array[this.index_tree_array[this.depthCount][0]], this.index_tree_array[this.depthCount+1][1]); // Here's the place where we call the saved positions of the parent function numbers and their positions in corresponding lines. 
+    //                     this.withRec(this.funcSpriteArray[this.index_tree_array[this.depthCount][0]], this.index_tree_array[this.depthCount+1][1]); // Here's the place where we call the saved positions of the parent function numbers and their positions in corresponding lines. 
     //                     // NB! In the withRec function parameters here we call the parent function on the previous depth level and the child's index on which we were interrupted by the recursive function previous time (that's why there's "+1" in the second parameter)
     //                 }
     //             }    
@@ -965,7 +973,7 @@ RobotKompis.Level.prototype = {
         this.player.reset(95, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
-        this.command_array = [];
+        this.commandArray = [];
         this.comKey = "nope";
     },
 
@@ -978,9 +986,9 @@ RobotKompis.Level.prototype = {
     },
     // Renders functions
     functionGroupRender: function () { // What happens if the commandGroup is empty?
-        for (var i = 0; i < this.func_line_group.length; i++) {
+        for (var i = 0; i < this.funcLineGroup.length; i++) {
             var comPosX = 200 + (70 * i); // Calculate the position.
-            this.func_line_group.getAt(i).reset(comPosX, 190);
+            this.funcLineGroup.getAt(i).reset(comPosX, 190);
         }
     },
 
@@ -1002,12 +1010,12 @@ RobotKompis.Level.prototype = {
             this.func_title.visible = true;
             // Everything what is supposed to be opened is opened, everything else is closed
             for (var i = 1; i < 9; i++) {
-                if (this.func_sprite_array[i]!=null){
-                    this.func_sprite_array[i].visible = true; 
-                    this.func_create_array[i].visible = false;   
+                if (this.funcSpriteArray[i]!=null){
+                    this.funcSpriteArray[i].visible = true; 
+                    this.funcCreateArray[i].visible = false;   
                 }
                 else {
-                    this.func_create_array[i].visible = true;
+                    this.funcCreateArray[i].visible = true;
                 }          
             }
         }
@@ -1015,26 +1023,26 @@ RobotKompis.Level.prototype = {
             this.func_title.visible = false;
             // Close everything except for the chosen function. 
             for (var i = 1; i < 9; i++) {
-                this.func_create_array[i].visible = false;
+                this.funcCreateArray[i].visible = false;
   
-                if (this.func_sprite_array[i]!=null){               
-                    if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
-                        this.func_sprite_array[i].visible = true;  
+                if (this.funcSpriteArray[i]!=null){               
+                    if(this.funcSpriteArray[i].y>=510 && this.funcSpriteArray[i].y<590){ 
+                        this.funcSpriteArray[i].visible = true;  
                     }
                     else{
-                        this.func_sprite_array[i].visible = false; 
+                        this.funcSpriteArray[i].visible = false; 
                     }                        
                 } 
 
             }
-            if(this.func_line_group.length>0){ // If user decided to click on function button during editing a function, the func_line_group is cleansed.
-                this.func_line_group.visible = false;
-                // this.func_line_group = NaN;
-                this.func_line_group = this.add.group();
-                // this.physics.arcade.enable(this.func_line_group);
-                // this.physics.enable( [ this.func_line_group ], Phaser.Physics.ARCADE);
-                // this.func_line_group.allowGravity = false; 
-                // this.func_line_group.immovable = true;            
+            if(this.funcLineGroup.length>0){ // If user decided to click on function button during editing a function, the funcLineGroup is cleansed.
+                this.funcLineGroup.visible = false;
+                // this.funcLineGroup = NaN;
+                this.funcLineGroup = this.add.group();
+                // this.physics.arcade.enable(this.funcLineGroup);
+                // this.physics.enable( [ this.funcLineGroup ], Phaser.Physics.ARCADE);
+                // this.funcLineGroup.allowGravity = false; 
+                // this.funcLineGroup.immovable = true;            
             }
             // To be sure that everything is closed (bugging without the following 4 guys).
             if(this.func_edit){this.func_edit.visible = false}
@@ -1054,22 +1062,22 @@ RobotKompis.Level.prototype = {
         var yCoord = 190;
         for(var i=1; i<9; i++){
 
-            this.func_create_array[i] = this.add.sprite(xCoord, yCoord, 'func_make');        
-            this.func_create_array[i].inputEnabled = true;
-            this.func_create_array[i].input.useHandCursor = true;
-            this.func_create_array[i].alpha = 0.3; // Makes them transparrent
-            this.func_create_array[i].visible=false; 
+            this.funcCreateArray[i] = this.add.sprite(xCoord, yCoord, 'func_make');        
+            this.funcCreateArray[i].inputEnabled = true;
+            this.funcCreateArray[i].input.useHandCursor = true;
+            this.funcCreateArray[i].alpha = 0.3; // Makes them transparrent
+            this.funcCreateArray[i].visible=false; 
             xCoord+=70;
         }
             // OnClick sends the Index parameter to the Listener makeNewFuncOnClick.
-            this.func_create_array[1].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[1]))}, this);
-            this.func_create_array[2].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[2]))}, this);
-            this.func_create_array[3].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[3]))}, this);
-            this.func_create_array[4].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[4]))}, this);
-            this.func_create_array[5].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[5]))}, this);
-            this.func_create_array[6].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[6]))}, this);
-            this.func_create_array[7].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[7]))}, this);
-            this.func_create_array[8].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.func_create_array.indexOf(this.func_create_array[8]))}, this);    
+            this.funcCreateArray[1].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[1]))}, this);
+            this.funcCreateArray[2].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[2]))}, this);
+            this.funcCreateArray[3].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[3]))}, this);
+            this.funcCreateArray[4].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[4]))}, this);
+            this.funcCreateArray[5].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[5]))}, this);
+            this.funcCreateArray[6].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[6]))}, this);
+            this.funcCreateArray[7].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[7]))}, this);
+            this.funcCreateArray[8].events.onInputDown.add(function() {this.makeNewFuncOnClick(this.funcCreateArray.indexOf(this.funcCreateArray[8]))}, this);    
 
     },
 
@@ -1078,19 +1086,19 @@ RobotKompis.Level.prototype = {
     makeNewFuncOnClick: function(index) {        
         // Closing the transparent components
         for (var i=1; i<9; i++) {
-              this.func_create_array[i].visible = false;                   
-            if (this.func_sprite_array[i]!=null){  
+              this.funcCreateArray[i].visible = false;                   
+            if (this.funcSpriteArray[i]!=null){  
                 //...except for the chosen functions.              
-                if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
-                    this.func_sprite_array[i].visible = true;  
+                if(this.funcSpriteArray[i].y>=510 && this.funcSpriteArray[i].y<590){ 
+                    this.funcSpriteArray[i].visible = true;  
                 }
                 else{
-                    this.func_sprite_array[i].visible = false; 
+                    this.funcSpriteArray[i].visible = false; 
                 }                   
             }
         }
         this.func_line.visible = true; 
-        this.func_line_group.visible = true;
+        this.funcLineGroup.visible = true;
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true; 
         this.func_save = this.add.sprite(260, 265 , 'func_save');
@@ -1112,34 +1120,34 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false; 
-        this.func_tree_group.remove(this.func_tree_group.getAt(index));
-        this.func_tree_group.addAt(this.func_line_group, index);
-        this.func_line_group.visible = false;
-        this.func_line_group = this.add.group();
+        this.funcTreeGroup.remove(this.funcTreeGroup.getAt(index));
+        this.funcTreeGroup.addAt(this.funcLineGroup, index);
+        this.funcLineGroup.visible = false;
+        this.funcLineGroup = this.add.group();
  
-        this.func_sprite_array[index] = this.add.sprite(this.func_create_array[index].x, this.func_create_array[index].y, this.func_image_array[index]);
-        this.physics.arcade.enable(this.func_sprite_array[index]);
-        this.func_sprite_array[index].body.allowGravity = false;        
-        //this.this.func_sprite_array[index].immovable = true; // Immovable necessary?         
-        this.func_sprite_array[index].inputEnabled = true;
-        this.func_sprite_array[index].input.useHandCursor = true;
-        this.func_sprite_array[index].input.enableDrag();
-        this.func_sprite_array[index].events.onDragStart.add(this.commandDragStart, this); // this
-        this.func_sprite_array[index].events.onDragStop.add(this.commandDragStop, this);
-        // if (this.func_sprite_array[index].timeUp - this.func_sprite_array[index].previousTapTime < this.game.input.doubleTapRate) {
+        this.funcSpriteArray[index] = this.add.sprite(this.funcCreateArray[index].x, this.funcCreateArray[index].y, this.funcImageKeyArray[index]);
+        this.physics.arcade.enable(this.funcSpriteArray[index]);
+        this.funcSpriteArray[index].body.allowGravity = false;        
+        //this.this.funcSpriteArray[index].immovable = true; // Immovable necessary?         
+        this.funcSpriteArray[index].inputEnabled = true;
+        this.funcSpriteArray[index].input.useHandCursor = true;
+        this.funcSpriteArray[index].input.enableDrag();
+        this.funcSpriteArray[index].events.onDragStart.add(this.commandDragStart, this); // this
+        this.funcSpriteArray[index].events.onDragStop.add(this.commandDragStop, this);
+        // if (this.funcSpriteArray[index].timeUp - this.funcSpriteArray[index].previousTapTime < this.game.input.doubleTapRate) {
         //     //  Yes, let's dispatch the signal then with the 2nd parameter set to true
         //     this.game.input.onTap.dispatch(this.funcSpriteOnClick, true);
         // }
-        this.func_sprite_array[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
+        this.funcSpriteArray[index].events.onInputDown.add(this.funcSpriteOnClick, this);        
 
         // Close what to be closed and open what to be opened
         for (var i=1; i<9; i++) {
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = true;
-                this.func_create_array[i].visible = false;    
+            if (this.funcSpriteArray[i]!=null){
+                this.funcSpriteArray[i].visible = true;
+                this.funcCreateArray[i].visible = false;    
             }
             else {
-                this.func_create_array[i].visible = true;    
+                this.funcCreateArray[i].visible = true;    
             } 
         }      
 
@@ -1151,24 +1159,27 @@ RobotKompis.Level.prototype = {
         this.func_line.visible = false;
         this.func_save.visible = false;
         this.func_cancel.visible = false;
-        this.func_line_group.destroy();
-        this.func_line_group.visible=false;
-        this.func_line_group = this.add.group(); // Empty the temporary function line group 
+        //this.funcTreeGroup.addAt(this.add.group(), index);
+        console.log("CANCEL TREE BEFORE", this.funcTreeGroup.getAt(index).length)
 
+        this.funcLineGroup.destroy();
+        this.funcLineGroup.visible=false;
+        this.funcLineGroup = this.add.group(); // Empty the temporary function line group 
+        console.log("CANCEL TREE AFTER", this.funcTreeGroup.getAt(index).length)
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false;     
         if(this.func_edit){this.func_edit.visible = false}
         if(this.func_delete){this.func_delete.visible = false}             
         for (var i=1; i<9; i++) {
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = true; 
-                this.func_create_array[i].visible = false;   
+            if (this.funcSpriteArray[i]!=null){
+                this.funcSpriteArray[i].visible = true; 
+                this.funcCreateArray[i].visible = false;   
             } 
             else {
-                this.func_create_array[i].visible = true;
+                this.funcCreateArray[i].visible = true;
             }          
         }
-        //this.func_line_group = this.add.group(); // Empty the temporary function line group 
+        //this.funcLineGroup = this.add.group(); // Empty the temporary function line group 
 
     },
 
@@ -1189,7 +1200,7 @@ RobotKompis.Level.prototype = {
         // }
         
 
-        if(this.inArray(sprite, this.func_sprite_array)===true) {
+        if(this.inArray(sprite, this.funcSpriteArray)===true) {
             // Please, desappear, dear EDIT and DELETE. 
             if(this.func_edit){
                 this.func_edit.visible = false;
@@ -1204,12 +1215,12 @@ RobotKompis.Level.prototype = {
             this.func_delete.inputEnabled = true;
             this.func_delete.input.useHandCursor = true; 
             this.func_delete.alpha = 0.7;       
-            this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_delete.events.onInputDown.add(function() {this.deleteFunctionBlockOnClick(this.funcSpriteArray.indexOf(sprite))}, this);
             this.func_edit = this.add.sprite(260, 265, 'func_edit');
             this.func_edit.inputEnabled = true;
             this.func_edit.input.useHandCursor = true;  
             this.func_edit.alpha = 0.7;      
-            this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.func_sprite_array.indexOf(sprite))}, this);
+            this.func_edit.events.onInputDown.add(function() {this.editFunctionBlockOnClick(this.funcSpriteArray.indexOf(sprite))}, this);
             
         }
     },
@@ -1217,24 +1228,24 @@ RobotKompis.Level.prototype = {
     // OWN FUNCTION: click on "TA BORT" and delete the current function-sprite.
     deleteFunctionBlockOnClick: function(index) {     
         this.func_line.visible = false;
-        this.func_line_group.visible = false;
-        this.func_line_group = this.add.group(); 
-        this.func_create_array[index].visible = true;         
-        this.func_sprite_array[index].kill();
-        this.func_sprite_array[index] = null;
-        this.func_tree_group.addAt(this.add.group(), index);
+        this.funcLineGroup.visible = false;
+        this.funcLineGroup = this.add.group(); 
+        this.funcCreateArray[index].visible = true;         
+        this.funcSpriteArray[index].kill();
+        this.funcSpriteArray[index] = null;
+        this.funcTreeGroup.addAt(this.add.group(), index);
         this.func_delete.visible = false; // Close unnecessary buttons. 
         this.func_edit.visible = false;
         this.func_edit = null; // And kill 'em all!!! 
         this.func_delete = null;
 
         for (var i=1; i<9; i++) {
-            if (this.func_sprite_array[i]!=null){
-                this.func_sprite_array[i].visible = true;
-                this.func_create_array[i].visible = false;    
+            if (this.funcSpriteArray[i]!=null){
+                this.funcSpriteArray[i].visible = true;
+                this.funcCreateArray[i].visible = false;    
             }
             else {
-                this.func_create_array[i].visible = true;    
+                this.funcCreateArray[i].visible = true;    
             } 
         }
     },
@@ -1242,22 +1253,24 @@ RobotKompis.Level.prototype = {
     editFunctionBlockOnClick: function(index) {
         // Close unnecessary things and let the necessary remain. 
         for (var i=1; i<9; i++) {
-            this.func_create_array[i].visible = false;                   
-            if (this.func_sprite_array[i]!=null){  
+            this.funcCreateArray[i].visible = false;                   
+            if (this.funcSpriteArray[i]!=null){  
                 //...except for the chosen functions.              
-                if(this.func_sprite_array[i].y>=510 && this.func_sprite_array[i].y<590){ 
-                    this.func_sprite_array[i].visible = true;  
+                if(this.funcSpriteArray[i].y>=510 && this.funcSpriteArray[i].y<590){ 
+                    this.funcSpriteArray[i].visible = true;  
                 }
                 else{
-                    this.func_sprite_array[i].visible = false; 
+                    this.funcSpriteArray[i].visible = false; 
                 }                   
             }
         }
-        // Returning back the commando chain corresponding by index to the current function to the func_line_group. 
+        // Returning back the commando chain corresponding by index to the current function to the funcLineGroup. 
         this.func_line.visible = true; 
-        this.func_line_group.visible=true;
-        this.func_tree_group.getAt(index).visible = true;
-        this.func_line_group = this.func_tree_group.getAt(index);
+        this.funcLineGroup.visible=true;
+        this.funcTreeGroup.getAt(index).visible = true;
+        console.log("EDIT TREE BEFORE", this.funcTreeGroup.getAt(index).length)
+        this.funcLineGroup = this.funcTreeGroup.children[index];
+        console.log("EDIT TREE AFTER", this.funcTreeGroup.getAt(index).length)
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true;                
@@ -1274,7 +1287,7 @@ RobotKompis.Level.prototype = {
         this.func_cancel.inputEnabled = true;
         this.func_cancel.input.useHandCursor = true;
         this.func_cancel.alpha = 0.7;
-        this.func_cancel.events.onInputDown.add(this.cancelCreateFunctionOnClick, this); 
+        this.func_cancel.events.onInputDown.add(function() {this.cancelCreateFunctionOnClick(index)}, this); 
     },
 
     // Returns Child Index (in the group)
@@ -1309,30 +1322,11 @@ RobotKompis.Level.prototype = {
     homeFunction: function() {
 
         this.scoreFunction(false);
-        this.func_sprite_array = [];
-        this.func_tree_group.destroy();
+        this.funcSpriteArray = [];
+        this.funcTreeGroup.destroy();
         this.state.start('MapOverview');
     },
 
-    // Function saves all the current functions into the local storage
-    saveAllFunctions: function() {
-        // Save your functions. 
-        var saveFuncArray = []; // This is a 2D matrix where the current (existing) funtions' commando sequences are saved as arrays of corresponding to the commandos' sprites key-strings (for example, "hop_right_com") under the index corresponding to the function numbers. 
-        for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
-            var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
-            if(this.func_tree_group.getAt(i).length===0){ // If the current function group in the func_tree_group is empty (function does not exist or is empty)...
-                saveFuncArray[i] = null; // save it as null... or maybe it's better to save it as en empty array? 
-            }
-            else { // If the current function group is not empty...
-                for(y=0;y<this.func_tree_group.getAt(i).length;y++){ // Go through it...
-                    commandoSequence.push(this.func_tree_group.children[i].getAt(y).key); // ... and push the key-string of every sprite in it into the temporary array
-                }
-                saveFuncArray[i] = commandoSequence; // Then put this temporary array into the less temporary (but still temporary) saveFuncArray under the index (i) corresponding to the current function
-            }
-        }
-        
-        this.saveDataArgs.funcArray = saveFuncArray; // Put the fuction array as an argument to the this.saveDataArgs
-    },
 
     // Save score and display WinScreen if used has completed level
     scoreFunction: function (shouldSaveScore) {
@@ -1342,14 +1336,14 @@ RobotKompis.Level.prototype = {
         if (shouldSaveScore) {
             var funcRepeatArray = [0,0,0,0,0,0,0,0,0]; // Looks if functions repeat themselves in commandGroup (which is good). Otherwise it's pointless to use functions in the game.
             for(i=0;i<this.commandGroup.length;i++){ // Let's go through each sprite in the commandGroup
-                if(this.inArray(this.commandGroup.getAt(i).key, this.func_image_array)===true){ // If the current sprite from the commandLine is a function...
-                    if(funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]===0){ // ... and moreover if this function is not repeated yet...
-                        noBlocks+=this.func_tree_group.children[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)].length; // Add the length of the function's commando sequence (integer) to the number of blocks.
-                        funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]++; // Add 1 to funcRepeatArray under the index corresponding to the functions number, which means that the function is now used.
+                if(this.inArray(this.commandGroup.getAt(i).key, this.funcImageKeyArray)===true){ // If the current sprite from the commandLine is a function...
+                    if(funcRepeatArray[this.funcImageKeyArray.indexOf(this.commandGroup.getAt(i).key)]===0){ // ... and moreover if this function is not repeated yet...
+                        noBlocks+=this.funcTreeGroup.children[this.funcImageKeyArray.indexOf(this.commandGroup.getAt(i).key)].length; // Add the length of the function's commando sequence (integer) to the number of blocks.
+                        funcRepeatArray[this.funcImageKeyArray.indexOf(this.commandGroup.getAt(i).key)]++; // Add 1 to funcRepeatArray under the index corresponding to the functions number, which means that the function is now used.
                     }
                     else{ // if now the function repeants itself, which is good...
                         noBlocks++; // ... just add 1 to  the number of blocks.
-                        funcRepeatArray[this.func_image_array.indexOf(this.commandGroup.getAt(i).key)]++; // Add one more 1 to funcRepeatArray under the index corresponding to the functions number, to count how many times the function is used (might be useful in future)
+                        funcRepeatArray[this.funcImageKeyArray.indexOf(this.commandGroup.getAt(i).key)]++; // Add one more 1 to funcRepeatArray under the index corresponding to the functions number, to count how many times the function is used (might be useful in future)
                     }
                 }
                 else{ // If the block/commando is not a function...
@@ -1362,15 +1356,15 @@ RobotKompis.Level.prototype = {
         }
 
         var saveFuncArray = []; // This is a 2D matrix where the current (existing) funtions' commando sequences are saved as arrays of corresponding to the commandos' sprites key-strings (for example, "hop_right_com") under the index corresponding to the function numbers. 
-        for(i=0;i<9;i++){ // Go through all the function groups in the func_tree_group
+        for(i=0;i<9;i++){ // Go through all the function groups in the funcTreeGroup
             var commandoSequence = []; // This is a temporary array where the very commando sequences corresponding to a particular function (inder number i) is temporarily saved.
-            if(this.func_tree_group.getAt(i).length===0){ // If the current function group in the func_tree_group is empty (function does not exist or is empty)...
-            // if(this.func_sprite_array[i]===null){
+            if(this.funcTreeGroup.getAt(i).length===0){ // If the current function group in the funcTreeGroup is empty (function does not exist or is empty)...
+            // if(this.funcSpriteArray[i]===null){
                 saveFuncArray[i] = null; // save it as null... or maybe it's better to save it as en empty array? 
             }
             else { // If the current function group is not empty...
-                for(y=0;y<this.func_tree_group.getAt(i).length;y++){ // Go through it...
-                    commandoSequence.push(this.func_tree_group.children[i].getAt(y).key); // ... and push the key-string of every sprite in it into the temporary array
+                for(y=0;y<this.funcTreeGroup.getAt(i).length;y++){ // Go through it...
+                    commandoSequence.push(this.funcTreeGroup.children[i].getAt(y).key); // ... and push the key-string of every sprite in it into the temporary array
                 }
                 saveFuncArray[i] = commandoSequence; // Then put this temporary array into the less temporary (but still temporary) saveFuncArray under the index (i) corresponding to the current function
             }
