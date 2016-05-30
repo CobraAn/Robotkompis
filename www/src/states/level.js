@@ -316,15 +316,19 @@ RobotKompis.Level.prototype = {
         functionMask.beginFill(0xffffff);
         functionMask.drawRect(176, 185, 600, 80);
         this.funcLineGroup.mask = functionMask; 
+
         this.funcRightArrow20 = this.add.sprite(175, 180, 'left20');
         this.funcRightArrow20.inputEnabled = true;
         this.funcRightArrow20.alpha = 0.6;
         this.funcRightArrow20.visible = false;
+        
         this.funcLeftArrow20 = this.add.sprite(755,180, 'right20');
         this.funcLeftArrow20.inputEnabled = true;
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
+        
         this.funcTreeGroup = this.add.group(); // Create a group tree to store function groups
+        
         for(i=0;i<9;i++){ // Fill the tree with empty groups 
             this.funcTreeGroup.add(this.add.group());
         }
@@ -620,13 +624,12 @@ RobotKompis.Level.prototype = {
     
     // This function saves the coordinates of the start position of the sprite you are dragging at the moment and adjusting it according to it's position. 
     commandDragStart: function(sprite, pointer) {
-        this.currentSpriteGroup.add(sprite); // Put the sprite in this temporary group. 
         
-        this.oldPosY = sprite.y;
         if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
             this.oldPosX = 850; // Same dimensions as when newCommand is created.
         }
-        else {
+        else if (this.commandGroup.getIndex(sprite) != -1) { // The sprite belongs to the commandGroup. Only outsiders get -1. 
+            //console.log("Found it in commandGroup");
             this.oldPosX = sprite.x;
             this.commandGroup.remove(sprite);
             for (i = 0; i < this.commandGroup.length; i++) {
@@ -636,9 +639,25 @@ RobotKompis.Level.prototype = {
                 } else {
                     otherSprite.x = otherSprite.x - 30;
                 }
-                otherSprite.reset(otherSprite.x, 510);
+                otherSprite.reset(otherSprite.x, otherSprite.y);
             }
+            this.commandGroup.sort("x");
+        } else if (this.funcLineGroup.getIndex(sprite) != -1) { // The sprite belongs to the commandGroup. Only outsiders get -1. 
+            //console.log("Found it in the functions group");
+            this.oldPosX = sprite.x;
+            this.funcLineGroup.remove(sprite);
+            for (i = 0; i < this.funcLineGroup.length; i++) {
+                var otherSprite = this.funcLineGroup.getAt(i);
+                if (otherSprite.x < sprite.x) {
+                    otherSprite.x = otherSprite.x + 40;
+                } else {
+                    otherSprite.x = otherSprite.x - 30;
+                }
+                otherSprite.reset(otherSprite.x, otherSprite.y); // Height of the function command bar
+            }
+            this.funcLineGroup.sort("x");
         }
+        this.currentSpriteGroup.add(sprite); // Put the sprite in this temporary group. 
     },
     // This function anjusts the sprite, which you're dragging, according to where it was taken from and where you you're going to drop it.
     commandDragStop: function(sprite, pointer) {
@@ -654,34 +673,10 @@ RobotKompis.Level.prototype = {
                 this.addNew();
             }
 
-            this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
-            var commandRect = this.commandGroup.getLocalBounds();
-
-            if (sprite.x < commandRect.x) { //In front of. 
-                sprite.x = commandRect.x - 70;
-            } else if (sprite.x >= (commandRect.x + commandRect.width)) { // Behind
-                if (commandRect.x == 0){
-                    sprite.x = commandRect.x + commandRect.width + 40; 
-                } else {
-                    sprite.x = commandRect.x + commandRect.width + 10;
-                }
-            } else {
-                for (i = 0; i < this.commandGroup.length; i++) {
-                    var otherSprite = this.commandGroup.getAt(i);
-                    if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) {
-                        sprite.x = otherSprite.x + 30;
-                    }
-                    if (otherSprite.x <= sprite.x) {
-                        otherSprite.x = otherSprite.x - 40;
-                        //comSprite.reset(comSprite.x, 510):
-                    } else {
-                        otherSprite.x = otherSprite.x + 30;
-                    }
-                    otherSprite.reset(otherSprite.x, 510);
-                }
-            }
+            this.scrollableField(sprite, this.commandGroup);
             sprite.reset(sprite.x, 510);
             this.commandGroup.add(sprite);
+            this.commandGroup.sort("x");
 
 
             // What if the sprite you have put in the command line is a function...? 
@@ -702,28 +697,19 @@ RobotKompis.Level.prototype = {
                     this.addNew();
                 }
                 // *** FROM HERE
-                if(this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function....
-                    sprite.reset(this.oldPosX, 510); // Just return it back to the command line.
-                    this.commandGroup.addAt(sprite, this.commandLineIndex); // Put it at the corresponding position in the command group. 
-                    this.currentSpriteGroup.remove(sprite); 
-                    this.commandGroupRender(); // ...and a control ajustment won't be excessive...  
-                    }
-
+                
+                if (this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function.... // Just return it back to the command line.
+                    this.scrollableField(sprite, this.commandGroup);
+                    sprite.reset(sprite.x, 510);
+                    this.commandGroup.add(sprite);
+                    this.commandGroup.sort("x");
+                }
                
-                // }
-                else{ // ... then it must be a command...
-                    var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                    this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                    this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                    this.newPosY = sprite.y;
-                    sprite.reset(this.newPosX, 190); // Put the sprite on the visually proper place in the function line
-                    if (this.commandLineIndex <= this.funcLineGroup.length) { 
-                        this.funcLineGroup.addAt(sprite, this.commandLineIndex);
-                    } else {
-                        this.funcLineGroup.add(sprite);
-                    }
-                    this.currentSpriteGroup.remove(sprite); 
-                    this.functionGroupRender();  // ...and a control ajustment won't be excessive...                 
+                else { // ... then it must be a command...                    
+                    this.scrollableField(sprite, this.commandGroup);
+                    sprite.reset(sprite.x, 190);
+                    this.funcLineGroup.add(sprite);     
+                    this.commandGroup.sort("x");         
                 }
                 // THIS UNCOMMENTED CODE BELOW IS if YOU WANT TO WORK ON RECURSION(FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
                 // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
@@ -750,10 +736,10 @@ RobotKompis.Level.prototype = {
                 }
             }
             else {
-                sprite.reset(this.oldPosX, 510); // Just return it back to the command line.
-                this.commandGroup.addAt(sprite, this.commandLineIndex); // Put it at the corresponding position in the command group. 
-                this.currentSpriteGroup.remove(sprite); 
-                this.commandGroupRender(); // ...and a control ajustment won't be excessive...                
+                this.scrollableField(sprite, this.commandGroup);
+                sprite.reset(sprite.x, 510);
+                this.commandGroup.add(sprite);   
+                this.commandGroup.sort("x");
             }
         }  
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
@@ -803,7 +789,7 @@ RobotKompis.Level.prototype = {
                 this.functionGroupRender();  // ...and a control ajustment won't be excessive... 
             }
             
-            else if(this.oldPosX<830 && this.oldPosY>500) {                
+            else if(this.oldPosX < 830 && this.oldPosY > 500) {                
                 sprite.reset(this.oldPosX, 510);                
                 // Put it according to the calculated position index
                 if (this.commandLineIndex <= this.commandGroup.length) { // If the position index is less than the length of the commandGroup...
@@ -816,6 +802,34 @@ RobotKompis.Level.prototype = {
             } // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
             else {
                 sprite.reset(this.oldPosX, 510);
+            }
+        }
+    },
+    scrollableField: function(sprite, group) {
+        this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
+        var groupRect = group.getLocalBounds();
+
+        if (sprite.x < groupRect.x) { //In front of. 
+            sprite.x = groupRect.x - 70;
+        } else if (sprite.x >= (groupRect.x + groupRect.width)) { // Behind
+            if (groupRect.x == 0){
+                sprite.x = groupRect.x + groupRect.width + 40; 
+            } else {
+                sprite.x = groupRect.x + groupRect.width + 10;
+            }
+        } else {
+            for (i = 0; i < group.length; i++) {
+                var otherSprite = group.getAt(i);
+                if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) {
+                    sprite.x = otherSprite.x + 30;
+                }
+                if (otherSprite.x <= sprite.x) {
+                    otherSprite.x = otherSprite.x - 40;
+                    //comSprite.reset(comSprite.x, 510):
+                } else {
+                    otherSprite.x = otherSprite.x + 30;
+                }
+                otherSprite.reset(otherSprite.x, otherSprite.y);
             }
         }
     },
@@ -993,6 +1007,7 @@ RobotKompis.Level.prototype = {
     },
     // Renders functions
     functionGroupRender: function () { // What happens if the commandGroup is empty?
+        console.log("In functionGroupRender(er)");
         for (var i = 0; i < this.funcLineGroup.length; i++) {
             var comPosX = 200 + (70 * i); // Calculate the position.
             this.funcLineGroup.getAt(i).reset(comPosX, 190);
