@@ -1,4 +1,4 @@
-RobotKompis.Level = function (game) {
+﻿RobotKompis.Level = function (game) {
     // Tilemap variables.
     this.map;
     this.layer0;
@@ -46,10 +46,7 @@ RobotKompis.Level = function (game) {
     this.func_title; // Title sprite in the function edit popUp.
     this.func_line; // This is the sprite for the function group where you put commands. 
     this.commandArray = []; // This is the ultimate array from which robot's movement commands are readed in the update-function.
-
-
-    this.a;
-
+    this.editPatchArray = []; // This is the patch array that helps to save the data in funcTreeArray properly after cancel the function-edit-menu
 
     //Check used for animations, e.g 0 means idle animation
     this.animationCheck = 0;
@@ -74,6 +71,9 @@ RobotKompis.Level = function (game) {
     this.commandLineIndex;
     this.comKey = "nope";  
     this.dragOffset = 0;
+
+    //
+    this.robotSpawnPosX = 95;
 
     this.finalPosX; 
     this.finalPosY;
@@ -155,7 +155,7 @@ RobotKompis.Level.prototype = {
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
 
         // Create the player
-        this.player = this.add.sprite(95, this.world.height - 280, this.robot);
+        this.player = this.add.sprite(this.robotSpawnPosX, this.world.height - 280, this.robot);
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Centers the player in one 32x32 tile.
@@ -615,7 +615,7 @@ RobotKompis.Level.prototype = {
 
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(95, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
@@ -991,7 +991,8 @@ RobotKompis.Level.prototype = {
         this.run_btn.visible = true;
 
         // Resets player and commands
-        this.player.reset(95, this.world.height - 280);
+	this.player.body.allowGravity = true;
+        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
@@ -1067,12 +1068,15 @@ RobotKompis.Level.prototype = {
                 // this.funcLineGroup.immovable = true;            
             }
             // To be sure that everything is closed (bugging without the following 4 guys).
+            // To be sure that everything is closed (bugging without the following 4 guys).
             if(this.func_edit){this.func_edit.visible = false}
             if(this.func_save){this.func_save.visible = false}
             if(this.func_delete){this.func_delete.visible = false}
             if(this.func_save){this.func_save.visible = false}
             if(this.func_cancel){this.func_cancel.visible = false}
-            if(this.func_line){this.func_line.visible = false}           
+            if(this.func_line){this.func_line.visible = false} 
+            if(this.funcRightArrow20.visible===true){this.funcRightArrow20.visible = false}
+            if(this.funcLeftArrow20.visible===true){this.funcLeftArrow20.visible = false}           
             this.cloud.visible = false;
   
          }    
@@ -1119,6 +1123,8 @@ RobotKompis.Level.prototype = {
                 }                   
             }
         }
+        if(this.func_edit){this.func_edit.visible = false}
+        if(this.func_delete){this.func_delete.visible = false}
         this.func_line.visible = true; 
         this.funcLineGroup.visible = true;
         this.funcRightArrow20.visible = true;
@@ -1133,7 +1139,7 @@ RobotKompis.Level.prototype = {
         this.func_cancel.input.useHandCursor = true;
         this.func_cancel.alpha = 0.7;
         this.func_cancel.events.onInputDown.add(function() {this.cancelCreateFunctionOnClick(index)}, this);               
-    },  
+    },   
 
     // OWN FUNCTION: click on "SPARA" and save the function. 
     saveFunctionOnClick: function(index) {
@@ -1182,11 +1188,26 @@ RobotKompis.Level.prototype = {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
         //this.funcTreeGroup.addAt(this.add.group(), index);
-        console.log("CANCEL TREE BEFORE", this.funcTreeGroup.getAt(index).length)
-
         this.funcLineGroup.destroy();
         this.funcLineGroup.visible=false;
         this.funcLineGroup = this.add.group(); // Empty the temporary function line group 
+        var tempCommand;
+        for(i=0;i<this.editPatchArray.length;i++){
+            tempCommand = this.add.sprite(200+70*(i), 190, this.editPatchArray[i]); // From every key-string you find in the saveFuncArray, create a command sprite
+            //tempCommand.visible = false;
+            this.physics.arcade.enable(tempCommand);
+            tempCommand.body.allowGravity = false;
+            tempCommand.inputEnabled = true;
+            tempCommand.input.enableDrag(true);
+            tempCommand.events.onDragStart.add(this.commandDragStart, this); // If you start dragging the sprite, the commandDragStart function is launched
+            tempCommand.events.onDragStop.add(this.commandDragStop, this); // If you drop the sprite, the commandDragStop function is launched
+            tempCommand.collideWorldBounds = true;
+            this.funcTreeGroup.children[index].add(tempCommand); // ...and finally put the sprite at the corresponding position in the funcTreeGroup
+
+        }
+        this.funcTreeGroup.children[index].visible = false;
+        this.editPatchArray = [];
+        // this.funcTreeGroup.addAt(this.editPatchGroup, index);
         console.log("CANCEL TREE AFTER", this.funcTreeGroup.getAt(index).length)
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false;     
@@ -1289,10 +1310,11 @@ RobotKompis.Level.prototype = {
         // Returning back the commando chain corresponding by index to the current function to the funcLineGroup. 
         this.func_line.visible = true; 
         this.funcLineGroup.visible=true;
-        this.funcTreeGroup.getAt(index).visible = true;
-        console.log("EDIT TREE BEFORE", this.funcTreeGroup.getAt(index).length)
-        this.funcLineGroup = this.funcTreeGroup.children[index];
-        console.log("EDIT TREE AFTER", this.funcTreeGroup.getAt(index).length)
+        this.funcTreeGroup.getAt(index).visible = true; 
+        for(i=0;i<this.funcTreeGroup.children[index].length;i++){ // This for-loop saves the functions content into the editPatchArray in the form of commando keys
+            this.editPatchArray.push(this.funcTreeGroup.children[index].getAt(i).key);
+        }
+        this.funcLineGroup = this.funcTreeGroup.children[index]; // Now we can transfer the functions content into the temporary group 
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true;                
