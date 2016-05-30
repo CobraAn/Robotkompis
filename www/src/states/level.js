@@ -620,19 +620,25 @@ RobotKompis.Level.prototype = {
     
     // This function saves the coordinates of the start position of the sprite you are dragging at the moment and adjusting it according to it's position. 
     commandDragStart: function(sprite, pointer) {
+        this.currentSpriteGroup.add(sprite); // Put the sprite in this temporary group. 
+        
         this.oldPosY = sprite.y;
-        var remainder = sprite.x % 70; // Cleanse the input from faulty values.
-        this.commandLineIndex = (sprite.x - remainder) / 70; // check how much of an offset it has from start.
         if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
             this.oldPosX = 850; // Same dimensions as when newCommand is created.
         }
         else {
             this.oldPosX = sprite.x;
-            this.oldPosY = sprite.y;
             this.commandGroup.remove(sprite);
-            this.currentSpriteGroup.add(sprite);
+            for (i = 0; i < this.commandGroup.length; i++) {
+                var otherSprite = this.commandGroup.getAt(i);
+                if (otherSprite.x < sprite.x) {
+                    otherSprite.x = otherSprite.x + 40;
+                } else {
+                    otherSprite.x = otherSprite.x - 30;
+                }
+                otherSprite.reset(otherSprite.x, 510);
+            }
         }
-        this.currentSpriteGroup.add(sprite); // Put the sprite in this temporary group. 
     },
     // This function anjusts the sprite, which you're dragging, according to where it was taken from and where you you're going to drop it.
     commandDragStop: function(sprite, pointer) {
@@ -651,16 +657,15 @@ RobotKompis.Level.prototype = {
             this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
             var commandRect = this.commandGroup.getLocalBounds();
 
-            if (sprite.x < commandRect.x) { //AT FRONT
+            if (sprite.x < commandRect.x) { //In front of. 
                 sprite.x = commandRect.x - 70;
-            } else if (sprite.x >= (commandRect.x + commandRect.width)) {
+            } else if (sprite.x >= (commandRect.x + commandRect.width)) { // Behind
                 if (commandRect.x == 0){
                     sprite.x = commandRect.x + commandRect.width + 40; 
                 } else {
                     sprite.x = commandRect.x + commandRect.width + 10;
                 }
             } else {
-
                 for (i = 0; i < this.commandGroup.length; i++) {
                     var otherSprite = this.commandGroup.getAt(i);
                     if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) {

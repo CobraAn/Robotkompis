@@ -87,11 +87,11 @@ RobotKompis.MapOverview.prototype = {
 
 
         console.log("saveFunction length in beginning", this.playerData.funcArray)
-        if(this.playerData.funcArray!=="undefined"){
+        /*if (this.playerData.funcArray!=="undefined") {
                                                     for(i=0;i<this.playerData.funcArray.length; i++){ 
                                                     console.log("saveFuncArray: ", i, this.playerData.funcArray[i])
                                                 }        
-        }
+        }*/
 
 
         }
