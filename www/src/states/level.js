@@ -70,6 +70,7 @@ RobotKompis.Level = function (game) {
     this.newPosY;
     this.commandLineIndex;
     this.comKey = "nope";  
+    this.dragOffset = 0;
 
     this.finalPosX; 
     this.finalPosY;
@@ -207,11 +208,13 @@ RobotKompis.Level.prototype = {
         // Com_line dimensions: 820 x 80 px
         this.com_line = this.add.sprite(10, 500, 'com_line');
 
-        this.commandGroup = this.add.group(); // To house all the command children
-        this.physics.arcade.enable(this.commandGroup);
-        this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
-        this.commandGroup.allowGravity = false; 
-        this.commandGroup.immovable = true;
+        //this.commandGroup = this.add.group(); // To house all the command children
+        //this.physics.arcade.enable(this.commandGroup);
+        //this.physics.enable( [ this.commandGroup ], Phaser.Physics.ARCADE);
+        this.commandGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
+        //this.commandGroup.x = 40;
+        //this.commandGroup.allowGravity = false; 
+        //this.commandGroup.immovable = true;
 
         //  A mask is a Graphics object
         var commandMask = this.game.add.graphics(0, 0);
@@ -410,9 +413,6 @@ RobotKompis.Level.prototype = {
                 this.player.body.velocity.x = -100;
                 this.smallerThan = true;
             } else if (this.comKey == "ladder_com") {
-                // Uhm, why are there 2 getTiles? 
-                //var layer1tiles = this.layer1.getTiles(this.player.x - 10, this.player.y - 20, 20, 20);
-
                 var layer4tiles = this.layer4.getTiles(this.player.x - 10, this.player.y - 20, 10, 10);
                 this.ladderOverlap = false;
                 // Two checks; one for if there's a ladder and one if there isn't.
@@ -421,13 +421,7 @@ RobotKompis.Level.prototype = {
                         this.ladderOverlap = true;
                     }
                     
-                }/*
-                for (i = 0; i < layer1tiles.length; i++) {
-                    if (layer1tiles[i].index != (-1)) {
-                        this.waterOverlap = true;
-                    }
-                    
-                }*/
+                }
                 
                 if (this.ladderOverlap) {
                     this.animationCheck = 3;
@@ -440,10 +434,6 @@ RobotKompis.Level.prototype = {
                 } else {
                     this.comKey = "wrong";
                 }
-                if(this.waterOverlap){
-                    console.log("Water overlap");
-                }
-                this.smallerThan = true; 
             } else if (this.comKey == "down_com") {
                 var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y + 64, 20, 20);
 
@@ -563,8 +553,6 @@ RobotKompis.Level.prototype = {
             this.oldPosX = 850; // Same dimensions as when newCommand is created
         }
         else {
-            var remainder = sprite.x % 70; // Cleanse the input from faulty values
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Check how much of an offset it has from start
             this.oldPosX = sprite.x;
             this.oldPosY = sprite.y;
             this.commandGroup.remove(sprite);
@@ -574,29 +562,51 @@ RobotKompis.Level.prototype = {
 
     commandDragStop: function(sprite, pointer) {
 
+        // So what does index do? 
         var index = 0;
+
+        // Related to Niko's functions: 
         if(this.inArray(sprite.key, this.func_image_array)===true){
             index = this.func_image_array.indexOf(sprite.key);   
         }
+
         // If the pointer drops it inside of the com_line square IN HEIGHT (relevant for the Library buttons)
         if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
             if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
                 this.addNew();
             }
-            var remainder = sprite.x % 70;
-            this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index
-            this.newPosX = 40 + (this.commandLineIndex * 70); // Calculate the new position
 
-            // Calculate the new position
-            this.newPosY = sprite.y;
-            sprite.reset(this.newPosX, 510);
-            if (this.commandLineIndex <= this.commandGroup.length) {
-                this.commandGroup.addAt(sprite, this.commandLineIndex);
+            this.currentSpriteGroup.remove(sprite); // KEEP
+
+            var commandRect = this.commandGroup.getLocalBounds();
+
+            if (sprite.x < commandRect.x) { //AT FRONT
+                sprite.x = commandRect.x - 70;
+            } else if (sprite.x >= (commandRect.x + commandRect.width)) {
+                if (commandRect.x == 0){
+                    sprite.x = commandRect.x + commandRect.width + 40; 
+                } else {
+                    sprite.x = commandRect.x + commandRect.width + 10;
+                }
             } else {
-                this.commandGroup.add(sprite);
+
+                for (i = 0; i < this.commandGroup.length; i++) {
+                    var otherSprite = this.commandGroup.getAt(i);
+                    if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) {
+                        sprite.x = otherSprite.x + 30;
+                    }
+                    if (otherSprite.x <= sprite.x) {
+                        otherSprite.x = otherSprite.x - 40;
+                        //comSprite.reset(comSprite.x, 510):
+                    } else {
+                        otherSprite.x = otherSprite.x + 30;
+                    }
+                    otherSprite.reset(otherSprite.x, 510);
+                }
             }
-            this.currentSpriteGroup.remove(sprite);
-            this.commandGroupRender();
+            sprite.reset(sprite.x, 510);
+            this.commandGroup.add(sprite);
+            //this.commandGroupRender();// REMOVE
 
 
             if(this.inArray(sprite, this.func_sprite_array)===true){  
