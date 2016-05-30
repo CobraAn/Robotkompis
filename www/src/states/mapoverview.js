@@ -15,7 +15,7 @@ RobotKompis.MapOverview = function (game) {
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
-    this.character = 'switch';
+    this.character = 'switch'; //Setting a default value for character
     this.popup;
     this.closebutton;
 
@@ -65,10 +65,9 @@ RobotKompis.MapOverview = function (game) {
     this.rightArrow;
     this.levelText;
     this.style = {
-        font: "50px Arial Black",
-        fill: "#000000"
+        font: "50px Sigmar One", fill: "Black"
     };
-};
+}
 
 RobotKompis.MapOverview.prototype = {
 
@@ -79,6 +78,7 @@ RobotKompis.MapOverview.prototype = {
          */
         
         this.playerData = loadData();
+        console.log(this.playerData);
         if (typeof this.playerData !== "undefined" && jQuery.isEmptyObject(this.playerData) !== true && this.playerData.robot !== undefined) {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
@@ -183,7 +183,7 @@ RobotKompis.MapOverview.prototype = {
             // Current world
             var currentWorld = l + 1;
             var currentWorldString = currentWorld.toString();
-            this.currentWorldText = this.add.text(offsetX + 180, 170, 'Värld ' + currentWorldString, this.style);
+            this.currentWorldText = this.add.text(offsetX + 150, 170, 'Värld ' + currentWorldString, this.style);
             this.levelButtonsGroup.add(this.currentWorldText);
 
             // Looping through each level button
@@ -197,6 +197,7 @@ RobotKompis.MapOverview.prototype = {
                     if (typeof this.playerData.levels !== "undefined" && this.playerData.levels !== null) {
                         if (typeof this.playerData.levels[dictKey] !== "undefined" && this.playerData.levels[dictKey] !== null) {
                             levelStars = this.playerData.levels[dictKey];
+                            console.log(levelStars);
                         }
                     }
 
@@ -230,13 +231,13 @@ RobotKompis.MapOverview.prototype = {
                     if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        this.levelText = this.add.bitmapText(levelButton.x+35,levelButton.y+20, 'numberFont', printedNumber, 50);
+                        this.levelText = this.add.text(levelButton.x+35,levelButton.y - 10, printedNumber, this.style);
                         this.levelButtonsGroup.add(this.levelText);
                     }
                     else if (this.starsArray[levelNumber] < 5) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        this.levelText = this.add.bitmapText(levelButton.x+20,levelButton.y+20, 'numberFont', printedNumber, 50);
+                        this.levelText = this.add.text(levelButton.x+17,levelButton.y - 10, printedNumber, this.tyle);
                         this.levelButtonsGroup.add(this.levelText);
                     }
                 }

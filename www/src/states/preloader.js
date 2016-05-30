@@ -3,10 +3,11 @@ RobotKompis.Preloader = function (game) {
 	this.preloadBar = null;
 	this.titleText = null;
 	this.ready = false;
-    this.music;
+    this.music; 
 };
 
 RobotKompis.Preloader.prototype = {
+    
 	preload: function () {
         'use strict';
         this.load.audio('sound', ['../../assets/ljud/happy.mp3', '../../assets/ljud/happy.ogg']);
@@ -24,7 +25,7 @@ RobotKompis.Preloader.prototype = {
         // Footer
         this.load.bitmapFont('startFont', '../../fonts/startFont/font.png', '../../fonts/startFont/font.fnt');
         this.load.bitmapFont('titleFont', '../../fonts/titleFont/titleFont.png', '../../fonts/titleFont/titleFont.fnt');
-        this.load.bitmapFont('numberFont', '../../fonts/numberFont/font.png', '../../fonts/numberFont/font.fnt');
+        
         
         // Start menu
         this.load.spritesheet('startKnapp', '../../images/Startknapp_Spritesheet.png', 392, 165, 2);

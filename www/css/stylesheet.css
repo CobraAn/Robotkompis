@@ -1,4 +1,6 @@
+@import url(https://fonts.googleapis.com/css?family=Sigmar+One);
 body {
+    font-family: 'Sigmar One', cursive;
     overflow: hidden;
     padding: 0;
     margin: 0;
