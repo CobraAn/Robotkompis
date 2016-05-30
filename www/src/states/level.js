@@ -977,6 +977,7 @@ RobotKompis.Level.prototype = {
         this.run_btn.visible = true;
 
         // Resets player and commands
+	this.player.body.allowGravity = true;
         this.player.reset(this.robotSpawnPosX, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
