@@ -65,7 +65,7 @@
 
     // These two variables hold the original and new X position along with the curren commandLine index of the command being dragged.
     this.oldPosX; // oldPosY doesn't exist because it's always 510.
-    this.oldPosY;
+    this.oldPosY = 0;
     this.newPosX;
     this.newPosY;
     this.commandLineIndex;
@@ -302,7 +302,6 @@ RobotKompis.Level.prototype = {
         // Activate event listeners (known as FUNCTIONS) for when run_btn and stop_btn are clicked.
         this.run_btn.events.onInputDown.add(this.listener, this);
         this.stop_btn.events.onInputDown.add(this.listenerStop, this);
-        this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
         // Function groups are created here
         this.funcLineGroup = this.add.group();
@@ -312,6 +311,7 @@ RobotKompis.Level.prototype = {
         this.funcLineGroup.immovable = true;
 
         // Function line mask and arrows
+        
         var functionMask = this.game.add.graphics(0, 0);
         functionMask.beginFill(0xffffff);
         functionMask.drawRect(176, 185, 600, 80);
@@ -336,7 +336,7 @@ RobotKompis.Level.prototype = {
 
         var saveFuncArray = this.playerData.funcArray; // Get the functions saved from the previous time from the localStorage.
 
-        console.log("Beginning of level", this.playerData.funcArray)
+        //console.log("Beginning of level", this.playerData.funcArray)
         if (typeof saveFuncArray !== "undefined" && saveFuncArray !== null) {
             var tempCommand; // A temporary variable to create command sprites from the functions from the previous time.
             for(i=0;i<9;i++){
@@ -377,6 +377,8 @@ RobotKompis.Level.prototype = {
         this.physics.enable( [ this.funcTreeGroup ], Phaser.Physics.ARCADE);
         this.funcTreeGroup.allowGravity = false;
         this.funcTreeGroup.immovable = true;
+
+        this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
 
 
     },
@@ -420,8 +422,6 @@ RobotKompis.Level.prototype = {
         } else {
             this.funcLineGroup.setAll('body.velocity.x', 0);
         }
-
-
 
         /* Adoptee keys:
          * this.finalPosX;
@@ -555,6 +555,7 @@ RobotKompis.Level.prototype = {
 
                 // The player has reached the door with a key, save all data
                 if (this.doorOverlap) {
+                    this.animationCheck = 0;
                     this.scoreFunction(true);
                     this.funcSpriteArray = [];
                     this.funcTreeGroup.destroy();
@@ -624,7 +625,7 @@ RobotKompis.Level.prototype = {
     
     // This function saves the coordinates of the start position of the sprite you are dragging at the moment and adjusting it according to it's position. 
     commandDragStart: function(sprite, pointer) {
-        
+        this.oldPosY = sprite.y; // To be checked for if it originated from the functions line. 
         if (sprite == this.newCommand) { // Checks if they're IDENTICAL. Not to be confused with having the same key. 
             this.oldPosX = 850; // Same dimensions as when newCommand is created.
         }
@@ -639,7 +640,7 @@ RobotKompis.Level.prototype = {
                 } else {
                     otherSprite.x = otherSprite.x - 30;
                 }
-                otherSprite.reset(otherSprite.x, otherSprite.y);
+                otherSprite.reset(otherSprite.x, 510);
             }
             this.commandGroup.sort("x");
         } else if (this.funcLineGroup.getIndex(sprite) != -1) { // The sprite belongs to the commandGroup. Only outsiders get -1. 
@@ -653,7 +654,7 @@ RobotKompis.Level.prototype = {
                 } else {
                     otherSprite.x = otherSprite.x - 30;
                 }
-                otherSprite.reset(otherSprite.x, otherSprite.y); // Height of the function command bar
+                otherSprite.reset(otherSprite.x, 190); // Height of the function command bar
             }
             this.funcLineGroup.sort("x");
         }
@@ -667,19 +668,16 @@ RobotKompis.Level.prototype = {
             index = this.funcImageKeyArray.indexOf(sprite.key);   
         }
 
-        // If the pointer drops it inside of the com_line square IN HEIGHT (relevant for the Library buttons)
+        // Dropped in command line !
         if (pointer.y > 510 && pointer.y < 590 && pointer.x < 820) {
-            if (this.oldPosX > 830) { // Was the command in commandGroup before? (commandLine spans 20 - 830) 
+            if (this.oldPosX > 830) { // If the command was taken from the newly created position..
                 this.addNew();
             }
 
-            this.scrollableField(sprite, this.commandGroup);
-            sprite.reset(sprite.x, 510);
-            this.commandGroup.add(sprite);
-            this.commandGroup.sort("x");
-
+            this.scrollableField(sprite, this.commandGroup, 510);
 
             // What if the sprite you have put in the command line is a function...? 
+            // FUNCTION CODE !!
             if(this.inArray(sprite, this.funcSpriteArray)===true){ // ...if it is true...
                 this.funcSpriteArray[this.funcSpriteArray.indexOf(sprite)]=null; // Delete it from the function sprite array.
                 this.func_edit.visible = false; // Cease the "ÄNDRA" button
@@ -690,65 +688,31 @@ RobotKompis.Level.prototype = {
             }
         }
 
-        // If the sprite is dropped in the function window
-        else if (pointer.y > 100 && pointer.y < 350 && pointer.x > 140 && pointer.x < 800) { // These are the approximate limits of the function window
-            if (this.cloud.visible===true && this.func_line.visible===true){ // If you drop it in the function editor...
+        // If the sprite is dropped in the ACTIVE function window area. x: 140 - 800, y: 350 - 100
+        // The function cloud has the dimensions 820 x 230 and starts at (140, 110) [x,y]
+        else if (pointer.y >= 110 && pointer.y < 250 && pointer.x > 140 && pointer.x < 800 && this.cloud.visible == true && this.func_line.visible == true) { // These are the approximate limits of the function window
+            // IF: Dropped in function editor while being able to create a new function. 
+                console.log("pointer.y");
+                console.log(pointer.y);
                 if (this.oldPosX > 830) { // If the command was taken from the newly created position..
                     this.addNew();
                 }
-                // *** FROM HERE
-                
-                if (this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function.... // Just return it back to the command line.
-                    this.scrollableField(sprite, this.commandGroup);
-                    sprite.reset(sprite.x, 510);
-                    this.commandGroup.add(sprite);
-                    this.commandGroup.sort("x");
+                // IF the sprite is a function ELSE it must be a command
+                if (this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function... Just return it back to the command line.
+                    sprite.x = this.oldPosX; // Change the position back. 
+                    this.scrollableField(sprite, this.commandGroup, 510); // And re-instate it to the group institution. 
+                } else { // The sprite is a command (blue). Allow it to live in funcLineGroup.                   
+                    this.scrollableField(sprite, this.funcLineGroup, 190);
                 }
-               
-                else { // ... then it must be a command...                    
-                    this.scrollableField(sprite, this.commandGroup);
-                    sprite.reset(sprite.x, 190);
-                    this.funcLineGroup.add(sprite);     
-                    this.commandGroup.sort("x");         
-                }
-                // THIS UNCOMMENTED CODE BELOW IS if YOU WANT TO WORK ON RECURSION(FUNCTION IN FUNCTION). JUST REPLACE THE CODE STARTING FROM *** FROM HERE WITH THIS UNCOMMENTED CODE. 
-                // var remainder = sprite.x % 70; // Cleanse the (new) input from faulty values. Through semi-holy fire.
-                // this.commandLineIndex = (sprite.x - remainder) / 70; // Calculate the (new) index with nice even integer numbers (why we need holy cleansing).            
-                // this.newPosX = 200 + (this.commandLineIndex * 70); // Calculate the new position. Needed as a tidy assignment line due to commandLineRender() wanting it.
-                // this.newPosY = sprite.y;
-                // console.log(this.commandLineIndex)
-                // sprite.reset(this.newPosX, 190);
-                // if (this.commandLineIndex <= this.funcLineGroup.length) {
-                //     this.funcLineGroup.addAt(sprite, this.commandLineIndex);
-                // } else {
-                //     this.funcLineGroup.add(sprite);
-                // }
-                // this.currentSpriteGroup.remove(sprite);
-                // this.functionGroupRender();
-            }
-            else if(this.cloud.visible===true && this.func_save.visible===false){
-
-                if(this.inArray(sprite, this.funcSpriteArray)===true){
-                    sprite.reset(this.funcCreateArray[index].x, this.funcCreateArray[index].y);  
-                }
-                else if(this.inArray(sprite.key, this.funcImageKeyArray)===true && this.inArray(sprite, this.funcSpriteArray)===false){
-                    sprite.kill();
-                }
-            }
-            else {
-                this.scrollableField(sprite, this.commandGroup);
-                sprite.reset(sprite.x, 510);
-                this.commandGroup.add(sprite);   
-                this.commandGroup.sort("x");
-            }
         }  
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
-            if (this.oldPosX < 830 && this.oldPosY > 500) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
+            // this.oldPosX < 830 && this.oldPosY > 500  
+            if (this.commandGroup.getIndex(sprite) != -1) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
                 this.commandGroup.remove(sprite, true); // IS the true necessary when we also have to kill it?
                 sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
-                this.commandGroupRender();
             }
+            // Can be replaced with this.funcLineGroup.getIndex(child)? 
             else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // It the sprite was in the function window
                 // Temporary solving...
                 if(this.inArray(sprite, this.funcSpriteArray)===true){ // If it was in the function menu...
@@ -773,65 +737,64 @@ RobotKompis.Level.prototype = {
             }
 
         }
-        else { // So it was moved outside of the commandLine area or function window area, eh? SNAP IT BACK !
-            if (this.inArray(sprite, this.funcSpriteArray)===true){ 
+        else { // So it was moved outside of the commandLine area or (active) function window area (and trash), eh? SNAP IT BACK !
+            // IF: Who am I ? What am I?
+            console.log("pointer.y");
+            console.log(pointer.y);
+            if (this.inArray(sprite, this.funcSpriteArray)===true){  // It came from a function... 
                 sprite.reset(this.funcCreateArray[index].x, this.funcCreateArray[index].y); 
             }
-            else if(this.cloud.visible===true && this.func_line.visible===true && this.oldPosY<500){
-                sprite.reset(this.oldPosX, 190); 
-                // Put it according to the calculated position index
-                if (this.commandLineIndex <= this.funcLineGroup.length) { // If the position index is less than the length of the function line group...
-                    this.funcLineGroup.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the functionGroup according to the index
-                } else { // If the position index is bigger...
-                    this.funcLineGroup.add(sprite); // Just put the sprite at the end of the functionGroup.
-                }
-                this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
-                this.functionGroupRender();  // ...and a control ajustment won't be excessive... 
+            // ELSE IF: It came from the function field (which is visible)
+            else if(this.cloud.visible===true && this.func_line.visible===true && this.oldPosY >= 110 && this.oldPosY <= 350){  
+                sprite.x = this.oldPosX; // Snap it back.
+                this.scrollableField(sprite, this.funcLineGroup, 190);
             }
-            
-            else if(this.oldPosX < 830 && this.oldPosY > 500) {                
-                sprite.reset(this.oldPosX, 510);                
-                // Put it according to the calculated position index
-                if (this.commandLineIndex <= this.commandGroup.length) { // If the position index is less than the length of the commandGroup...
-                    this.commandGroup.addAt(sprite, this.commandLineIndex); // Squeeze the sprite in between the other sprites in the commandGroup according to the index
-                } else { // If the position index is bigger...
-                    this.commandGroup.add(sprite); // Just put the sprite at the end of the commandGroup. 
-                }
-                this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
-                this.commandGroupRender(); // ...and a control ajustment won't be excessive...            
-            } // oldPosX gotten from savePosition. Commands are ALWAYS at y = 510.
+            // ELSE IF: It came from the command field. 
+            else if (this.oldPosX < 830) { 
+                sprite.x = this.oldPosX;  // Snap it back.
+                this.scrollableField(sprite, this.commandGroup, 510);
+            } 
+            // ELSE: I am this.newCommand  
             else {
                 sprite.reset(this.oldPosX, 510);
             }
         }
     },
-    scrollableField: function(sprite, group) {
+
+    scrollableField: function(sprite, group, resetHeight) {
         this.currentSpriteGroup.remove(sprite); //...and don't forget to remove it from the temporary group.
         var groupRect = group.getLocalBounds();
 
         if (sprite.x < groupRect.x) { //In front of. 
             sprite.x = groupRect.x - 70;
         } else if (sprite.x >= (groupRect.x + groupRect.width)) { // Behind
-            if (groupRect.x == 0){
+            if (groupRect.x == 0 && resetHeight == 510) {
                 sprite.x = groupRect.x + groupRect.width + 40; 
+            } else if (resetHeight == 190 && groupRect.x == 0) {
+                sprite.x = groupRect.x + groupRect.width + 200;
             } else {
                 sprite.x = groupRect.x + groupRect.width + 10;
             }
         } else {
             for (i = 0; i < group.length; i++) {
-                var otherSprite = group.getAt(i);
-                if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) {
+                var otherSprite = group.getAt(i); 
+                if (sprite.overlap(otherSprite) && otherSprite.x <= sprite.x) { // Does not work for dropped from afar ones. 
+                    sprite.x = otherSprite.x + 30;
+                } else if (otherSprite.x <= sprite.x && (otherSprite.x + 70) >= sprite.x) { // Dropped from afar. 
                     sprite.x = otherSprite.x + 30;
                 }
+
                 if (otherSprite.x <= sprite.x) {
                     otherSprite.x = otherSprite.x - 40;
-                    //comSprite.reset(comSprite.x, 510):
                 } else {
                     otherSprite.x = otherSprite.x + 30;
                 }
                 otherSprite.reset(otherSprite.x, otherSprite.y);
             }
         }
+        sprite.reset(sprite.x, resetHeight);
+        group.add(sprite);
+        group.sort("x");
     },
 
     // Adds new command
