@@ -40,16 +40,31 @@ RobotKompis.Preloader.prototype = {
         this.load.image('bg', '../../images/startBG600.png');
 
         //Maps
-        this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        //World 1
+        //this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap1', '../../assets/maps/1.0x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap2', '../../assets/maps/1.1xx.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap3', '../../assets/maps/1.2x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap4', '../../assets/maps/1.3x.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('tilemap5', '../../assets/maps/1.4x.json', null, Phaser.Tilemap.TILED_JSON);
+        //World 2
+        //this.load.tilemap('tilemap0', '../../assets/maps/0.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap6', '../../assets/maps/2.0x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap7', '../../assets/maps/2.1x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap8', '../../assets/maps/2.2x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap9', '../../assets/maps/2.3x.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('tilemap10', '../../assets/maps/2.4x.json', null, Phaser.Tilemap.TILED_JSON);
+        
+        
         this.load.image('ground', '../../assets/kenney32/spritesheet_ground2.png');
         this.load.image('items', '../../assets/kenney32/spritesheet_items.png');
+        
         this.load.image('tiles', '../../assets/kenney32/spritesheet_tiles.png');
-        this.load.image('background', '../../assets/backgrounds/newdesert.jpg');
+        this.load.image('newdesert', '../../assets/backgrounds/newdesert.jpg');
+        this.load.image('iceland', '../../assets/backgrounds/iceland.png');
+        this.load.image('ice32xx', '../../assets/kenney32/ice32xx.png');
+        this.load.image('icetiles32', '../../assets/kenney32/icetiles32.png');
+        this.load.image('icetiles32x', '../../assets/kenney32/icetiles32x.png');
 
         // Commands
         this.load.image('up_com', '../../images/actionicons/uparrow_60.png');
@@ -86,6 +101,11 @@ RobotKompis.Preloader.prototype = {
         this.load.image('gopil', '../../assets/pilar/gopil.png');
         this.load.image('pilmute', '../../assets/pilar/pilmute.png');
         this.load.image('radpil', '../../assets/pilar/radpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('clearpil', '../../assets/pilar/clearpil.png');
+        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
+        this.load.image('movepil', '../../assets/pilar/movepil.png');
+        
         
         // Images for settings-state
         this.load.image('backButton', '../../images/bakpil.png');
@@ -104,14 +124,13 @@ RobotKompis.Preloader.prototype = {
         this.load.image('elseChoise', '../../assets/robotar/Else.png');
         
         
-        // Playable character
+        // Playable characters
+        // Spritesheets containing assets for jump, walk, climb and idle animations
         this.load.spritesheet('else', '../../assets/robotsResized/Else1Walk.png', 30, 42);
         this.load.spritesheet('goto', '../../assets/robotsResized/goto1Walk.png', 30, 49);
         this.load.spritesheet('if', '../../assets/robotsResized/if1Walk.png', 30, 59);
         this.load.spritesheet('while', '../../assets/robotsResized/while1Walk.png', 30, 38);
-
-        // Spritesheet for switch with animation for jumping
-        this.load.spritesheet('switchAni', '../../assets/robotsResized/switchSpritesheetWalk.png', 30, 37);
+        this.load.spritesheet('switch', '../../assets/robotsResized/switchSpritesheetWalk.png', 30, 37);
 
         // Own-defined functions
         this.load.spritesheet('func_button', '../../assets/function/favx.png', 50, 50, 2);
@@ -131,7 +150,9 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f8', '../../assets/function/f8.png');
         this.load.image('cloud','../../assets/function/the_cloud.png');
         this.load.image('func_title','../../assets/function/func_title.png');
+        this.load.image('func_line','../../assets/function/func_line.png');
         this.load.image('temp1','../../assets/function/TEMP1.png');
+
 
         // Win Screen
         this.load.image('starr','../../assets/da_star.png');       
