@@ -1,4 +1,4 @@
-RobotKompis.Level = function (game) {
+﻿RobotKompis.Level = function (game) {
     // Tilemap variables.
     this.map;
     this.layer0;
@@ -71,6 +71,9 @@ RobotKompis.Level = function (game) {
     this.commandLineIndex;
     this.comKey = "nope";  
     this.dragOffset = 0;
+
+    //
+    this.robotSpawnPosX = 97; // since one block is 32 px and robot 30 px wide
 
     this.finalPosX; 
     this.finalPosY;
@@ -152,7 +155,7 @@ RobotKompis.Level.prototype = {
         this.map.setCollisionBetween(1, 5000, true, 'blocked');
 
         // Create the player
-        this.player = this.add.sprite(95, this.world.height - 280, this.robot);
+        this.player = this.add.sprite(this.robotSpawnPosX, this.world.height - 280, this.robot);
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
         // Centers the player in one 32x32 tile.
@@ -608,7 +611,7 @@ RobotKompis.Level.prototype = {
 
         this.stop_btn.visible = false;
         this.run_btn.visible = true;
-        this.player.reset(95, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
@@ -974,7 +977,7 @@ RobotKompis.Level.prototype = {
         this.run_btn.visible = true;
 
         // Resets player and commands
-        this.player.reset(95, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
