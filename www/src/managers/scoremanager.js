@@ -9,7 +9,7 @@ function saveScore(noBlocks, dataArgs) {
     console.log("saving score")
     console.log("FuncArray in saveScore", dataArgs.funcArray)
 
-    dataArgs.levelScore = calculateScore(noBlocks);
+    dataArgs.levelScore = calculateScore(noBlocks, dataArgs.levelName);
 
     if (typeof dataArgs.levelScore !== "undefined" && dataArgs.levelScore !== null) {
         saveData(dataArgs);

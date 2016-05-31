@@ -1,6 +1,6 @@
 // Variable used as a key for localStorage
 var data = "DATA";
-
+console.log("Jag är för fan här....")
 /*
  *  Takes an object args and saves the data contained to localStorage
  */
