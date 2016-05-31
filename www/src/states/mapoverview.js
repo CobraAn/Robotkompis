@@ -63,7 +63,10 @@ RobotKompis.MapOverview = function (game) {
     // Arrows to navigate through level pages
     this.leftArrow;
     this.rightArrow;
+    
+    // Variable for numbers on levels
     this.levelText;
+    // Style for font
     this.style = {
         font: "50px Sigmar One", fill: "Black"
     };
@@ -169,7 +172,7 @@ RobotKompis.MapOverview.prototype = {
     
     createLevelSelect: function() {
 
-        // Create left and right arrows
+        // Create left and right arrows for level select navigation
         this.leftArrow = this.add.button(this.world.centerX - 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 0, 0, 1);
         this.leftArrow.anchor.setTo(0.5);
         this.leftArrow.frame = 0;
@@ -180,6 +183,7 @@ RobotKompis.MapOverview.prototype = {
 
         //Creation of levelButton group
         this.levelButtonsGroup = this.add.group();
+        //Height and length of button grid
         var levelLength = this.buttonWidth*this.buttonCols+this.buttonSpacing*(this.buttonCols - 1);
         var levelHeight = this.buttonWidth*this.buttonRows+this.buttonSpacing*(this.buttonRows - 1);
 
