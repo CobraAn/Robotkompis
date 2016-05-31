@@ -113,10 +113,7 @@ RobotKompis.MapOverview.prototype = {
         this.mute_button.visible = false;
         this.tut_button.visible = false;
 
-        // TODO
-        // Have to fix that the sprite sheet remembers its last frame so it chows the right chosen robot.
-
-        // Robot menu
+        // Robot choosing menu
         this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
         this.robotchoice.frame = this.robotFrame;
         
@@ -393,6 +390,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.start('Level', true, false, this.character, "Level6");
     },
     popuprobot: function () {
+        //change so that other buttons then robot-choosing-menu doesnt show.
         this.levelButtonsGroup.visible = false;    
         this.popupGroup.visible = true;
         this.leftArrow.visible = false;
@@ -402,6 +400,7 @@ RobotKompis.MapOverview.prototype = {
     },
     
     closeWindow: function() {
+        //when the closebutton is pressed the popupp menu dissaperars and the levels buttons show. 
         this.popupGroup.visible = false;
         this.levelButtonsGroup.visible = true;
         this.leftArrow.visible = true;
@@ -410,19 +409,21 @@ RobotKompis.MapOverview.prototype = {
     },
 
     // Buttons for the robots
+    //changes the character when a robot is pressed and remembers which robot was choosen before. 
     whileButton: function () {
-        this.character = 'while'; //changes the character
-        this.robotchoice.frame = 1;
+        this.character = 'while';        //changes the character
+        this.robotchoice.frame = 1;     //change the robotbuttons img
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 1;
-        saveRobot(this.robotData);
+        saveRobot(this.robotData);      //saves the choosen robot for later use in lokalstorage. 
     },
     switchButton: function () {
         this.character = 'switch';
         this.robotchoice.frame = 0;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 0;
-        saveRobot(this.robotData);    },
+        saveRobot(this.robotData);    
+    },
     elseButton: function () {
         this.character = 'else';
         this.robotchoice.frame = 4;

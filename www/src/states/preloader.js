@@ -10,8 +10,12 @@ RobotKompis.Preloader.prototype = {
     
 	preload: function () {
         'use strict';
+        //to change the sound in the game place another soundtrack in the ljud file and change the name below to the new soundname. 
+        //the ogg file is for firefox, because firefox can´t handle mp3 
         this.load.audio('sound', ['../../assets/ljud/happy.mp3', '../../assets/ljud/happy.ogg']);
-
+        /*credit for the music:
+        music created by rezoner find the author here: http://opengameart.org/users/rezoner
+        the music is downloaded from this http://opengameart.org/content/happy-arcade-tune*/
 
         // Initiate loading screen
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');
@@ -118,6 +122,7 @@ RobotKompis.Preloader.prototype = {
         this.load.spritesheet('robotButton', '../../assets/robotar/robotar.png', 130, 190);
         this.load.image('closeButton', '../../assets/close.png');
         this.load.image('robotChoiseBackground', '../../assets/robotChoiseBackground.png');
+        //big robotar for buttons in the robot-choosing meny.
         this.load.image('whileChoise', '../../assets/robotar/while.png');
         this.load.image('gotoChoise', '../../assets/robotar/Goto.png');
         this.load.image('ifChoise', '../../assets/robotar/if.png');
@@ -163,6 +168,7 @@ RobotKompis.Preloader.prototype = {
 	},
 	create: function () {
         'use strict';
+        //for the music to start and loop.
 		this.preloadBar.cropEnabled = false;
         this.music = this.add.audio('sound');
         this.music.play();
