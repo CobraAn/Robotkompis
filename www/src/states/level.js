@@ -657,7 +657,10 @@ RobotKompis.Level.prototype = {
                 otherSprite.reset(otherSprite.x, 190); // Height of the function command bar
             }
             this.funcLineGroup.sort("x");
+        } else { // Most probably this else concerns the functions on their original place. 
+            this.oldPosX = sprite.x;
         }
+
         this.currentSpriteGroup.add(sprite); // Put the sprite in this temporary group. 
     },
     // This function anjusts the sprite, which you're dragging, according to where it was taken from and where you you're going to drop it.
@@ -707,15 +710,21 @@ RobotKompis.Level.prototype = {
         }  
         // If the pointer is within range of trash_100 (occupies 480 - 380 and 915 to end)
         else if (pointer.y > 420 && pointer.y < 480 && pointer.x > 950) {
+           console.log("Old Y", this.oldPosY)
+           console.log("Old X", this.oldPosX) 
+            console.log("Hmmmmmmmm")
             // this.oldPosX < 830 && this.oldPosY > 500  
             if (this.commandGroup.getIndex(sprite) != -1) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
+                console.log("Hmmmmmmmm111")
                 this.commandGroup.remove(sprite, true); // IS the true necessary when we also have to kill it?
                 sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
             }
             // Can be replaced with this.funcLineGroup.getIndex(child)? 
-            else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // It the sprite was in the function window
+            else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // It the sprite was in the function window 
+                console.log("Hmmmmmmmm222")
                 // Temporary solving...
                 if(this.inArray(sprite, this.funcSpriteArray)===true){ // If it was in the function menu...
+                    console.log("Hmmmmmmmm222333")
                     this.funcCreateArray[index].visible = true; // Replace the function sprite with the transparent "KLICK ATT SKAPA" sprite. 
                     this.funcSpriteArray[index].kill(); 
                     this.funcSpriteArray[index] = null; // Remove the sprite from the funcSpriteArray
@@ -726,12 +735,14 @@ RobotKompis.Level.prototype = {
                     this.func_delete = null;
                 }
                 else{ //... then it must have been the function editor...
+                    console.log("Hmmmmmmmm222444")
                     this.funcLineGroup.remove(sprite, true); // So remove the sprite from the function line
                     sprite.kill();
                     this.functionGroupRender();  // ...and a control ajustment won't be excessive...  
                 }
             } 
             else { // Add it back to new, you pleb!
+                console.log("Hmmmmmmmm333")
                 this.addNew();
                 sprite.kill();
             }
