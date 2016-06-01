@@ -7,6 +7,7 @@ RobotKompis.MapOverview = function (game) {
     this.LevelFour = null;
     this.LevelFive = null;
     this.LevelSix = null;
+    this.LevelSeven = null;
     this.settingIcon = null;
     this.cloud;
     this.func_btn;
@@ -49,7 +50,7 @@ RobotKompis.MapOverview = function (game) {
      * 4 = Used for click interaction! don't use this in starsArray!!
      * 5 = Locked level
     */
-    this.starsArray = [0, 1, 2, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    this.starsArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
 
     // Pages required to show all levels
     this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
@@ -280,6 +281,9 @@ RobotKompis.MapOverview.prototype = {
             else if (button.levelNumber == 6) {
                 this.startLevelSix();
             }
+            else if (button.levelNumber == 7) {
+                this.startLevelSeven();
+            }
             else {
                 console.log('Something went wrong');
             }
@@ -392,6 +396,13 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
         this.state.start('Level', true, false, this.character, "Level6");
+    },
+    startLevelSeven: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap7'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].playerData = this.playerData;                                                
+        this.state.start('Level', true, false, this.character, "Level7");
     },
     popuprobot: function () {
         //change so that other buttons then robot-choosing-menu doesnt show.
