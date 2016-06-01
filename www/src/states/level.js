@@ -1,4 +1,4 @@
-﻿RobotKompis.Level = function (game) {
+RobotKompis.Level = function (game) {
     // Tilemap variables.
     this.map;
     this.layer0;
@@ -131,16 +131,19 @@ RobotKompis.Level.prototype = {
         graphics = this.add.graphics(0, 0); // Needed for gravity
         this.map = this.add.tilemap(this.tilemapKey); // Passed on from MapOverview
 
-        // Tilesets
+        // Tilesets. 
+        // Here we connect the name of the tileset in Tiled Map Editor with the name of the image which we preloaded.
+        this.map.addTilesetImage('spritesheet_items', 'items');        
         this.map.addTilesetImage('spritesheet_ground2', 'ground');
-        this.map.addTilesetImage('spritesheet_items', 'items');
         this.map.addTilesetImage('spritesheet_tiles', 'tiles');
+        this.map.addTilesetImage('ice32xx', 'ice32xx');
+        this.map.addTilesetImage('icetiles32x', 'icetiles32x');
+        //Backgrounds
         this.map.addTilesetImage('newdesert', 'newdesert');
         this.map.addTilesetImage('iceland', 'iceland');
-        this.map.addTilesetImage('ice32xx', 'ice32xx');
-        this.map.addTilesetImage('icetiles32', 'icetiles32');
-        this.map.addTilesetImage('icetiles32x', 'icetiles32x');
+
         // Layers
+        // Here we create the layers from our tiled maps.
         this.layer0 = this.map.createLayer('background');
         this.layer1 = this.map.createLayer('water');
         this.layer3 = this.map.createLayer('unblocked');
@@ -151,8 +154,8 @@ RobotKompis.Level.prototype = {
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
-        // Activate collision tiles from blocked layer
-        this.map.setCollisionBetween(1, 5000, true, 'blocked');
+        // Activate collision on the blocked layer
+        this.map.setCollisionBetween(1, 3000, true, 'blocked');
 
         // Create the player
         this.player = this.add.sprite(this.robotSpawnPosX, this.world.height - 280, this.robot);
