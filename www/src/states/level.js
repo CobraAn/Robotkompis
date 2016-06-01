@@ -179,10 +179,19 @@ RobotKompis.Level.prototype = {
         // Ladder layer collisions
         this.map.setCollisionBetween(1, 5000, false, 'ladder');
         this.map.setCollisionBetween(1, 5000, true, 'water');
-        this.game.physics.arcade.enable(this.layer1); // The water layer
+        //this.map.setCollisionBetween(1, 5000, true, 'ice');
+        // The water layer
+        this.game.physics.arcade.enable(this.layer1);
         this.physics.enable( [ this.layer1 ], Phaser.Physics.ARCADE);
         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit);
-        this.game.physics.arcade.enable(this.layer4); // The ladder layer
+        // The ice layer
+        /*
+        this.game.physics.arcade.enable(this.layer6);        
+        this.physics.enable( [ this.layer6 ], Phaser.Physics.ARCADE);        
+        this.game.physics.arcade.collide(this.player, this.layer6, this.iceHIT);
+        */
+        // The ladder layer
+        this.game.physics.arcade.enable(this.layer4);
         this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
 
@@ -388,6 +397,7 @@ RobotKompis.Level.prototype = {
     
     update: function () {
         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit, null, this);
+        //this.game.physics.arcade.collide(this.player, this.layer6, this.iceHIT, null, this);
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);
@@ -600,7 +610,30 @@ RobotKompis.Level.prototype = {
         }
         
     },
+    // Reset the player and inputs
+    iceHit: function(){
+        this.animationCheck = 0;
 
+        // Re-activate commands and their input related functionality. 
+        for (i = 0; i < this.commandGroup.length; i++) {
+            this.commandGroup.getAt(i).input.enabled = true;
+        }
+
+        this.rightArrow20.input.enabled = true;
+        this.leftArrow20.input.enabled = true;
+        this.newCommand.input.draggable = true;
+        this.new_btn.input.enabled = true; 
+        this.clear_btn.input.enabled = true;
+
+        this.stop_btn.visible = false;
+        this.run_btn.visible = true;
+        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
+        this.runInitiated = false; 
+        this.comArrIndex = 0;
+        this.commandArray = [];
+        this.comKey = "nope";
+        
+    },
 
     // Reset the player and inputs
     waterHit: function(){
