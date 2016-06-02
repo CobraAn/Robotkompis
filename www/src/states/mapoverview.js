@@ -1,16 +1,14 @@
 RobotKompis.MapOverview = function (game) {
     'use strict';
     this.title = null;
-    this.LevelOne = null;
-    this.LevelTwo = null;
-    this.LevelThree = null;
-    this.LevelFour = null;
-    this.LevelFive = null;
-    this.LevelSix = null;
-    this.LevelSeven = null;
+    // this.LevelOne = null;
+    // this.LevelTwo = null;
+    // this.LevelThree = null;
+    // this.LevelFour = null;
+    // this.LevelFive = null;
+    // this.LevelSix = null;
     this.settingIcon = null;
-    this.cloud;
-    this.func_btn;
+    this.setting_cloud; // The popUp (cloud) which is shown when you click on the settings icon. 
     this.mute_button;
     this.tut_button;
     
@@ -18,29 +16,20 @@ RobotKompis.MapOverview = function (game) {
     this.commandKeys = null; // The commands which are available on a certain level. 
     this.character = 'switch'; //Setting a default value for character
     this.popup;
+    this.popupGroup;
     this.closebutton;
 
     this.playerData = {};
     this.robotFrame = 0;
     this.robotData = {};
 
-    // Vairabel for level select
-    this.currentWorld;
-
-    // Number of button rows
-    this.buttonRows = 1;
-
-    // Number of button columns
-    this.buttonCols = 5;
-
-    // Width of a button, in pixels
-    this.buttonWidth = 100;
-
-    // Height of a button, in pixels
-    this.buttonHeight = 100;
-
-    // Space among buttons, in pixels
-    this.buttonSpacing = 8;
+    this.currentWorld; // Vairabel for level select
+    this.worldOpenArray = [0,0,0,0,0];
+    this.buttonRows = 1; // Number of button rows
+    this.buttonCols = 5; // Number of button columns
+    this.buttonWidth = 100; // Width of a button, in pixels
+    this.buttonHeight = 100; // Height of a button, in pixels
+    this.buttonSpacing = 8; // Space among buttons, in pixels
 
     /* Array with finished levels and stars collected.
      * 0 = zero stars
@@ -50,10 +39,10 @@ RobotKompis.MapOverview = function (game) {
      * 4 = Used for click interaction! don't use this in starsArray!!
      * 5 = Locked level
     */
-    this.starsArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    this.starsArray = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-    // Pages required to show all levels
-    this.pages = this.starsArray.length/(this.buttonRows*this.buttonCols);
+    // Number of world pages. 
+    this.pages = 4; // this.starsArray.length/(this.buttonRows*this.buttonCols)
 
     // Group where to place all level buttons
     this.levelButtonsGroup;
@@ -90,12 +79,12 @@ RobotKompis.MapOverview.prototype = {
         
 
 
-        console.log("saveFunction length in beginning", this.playerData.funcArray)
-        /*if (this.playerData.funcArray!=="undefined") {
-                                                    for(i=0;i<this.playerData.funcArray.length; i++){ 
-                                                    console.log("saveFuncArray: ", i, this.playerData.funcArray[i])
-                                                }        
-        }*/
+        // console.log("saveFunction length in beginning", this.playerData.funcArray)
+        // if (this.playerData.funcArray!=="undefined") {
+        //                                             for(i=0;i<this.playerData.funcArray.length; i++){ 
+        //                                             console.log("saveFuncArray: ", i, this.playerData.funcArray[i])
+        //                                         }        
+        // }
 
 
         }
@@ -106,10 +95,11 @@ RobotKompis.MapOverview.prototype = {
         'use strict';
         this.createLevelSelect();
         this.popupGroup = this.add.group();
-
-        this.cloud = this.add.image(430, 50, 'settingsCloud');
-        this.cloud.bringToTop();
-        this.cloud.visible = false;
+ 
+        // Create the settings could sprite and put it where it should be
+        this.setting_cloud = this.add.image(430, 50, 'settingsCloud');
+        this.setting_cloud.bringToTop();
+        this.setting_cloud.visible = false;
 
         // Mute and Tutorial button initiation
         this.mute_button = this.add.button(500, 65,  'muteUnMute', this.Mute, this);
@@ -158,15 +148,15 @@ RobotKompis.MapOverview.prototype = {
     startSettings: function () {
         'use strict';
         
-        if (this.cloud.visible==false) {
-            this.cloud.visible = true;
+        if (this.setting_cloud.visible==false) {
+            this.setting_cloud.visible = true;
             this.mute_button.visible = true;
         }
         
         else {
             this.mute_button.visible = false;
             this.tut_button.visible = false;
-            this.cloud.visible = false;
+            this.setting_cloud.visible = false;
   
          }
     },
@@ -188,39 +178,41 @@ RobotKompis.MapOverview.prototype = {
         var levelLength = this.buttonWidth*this.buttonCols+this.buttonSpacing*(this.buttonCols - 1);
         var levelHeight = this.buttonWidth*this.buttonRows+this.buttonSpacing*(this.buttonRows - 1);
 
-        //Looping through each page
+        //Looping through each world page
         for(var l = 0; l < this.pages; l++){
             // Position of grid
             var offsetX = (this.world.width - levelLength)/2+this.world.width*l;
             var offsetY = (this.world.height - levelHeight)/2;
 
             // Current world
-            var currentWorld = l + 1;
-            var currentWorldString = currentWorld.toString();
-            this.currentWorldText = this.add.text(offsetX + 150, 170, 'Värld ' + currentWorldString, this.style);
-            this.levelButtonsGroup.add(this.currentWorldText);
+            var currentWorld = l + 1; //... cause count starts from 0
+            var currentWorldString = currentWorld.toString(); 
+            var currentWorldTotalStars = 0; // The total amount of stars got in a particular world
+            this.currentWorldText = this.add.text(offsetX + 150, 170, 'Värld ' + currentWorldString, this.style); 
+            this.levelButtonsGroup.add(this.currentWorldText); // Level buttons will be stored in this group
 
             // Looping through each level button
-            for(var i = 0; i < this.buttonRows; i++) {
+            for(var i = 0; i < this.buttonRows; i++) { // This for-loop may be taken away to optimize the game or may be needed if you want to make more than 5 levels in a particular world
                 for(var j = 0; j < this.buttonCols; j++){
 
                     // Check which level and load previously earned stars if they exist
-                    var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols);
-                    var dictKey = "Level" + (levelNumber+1).toString();
+                    var levelNumber = i*this.buttonCols+j+l*(this.buttonRows*this.buttonCols); 
+                    var dictKey = "Level" + (levelNumber+1).toString(); // This key-string is meant to represent the particular level in the local storage
                     var levelStars = 0;
-                    if (typeof this.playerData.levels !== "undefined" && this.playerData.levels !== null) {
+                    if (typeof this.playerData.levels !== "undefined" && this.playerData.levels !== null) { // Controlling if the level data from local storage is not empty
                         if (typeof this.playerData.levels[dictKey] !== "undefined" && this.playerData.levels[dictKey] !== null) {
+                            currentWorldTotalStars += this.playerData.levels[dictKey]; // Take the data drom local storage (see in init function)
                             levelStars = this.playerData.levels[dictKey];
-                            console.log(levelStars);
+                            console.log(currentWorldTotalStars);
                         }
                     }
 
                     // Adding button based on amount of stars, calls the buttonClicked function
-                    if (this.starsArray[levelNumber] == 5) {
+                    if (this.starsArray[levelNumber] == 1) {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                             offsetY+i*(this.buttonHeight+this.buttonSpacing), '' +
                             'levelSelect', this.buttonClicked, this);
-                        levelButton.frame = this.starsArray[levelNumber];
+                        levelButton.frame = 5;
                     }
                     else {
                         if (levelStars !== 0) {
@@ -237,23 +229,31 @@ RobotKompis.MapOverview.prototype = {
                         }
                     }
 
-                    // Custom attribute
-				    levelButton.levelNumber = levelNumber+1;
+                    
+                    levelButton.levelNumber = levelNumber+1; // Custom attribute of the level button(its'number)
+                    console.log("Levelnumber", levelNumber+1)
 
-				    // Adding the level button to the group
-				    this.levelButtonsGroup.add(levelButton);
-                    if(this.starsArray[levelNumber] < 5 && (levelNumber+1) < 10) {
+                    // Adding the level button to the group
+                    this.levelButtonsGroup.add(levelButton);
+                    if(this.starsArray[levelNumber] == 0 && (levelNumber+1) < 10) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
                         this.levelText = this.add.text(levelButton.x+35,levelButton.y - 10, printedNumber, this.style);
                         this.levelButtonsGroup.add(this.levelText);
                     }
-                    else if (this.starsArray[levelNumber] < 5) {
+                    else if (this.starsArray[levelNumber] == 0) {
                         var levelNumberRight = levelNumber + 1;
                         var printedNumber = levelNumberRight.toString();
-                        this.levelText = this.add.text(levelButton.x+17,levelButton.y - 10, printedNumber, this.tyle);
+                        this.levelText = this.add.text(levelButton.x+17,levelButton.y - 10, printedNumber, this.style);
                         this.levelButtonsGroup.add(this.levelText);
                     }
+                }
+            }
+            // This blocks opens the next world is you got a particular amount of stars in the previous world.
+            if(currentWorldTotalStars>=9){ // If you, say, got 9 stars, in the world n, open the levels in the world (n+1)
+                var levelWorldBaseCount = currentWorld*5;
+                for(k=0;k<5;k++){
+                    this.starsArray[levelWorldBaseCount+k] = 0; // Set the corresponding objects in starsArray from 1 (closed) to 0 (opened)
                 }
             }
         }
@@ -283,6 +283,15 @@ RobotKompis.MapOverview.prototype = {
             }
             else if (button.levelNumber == 7) {
                 this.startLevelSeven();
+            }
+             else if (button.levelNumber == 8) {
+                this.startLevelEight();
+            }
+             else if (button.levelNumber == 9) {
+                this.startLevelNine();
+            }
+            else if (button.levelNumber == 10) {
+                this.startLevelTen();
             }
             else {
                 console.log('Something went wrong');
@@ -343,7 +352,7 @@ RobotKompis.MapOverview.prototype = {
                 x: this.currentPage * this.world.width * -1
             }, 400, Phaser.Easing.Cubic.None);
             buttonsTween.start();
-        }		
+        }       
 
    
      },
@@ -404,6 +413,27 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].playerData = this.playerData;                                                
         this.state.start('Level', true, false, this.character, "Level7");
     },
+    startLevelEight: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap8'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].playerData = this.playerData;                                                
+        this.state.start('Level', true, false, this.character, "Level8");
+    },
+    startLevelNine: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap9'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].playerData = this.playerData;                                                
+        this.state.start('Level', true, false, this.character, "Level9");
+    },
+    startLevelTen: function () {
+        'use strict';
+        this.state.states['Level'].tilemapKey = 'tilemap10'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
+        this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
+        this.state.states['Level'].playerData = this.playerData;                                                
+        this.state.start('Level', true, false, this.character, "Level10");
+    },    
     popuprobot: function () {
         //change so that other buttons then robot-choosing-menu doesnt show.
         this.levelButtonsGroup.visible = false;    

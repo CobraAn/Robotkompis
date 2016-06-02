@@ -29,22 +29,42 @@ function calculateScore(noBlocks, levelName) {
     // HARDCODED requirement values for how many stars the player should receive, based on the number of used blocks
     switch (levelName) {
         case "Level1":
+            minStarsRq.twoStars = 11;
+            minStarsRq.threeStars = 9;
+            break;
+        case "Level2":
+            minStarsRq.twoStars = 16;
+            minStarsRq.threeStars = 15;
+            break;
+        case "Level3":
+            minStarsRq.twoStars = 25;
+            minStarsRq.threeStars = 23;
+            break;
+        case "Level4":
+            minStarsRq.twoStars = 17;
+            minStarsRq.threeStars = 16;
+            break;
+        case "Level5":
+            minStarsRq.twoStars = 25;
+            minStarsRq.threeStars = 23;
+            break;
+        case "Level6":
             minStarsRq.twoStars = 15;
             minStarsRq.threeStars = 8;
             break;
-        case "Level2":
+        case "Level7":
             minStarsRq.twoStars = 15;
             minStarsRq.threeStars = 10;
             break;
-        case "Level3":
+        case "Level8":
             minStarsRq.twoStars = 15;
             minStarsRq.threeStars = 10;
             break;
-        case "Level4":
+        case "Level9":
             minStarsRq.twoStars = 15;
             minStarsRq.threeStars = 10;
             break;
-        case "Level5":
+        case "Level10":
             minStarsRq.twoStars = 15;
             minStarsRq.threeStars = 10;
             break;
