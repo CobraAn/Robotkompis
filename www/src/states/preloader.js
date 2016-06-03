@@ -36,7 +36,7 @@ RobotKompis.Preloader.prototype = {
         this.load.image('titleScreen', '../../assets/startmenu/startBG600.png');
         
         // Map overview
-        this.load.spritesheet('levelSelect', '../../assets/mapoverview/select_levelNy.png', 100, 100, 6);
+        this.load.spritesheet('levelSelect', '../../assets/mapoverview/select_levelNy.png', 100, 100);
         this.load.image('settingsIcon', '../../assets/mapoverview/settingIcon.png');
         this.load.spritesheet('menuArrows', '../../assets/mapoverview/menypilar.png', 116, 168);
 

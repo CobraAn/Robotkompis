@@ -14,13 +14,13 @@ RobotKompis.MapOverview = function (game) {
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
-    this.character = 'switch'; //Setting a default value for character
+    this.character; //Setting a default value for character
     this.popup;
     this.popupGroup;
     this.closebutton;
 
     this.playerData = {};
-    this.robotFrame = 0;
+    this.robotFrame;
     this.robotData = {};
 
     this.currentWorld; // Vairabel for level select
@@ -42,7 +42,7 @@ RobotKompis.MapOverview = function (game) {
     this.starsArray = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
     // Number of world pages. 
-    this.pages = 4; // this.starsArray.length/(this.buttonRows*this.buttonCols)
+    this.pages = 2; // this.starsArray.length/(this.buttonRows*this.buttonCols)
 
     // Group where to place all level buttons
     this.levelButtonsGroup;
@@ -71,7 +71,7 @@ RobotKompis.MapOverview.prototype = {
          */
         
         this.playerData = loadData();
-        if (typeof this.playerData !== "undefined" && this.playerData !== null && this.playerData.robot !== undefined) {
+        if (typeof this.playerData != "undefined" && this.playerData != null && this.playerData.robot != "") {
 
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
@@ -87,6 +87,9 @@ RobotKompis.MapOverview.prototype = {
         // }
 
 
+        } else {
+            this.character = 'switch';
+            this.robotFrame = 0;
         }
         
     },
@@ -212,26 +215,24 @@ RobotKompis.MapOverview.prototype = {
                         var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                             offsetY+i*(this.buttonHeight+this.buttonSpacing), '' +
                             'levelSelect', this.buttonClicked, this);
-                        levelButton.frame = 5;
+                        levelButton.frame = 4;
                     }
                     else {
                         if (levelStars !== 0) {
                             var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                                 offsetY+i*(this.buttonHeight+this.buttonSpacing),
-                                'levelSelect', this.buttonClicked, this, null,
-                                this.playerData.levels[dictKey] , 4);
+                                'levelSelect', this.buttonClicked, this);
                             levelButton.frame = levelStars;
                         } else {
                             var levelButton = this.add.button(offsetX+j*(this.buttonWidth+this.buttonSpacing),
                                 offsetY+i*(this.buttonHeight+this.buttonSpacing),
-                                'levelSelect', this.buttonClicked, this, null, 0, 4);
+                                'levelSelect', this.buttonClicked, this);
                             levelButton.frame = 0;
                         }
                     }
 
                     
                     levelButton.levelNumber = levelNumber+1; // Custom attribute of the level button(its'number)
-                    console.log("Levelnumber", levelNumber+1)
 
                     // Adding the level button to the group
                     this.levelButtonsGroup.add(levelButton);
@@ -261,7 +262,7 @@ RobotKompis.MapOverview.prototype = {
      buttonClicked: function (button, pointer) {
 
          // Start correct level
-        if(button.frame < 5) {
+        if(button.frame < 4) {
 
             if (button.levelNumber == 1) {
                 this.startLevelOne();
@@ -359,7 +360,6 @@ RobotKompis.MapOverview.prototype = {
     // Functions connected to the level buttons for loading correct game states
     startLevelOne: function () {
         'use strict';
-
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'key_com'];
         this.state.states['Level'].playerData = this.playerData;
