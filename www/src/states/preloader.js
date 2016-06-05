@@ -1,3 +1,20 @@
+/* Attribution Section: 
+
+Tilemap components, with the exception of the robots, are originally made by : Kenney @ http://opengameart.org/users/kenney [CC0 license]
+The 5 playable robots are property of Kodcentrum and are originally made by Ellinor Hägg. More info @: http://www.kodboken.se/start/lana-bild-ljud/kodcentrums-robotar
+The trash can icon is originally made by Andy (Open Clip Art Library image's page) [CC0], via Wikimedia Commons
+Home icon is originally made by: Timothy Miller [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons
+The help icon has no known person to attribute but is under a MIT License and available at https://www.iconfinder.com/icons/211674/circled_help_icon#size=128
+The play button is made by Hopstarter and is under a CC Attribution-Noncommercial-No Derivate 4.0 license [http://creativecommons.org/licenses/by-nc-nd/4.0/]. Hopstarter can be found at http://www.iconarchive.com/artist/hopstarter.html and http://hopstarter.deviantart.com/
+The stop button is made By JustinForce (Own work inspired by Stop hand.svg:) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons
+The new page icon (used for the clear function) is under a CC0 license and can be found at https://pixabay.com/sv/dokument-papper-nya-registrera-dig-97577/
+The refresh icon (used for generating a new newCommand) is made by Everaldo @ http://www.iconarchive.com/artist/everaldo.html, and is under a GNU Lesser General Public License (https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License)
+The right and left arrow for the scrolling the command area are made By Kildor (Own work) [Public domain], via Wikimedia Commons @ (https://commons.wikimedia.org/wiki/File:ArrowRight.svg and https://commons.wikimedia.org/wiki/File:TriangleArrow-Left.svg)
+The left and right arrows were modified by decreasing their width but not their height. 
+In regards to all the menu icons, only the overall size was changed, and the width of the trash can and the arrow icons.  
+
+
+*/
 RobotKompis.Preloader = function (game) {
     'use strict';
 	this.preloadBar = null;
@@ -82,32 +99,31 @@ RobotKompis.Preloader.prototype = {
 
         // New Command Button
         this.load.image('new', '../../assets/commandstuff/restart_60.png');
-        this.load.image('clear_btn', '../../assets/commandstuff/clear_50.png'); // CC0 License
-        this.load.image('trash_100', '../../assets/commandstuff/trash_100.png');
-        this.load.image('trash_50', '../../assets/commandstuff/trash_50.png'); // CC0 license
-
+        this.load.image('clearButton', '../../assets/commandstuff/clear_50.png'); // CC0 License
+        // Trash icon By Andy (Open Clip Art Library image's page) [CC0], via Wikimedia Commons
+        this.load.image('trashButton', '../../assets/commandstuff/trash_50.png'); 
         // Command line
-        this.load.image('com_line', '../../assets/commandstuff/com_line.png');
+        this.load.image('commandLine', '../../assets/commandstuff/com_line.png');
 
         this.load.image('right20', '../../assets/commandstuff/right_arrow_20.png');
         this.load.image('left20', '../../assets/commandstuff/left_arrow_20.png');
 
         // Menu Buttons
-        this.load.image('run_btn', '../../assets/menubuttons/run_button.png');
-        this.load.image('stop_btn', '../../assets/menubuttons/stop_50.png');
-        this.load.image('sound_btn', '../../assets/menubuttons/sound_50.png');
-        this.load.image('home_btn', '../../assets/menubuttons/home_50.png');
-        this.load.image('help_btn', '../../assets/menubuttons/help_50.png');
+        this.load.image('runButton', '../../assets/menubuttons/run_button.png');
+        this.load.image('stopButton', '../../assets/menubuttons/stop_50.png');
+        this.load.image('soundButton', '../../assets/menubuttons/sound_50.png');
+        this.load.image('homeButton', '../../assets/menubuttons/home_50.png');
+        this.load.image('helpButton', '../../assets/menubuttons/help_50.png');
         
-        this.load.image('commandopil', '../../assets/pilar/commandopil.png');
-        this.load.image('funkpil', '../../assets/pilar/funkpil.png');
-        this.load.image('gopil', '../../assets/pilar/gopil.png');
-        this.load.image('pilmute', '../../assets/pilar/pilmute.png');
-        this.load.image('radpil', '../../assets/pilar/radpil.png');
-        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
-        this.load.image('clearpil', '../../assets/pilar/clearpil.png');
-        this.load.image('homepil', '../../assets/pilar/Pilhem.png');
-        this.load.image('movepil', '../../assets/pilar/movepil.png');
+        this.load.image('commandArrow', '../../assets/pilar/commandopil.png');
+        this.load.image('functionArrow', '../../assets/pilar/funkpil.png');
+        this.load.image('goArrow', '../../assets/pilar/gopil.png');
+        this.load.image('arrowMute', '../../assets/pilar/pilmute.png');
+        this.load.image('rowArrow', '../../assets/pilar/radpil.png');
+        this.load.image('homeArrow', '../../assets/pilar/Pilhem.png');
+        this.load.image('clearArrow', '../../assets/pilar/clearpil.png');
+        this.load.image('homeArrow', '../../assets/pilar/Pilhem.png');
+        this.load.image('moveArrow', '../../assets/pilar/movepil.png');
         
         
         // Images for settings-state
@@ -153,8 +169,8 @@ RobotKompis.Preloader.prototype = {
         this.load.image('f7', '../../assets/function/f7.png');
         this.load.image('f8', '../../assets/function/f8.png');
         this.load.image('cloud','../../assets/function/the_cloud.png');
-        this.load.image('func_title','../../assets/function/func_title.png');
-        this.load.image('func_line','../../assets/function/func_line.png');
+        this.load.image('funcTitle','../../assets/function/func_title.png');
+        this.load.image('funcLine','../../assets/function/func_line.png');
         this.load.image('temp1','../../assets/function/TEMP1.png');
 
 
