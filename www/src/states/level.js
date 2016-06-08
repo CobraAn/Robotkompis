@@ -205,7 +205,6 @@ RobotKompis.Level.prototype = {
         this.player.animations.add('climb', [7], 1, false);
 
         // Layer collisions. this.map.setCollisionBetween(startTileIndex, endTileIndex, collision, layerKey) 
-        //this.map.setCollisionBetween(1, 5000, false, 'ladder');
         this.map.setCollisionBetween(1, 5000, true, 'water');
         //this.map.setCollisionBetween(1, 5000, true, 'ice');
 
@@ -221,10 +220,6 @@ RobotKompis.Level.prototype = {
         this.game.physics.arcade.collide(this.player, this.layer6, this.iceHIT);
         */
 
-        // The ladder layer
-        //this.game.physics.arcade.enable(this.layer4);
-        //this.physics.enable( [ this.layer4 ], Phaser.Physics.ARCADE);
-        //this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
 
         // Outer Block Library. Black
         graphics.lineStyle(0);
@@ -455,9 +450,7 @@ RobotKompis.Level.prototype = {
         } else if (this.game.input.activePointer.isDown && this.funcLeftArrow20.input.checkPointerOver(this.game.input.activePointer)) {
             this.funcLineGroup.setAll('body.velocity.x', +120);
         } else {
-            if (this.funcLineGroup.length != 0) {
-                this.funcLineGroup.setAll('body.velocity.x', 0);
-            }
+            this.funcLineGroup.setAll('body.velocity.x', 0);
         }
 
         /* Adoptee keys:  Defined before create. 
@@ -773,7 +766,7 @@ RobotKompis.Level.prototype = {
             if (this.inArray(sprite.key,this.funcImageKeyArray)===true) { // If the taken sprite is a function... Just return it back to the command line.
                 sprite.x = this.oldPosX; // Change the position back. 
                 this.scrollableField(sprite, this.commandGroup, 510); // And re-instate it to the group institution. 
-            } else { // The sprite is a command (blue). Allow it to live in funcLineGroup.                   
+            } else { // The sprite is a command (blue). Allow it to live in funcLineGroup.     
                 this.scrollableField(sprite, this.funcLineGroup, 190);
             }
         }  
@@ -1126,7 +1119,7 @@ RobotKompis.Level.prototype = {
         this.funcTreeGroup.remove(this.funcTreeGroup.getAt(index));
         this.funcTreeGroup.addAt(this.funcLineGroup, index);
         this.funcLineGroup.visible = false;
-        this.funcLineGroup = this.add.group();
+        this.funcLineGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
  
         this.funcSpriteArray[index] = this.add.sprite(this.funcCreateArray[index].x, this.funcCreateArray[index].y, this.funcImageKeyArray[index]);
         this.physics.arcade.enable(this.funcSpriteArray[index]);
