@@ -76,6 +76,7 @@ RobotKompis.Level = function (game) {
     this.funcLine; // This is the sprite for the function group where you put commands. 
     this.commandArray = []; // This is the ultimate array from which robot's movement commands are readed in the update-function.
     this.editPatchArray = []; // This is the patch array that helps to save the data in funcTreeArray properly after cancel the function-edit-menu
+    this.functionMask;
 
     //Check used for animations, e.g 0 means idle animation
     this.animationCheck = 0;
@@ -339,10 +340,10 @@ RobotKompis.Level.prototype = {
         this.funcLineGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
 
         // Function line mask and arrows
-        var functionMask = this.game.add.graphics(0, 0);
-        functionMask.beginFill(0xffffff);
-        functionMask.drawRect(176, 185, 600, 80);
-        this.funcLineGroup.mask = functionMask; 
+        this.functionMask = this.game.add.graphics(0, 0);
+        this.functionMask.beginFill(0xffffff);
+        this.functionMask.drawRect(176, 185, 600, 80);
+        this.funcLineGroup.mask = this.functionMask; 
 
         this.funcRightArrow20 = this.add.sprite(752, 180, 'left20');
         this.funcRightArrow20.inputEnabled = true;
@@ -354,10 +355,13 @@ RobotKompis.Level.prototype = {
         this.funcLeftArrow20.alpha = 0.6;
         this.funcLeftArrow20.visible = false;
         
-        this.funcTreeGroup = this.add.group(); // Create a group tree to store function groups
+        this.funcTreeGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE); // Create a group tree to store function groups
         
         for(i=0;i<9;i++){ // Fill the tree with empty groups 
-            this.funcTreeGroup.add(this.add.group());
+            var treeChild = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
+            treeChild.visible = false;
+            treeChild.mask = this.functionMask;
+            this.funcTreeGroup.add(treeChild);
         }
         // 
 
@@ -399,11 +403,6 @@ RobotKompis.Level.prototype = {
 
             }
         }
-
-        this.physics.arcade.enable(this.funcTreeGroup);
-        this.physics.enable( [ this.funcTreeGroup ], Phaser.Physics.ARCADE);
-        this.funcTreeGroup.allowGravity = false;
-        this.funcTreeGroup.immovable = true;
 
         // The currentSpriteGroup contains whichever command or function which has started to be dragged. It exist to make sure the sprite being dragged is over everything else.
         this.currentSpriteGroup = this.add.group(); // ADDED LAST! Over everything!
@@ -775,10 +774,10 @@ RobotKompis.Level.prototype = {
             // this.oldPosX < 830 && this.oldPosY > 500  
             if (this.commandGroup.getIndex(sprite) != -1) { // Was the command in commandLine before? (commandLine spans 20 - 830) 
                 this.commandGroup.remove(sprite, true); // IS the true necessary when we also have to kill it?
-                sprite.kill(); // It doesn't update the rendering of the sprite unless it's KILLED!
+                sprite.destroy(); // It doesn't update the rendering of the sprite unless it's DESTROYED!
             }
             // Can be replaced with this.funcLineGroup.getIndex(child)? 
-            else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // It the sprite was in the function window 
+            else if (this.oldPosY > 100 && this.oldPosY < 350 && this.oldPosX > 140 && this.oldPosX < 800) { // If the sprite was in the function window 
                 // Temporary solving...
                 if(this.inArray(sprite, this.funcSpriteArray)===true){ // If it was in the function menu...
                     this.funcCreateArray[index].visible = true; // Replace the function sprite with the transparent "KLICK ATT SKAPA" sprite. 
@@ -792,12 +791,12 @@ RobotKompis.Level.prototype = {
                 }
                 else{ //... then it must have been the function editor...
                     this.funcLineGroup.remove(sprite, true); // So remove the sprite from the function line
-                    sprite.kill();
+                    sprite.destroy();
                 }
             } 
             else { // Add it back to new, you pleb! 
                 this.addNew();
-                sprite.kill();
+                sprite.destroy();
             }
 
         }
@@ -986,14 +985,13 @@ RobotKompis.Level.prototype = {
 
     // Clears the command line
     clearCommandLine: function() {
-        //for (var i = 0; i <= this.commandGroup.length; i++) {
-        while (this.commandGroup.length != 0) {
-            var sprite = this.commandGroup.getAt(0); // Might be worth checking whether or not there's a speed difference from the end versus beginning. 
-            this.commandGroup.remove(sprite, true); // Remove the sprite from the group (it's not klled yet though) 
-            sprite.kill(); // Kill the sprite
-        }
+        this.commandGroup.removeAll(true); // Remove all the children and destroy them 
     },
 
+    // Clears the funcLineGroup
+    clearFuncLineGroup: function() {
+        this.funcLineGroup.removeAll(true);
+    },
 
     // Opens and closes the function making window.
     favxOnClick: function() {         
@@ -1028,13 +1026,8 @@ RobotKompis.Level.prototype = {
 
             }
             if(this.funcLineGroup.length>0){ // If user decided to click on function button during editing a function, the funcLineGroup is cleansed.
+                this.clearFuncLineGroup();  
                 this.funcLineGroup.visible = false;
-                // this.funcLineGroup = NaN;
-                this.funcLineGroup = this.add.group();
-                // this.physics.arcade.enable(this.funcLineGroup);
-                // this.physics.enable( [ this.funcLineGroup ], Phaser.Physics.ARCADE);
-                // this.funcLineGroup.allowGravity = false; 
-                // this.funcLineGroup.immovable = true;            
             }
             // To be sure that everything is closed.
             if(this.func_edit){this.func_edit.visible = false}
@@ -1116,10 +1109,13 @@ RobotKompis.Level.prototype = {
         this.func_cancel.visible = false;
         this.funcRightArrow20.visible = false;
         this.funcLeftArrow20.visible = false; 
-        this.funcTreeGroup.remove(this.funcTreeGroup.getAt(index));
-        this.funcTreeGroup.addAt(this.funcLineGroup, index);
+        this.funcLineGroup.sort('x'); // Sort on x so the function is saved correctly (possibly redundant). 
+        var treeChild = this.funcTreeGroup.getAt(index)
+        treeChild.visible = false;
+        this.funcLineGroup.moveAll(treeChild); // Move all of funcLineGroup to treeChild (in funcTreeGroup)
+
+        this.clearFuncLineGroup();   
         this.funcLineGroup.visible = false;
-        this.funcLineGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
  
         this.funcSpriteArray[index] = this.add.sprite(this.funcCreateArray[index].x, this.funcCreateArray[index].y, this.funcImageKeyArray[index]);
         this.physics.arcade.enable(this.funcSpriteArray[index]);
@@ -1141,6 +1137,8 @@ RobotKompis.Level.prototype = {
                 this.funcCreateArray[i].visible = true;    
             } 
         }      
+        console.log(this.funcLineGroup.getAt(0).key);
+        console.log(this.funcTreeGroup.getAt(index).getAt(0).key);
 
     },
     // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
@@ -1151,9 +1149,8 @@ RobotKompis.Level.prototype = {
         this.func_save.visible = false;
         this.func_cancel.visible = false;
         //this.funcTreeGroup.addAt(this.add.group(), index);
-        this.funcLineGroup.destroy();
+        this.clearFuncLineGroup();   
         this.funcLineGroup.visible=false;
-        this.funcLineGroup = this.add.group(); // Empty the temporary function line group 
         var tempCommand;
         for(i=0;i<this.editPatchArray.length;i++){
             tempCommand = this.add.sprite(200+70*(i), 190, this.editPatchArray[i]); // From every key-string you find in the saveFuncArray, create a command sprite
@@ -1184,7 +1181,6 @@ RobotKompis.Level.prototype = {
                 this.funcCreateArray[i].visible = true;
             }          
         }
-        this.funcLineGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
 
     },
 
@@ -1221,7 +1217,8 @@ RobotKompis.Level.prototype = {
     deleteFunctionBlockOnClick: function(index) {     
         this.funcLine.visible = false;
         this.funcLineGroup.visible = false;
-        this.funcLineGroup = this.add.group(); 
+        this.funcLineGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
+        this.funcLineGroup.mask = this.functionMask; 
         this.funcCreateArray[index].visible = true;         
         this.funcSpriteArray[index].kill();
         this.funcSpriteArray[index] = null;
@@ -1263,7 +1260,9 @@ RobotKompis.Level.prototype = {
         for(i=0;i<this.funcTreeGroup.children[index].length;i++){ // This for-loop saves the functions content into the editPatchArray in the form of commando keys
             this.editPatchArray.push(this.funcTreeGroup.children[index].getAt(i).key);
         }
-        this.funcLineGroup = this.funcTreeGroup.children[index]; // Now we can transfer the functions content into the temporary group 
+        this.clearFuncLineGroup(); // Clear the funcLineGroup, just in case. 
+        var treeChild = this.funcTreeGroup.getAt(index)
+        treeChild.moveAll(this.funcLineGroup);
         // ...and show the needed buttons! 
         this.funcRightArrow20.visible = true;
         this.funcLeftArrow20.visible = true;                
