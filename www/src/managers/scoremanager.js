@@ -29,11 +29,11 @@ function calculateScore(noBlocks, levelName) {
     // HARDCODED requirement values for how many stars the player should receive, based on the number of used blocks
     switch (levelName) {
         case "Level1":
-            minStarsRq.twoStars = 11;
-            minStarsRq.threeStars = 9;
+            minStarsRq.twoStars = 11; // Minimum stars required for two stars in the level 1
+            minStarsRq.threeStars = 9; // Minimum stars required for three stars in the level 1
             break;
         case "Level2":
-            minStarsRq.twoStars = 16;
+            minStarsRq.twoStars = 16; // And so on... 
             minStarsRq.threeStars = 15;
             break;
         case "Level3":
@@ -71,8 +71,8 @@ function calculateScore(noBlocks, levelName) {
         default:
             return;
     }
-
-    if (noBlocks != 9999) {
+    // Returns the corresponding score (number of stars) the player earned
+    if (noBlocks != 9999) { // Say, if you won a level...
         if (noBlocks <= minStarsRq.threeStars) {
             return 3;
         } else if (between(noBlocks, minStarsRq.threeStars, minStarsRq.twoStars)) {
@@ -81,7 +81,9 @@ function calculateScore(noBlocks, levelName) {
             return 1;
         }
     }
-
+    else { // If you pushed the Home-button 
+        return 0;
+    }
 }
 
 /*
