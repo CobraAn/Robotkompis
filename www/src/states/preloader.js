@@ -29,10 +29,9 @@ RobotKompis.Preloader.prototype = {
         'use strict';
         //to change the sound in the game place another soundtrack in the sound file and change the name below to the new soundname. 
         //the ogg file is for firefox, because firefox can´t handle mp3 
-        this.load.audio('sound', ['../../assets/sound/happy.mp3', '../../assets/sound/happy.ogg']);
-        /*credit for the music:
-        music created by rezoner find the author here: http://opengameart.org/users/rezoner
-        the music is downloaded from this http://opengameart.org/content/happy-arcade-tune*/
+        this.load.audio('sound', ['../../sound/DarkMatterInProgress_loop.mp3', '../../sound/DarkMatterInProgress_loop.ogg']);
+        /*musik: Gustav Wall*/
+
 
         // Initiate loading screen
 		this.preloadBar = this.add.sprite(this.world.centerX, this.world.centerY, 'preloadBar');

@@ -72,7 +72,6 @@ RobotKompis.MapOverview.prototype = {
         
         this.playerData = loadData();
         if (typeof this.playerData != "undefined" && this.playerData != null && this.playerData.robot != "") {
-
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
             this.funcArray = this.playerData.funcArray;
@@ -472,7 +471,6 @@ RobotKompis.MapOverview.prototype = {
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 2;
         saveRobot(this.robotData);
-        this.robotchoice.setFrames(2,2,2);
     },
     ifButton: function () {
         this.character = 'if';
