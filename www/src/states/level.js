@@ -97,7 +97,8 @@ RobotKompis.Level = function (game) {
     this.comKey = "nope";  // Changes to represent the command.key for a command which will run. Set as "nope" initially to make sure nothing runs. 
     this.dragOffset = 0; // The offset which has occured by clicking on the arrows and moving the commands around. 
 
-    this.robotSpawnPosX = 95;
+    this.robotSpawnPosX;
+    this.robotSpawnPosY;
 
     // Update variables which control robot movement and command functionality.
     this.finalPosX; 
@@ -130,12 +131,14 @@ RobotKompis.Level.prototype = {
     /*
      * Initiates variables needed for the level creation and storage
      */
-    init: function (character, robotFrame, levelName){
+    init: function (character, robotFrame, levelName, robotX, robotY){
         this.robot = character;
         this.saveDataArgs.robot = character;
         console.log("robotFrame", robotFrame, character, levelName)
         this.saveDataArgs.robotFrame = robotFrame; 
         this.saveDataArgs.levelName = levelName;
+        this.robotSpawnPosX = robotX;
+        this.robotSpawnPosY = robotY;
     },
 
     /*
@@ -189,7 +192,7 @@ RobotKompis.Level.prototype = {
         this.map.setCollisionBetween(1, 3000, true, 'blocked');
 
         // Create the playern and enable physics on it
-        this.player = this.add.sprite(this.robotSpawnPosX, this.world.height - 280, this.robot);
+        this.player = this.add.sprite(this.robotSpawnPosX, this.robotSpawnPosY, this.robot);
         this.physics.arcade.enable(this.player);
         this.physics.enable( [ this.player ], Phaser.Physics.ARCADE);
 
@@ -657,7 +660,7 @@ RobotKompis.Level.prototype = {
 
         this.stopButton.visible = false;
         this.runButton.visible = true;
-        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
@@ -682,7 +685,7 @@ RobotKompis.Level.prototype = {
 
         this.stopButton.visible = false;
         this.runButton.visible = true;
-        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
@@ -978,7 +981,7 @@ RobotKompis.Level.prototype = {
 
         // Resets player and commands
 	    this.player.body.allowGravity = true;
-        this.player.reset(this.robotSpawnPosX, this.world.height - 280);
+        this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
         this.runInitiated = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
