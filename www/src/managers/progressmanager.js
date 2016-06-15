@@ -11,7 +11,8 @@ function saveData(args) {
     if (typeof args !== "undefined" && args !== null) {
 
         saveObject.robot = args.robot;
-
+        saveObject.robotFrame = args.robotFrame;
+        
         // Controls for setting correct values to the saveObject to be stored in localStorage
         if (typeof storageObject !== "undefined" && storageObject !== null) {
             saveObject.levels = storageObject.levels;
@@ -78,6 +79,7 @@ function loadData() {
         returnObject.levels = {};
         returnObject.funcArray = [];
         returnObject.robot = "";
+        returnObject.robotFrame = 0;
         returnObject.totalStars = 0;
 
         return returnObject;

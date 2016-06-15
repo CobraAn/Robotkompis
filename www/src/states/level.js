@@ -130,9 +130,11 @@ RobotKompis.Level.prototype = {
     /*
      * Initiates variables needed for the level creation and storage
      */
-    init: function (character, levelName){
+    init: function (character, robotFrame, levelName){
         this.robot = character;
         this.saveDataArgs.robot = character;
+        console.log("robotFrame", robotFrame, character, levelName)
+        this.saveDataArgs.robotFrame = robotFrame; 
         this.saveDataArgs.levelName = levelName;
     },
 

@@ -1,12 +1,7 @@
 RobotKompis.MapOverview = function (game) {
     'use strict';
     this.title = null;
-    // this.LevelOne = null;
-    // this.LevelTwo = null;
-    // this.LevelThree = null;
-    // this.LevelFour = null;
-    // this.LevelFive = null;
-    // this.LevelSix = null;
+
     this.settingIcon = null;
     this.setting_cloud; // The popUp (cloud) which is shown when you click on the settings icon. 
     this.mute_button;
@@ -74,6 +69,7 @@ RobotKompis.MapOverview.prototype = {
         if (typeof this.playerData != "undefined" && this.playerData != null && this.playerData.robot != "") {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
+            console.log("While", this.character, this.robotFrame)
             this.funcArray = this.playerData.funcArray;
 
         } else {
@@ -349,10 +345,11 @@ RobotKompis.MapOverview.prototype = {
     // Functions connected to the level buttons for loading correct game states
     startLevelOne: function () {
         'use strict';
+        console.log("robotFrame in startLVL1", this.robotFrame)
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'key_com'];
         this.state.states['Level'].playerData = this.playerData;
-        this.state.start('Level', true, false, this.character, "Level1");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level1");
         
 
     },
@@ -362,7 +359,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap2'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap2'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_right_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level2");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level2");
     },
     
     startLevelThree: function () {
@@ -370,7 +367,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap3'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap3'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'key_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level3");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level3");
     },
     
     startLevelFour: function () {
@@ -378,7 +375,7 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap4'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap4'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'key_com']; // , 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
            this.state.states['Level'].playerData = this.playerData;                                             
-        this.state.start('Level', true, false, this.character, "Level4");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level4");
     },
     
     startLevelFive: function () {
@@ -386,42 +383,42 @@ RobotKompis.MapOverview.prototype = {
         this.state.states['Level'].tilemapKey = 'tilemap5'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap5'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level5");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level5");
     },
     startLevelSix: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap6'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level6");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level6");
     },
     startLevelSeven: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap7'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level7");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level7");
     },
     startLevelEight: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap8'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level8");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level8");
     },
     startLevelNine: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap9'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level9");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level9");
     },
     startLevelTen: function () {
         'use strict';
         this.state.states['Level'].tilemapKey = 'tilemap10'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap6'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'hop_left_com', 'hop_right_com', 'down_com', 'key_com']; //, 'down_com', 'key_com', 'ladder_com', 'hop_left_com', 'hop_right_com'
         this.state.states['Level'].playerData = this.playerData;                                                
-        this.state.start('Level', true, false, this.character, "Level10");
+        this.state.start('Level', true, false, this.character, this.robotFrame, "Level10");
     },    
     popuprobot: function () {
         //change so that other buttons then robot-choosing-menu doesnt show.
@@ -447,6 +444,7 @@ RobotKompis.MapOverview.prototype = {
     whileButton: function () {
         this.character = 'while';        //changes the character
         this.robotchoice.frame = 1;     //change the robotbuttons img
+        this.robotFrame = 1;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 1;
         saveRobot(this.robotData);      //saves the choosen robot for later use in lokalstorage. 
@@ -454,6 +452,7 @@ RobotKompis.MapOverview.prototype = {
     switchButton: function () {
         this.character = 'switch';
         this.robotchoice.frame = 0;
+        this.robotFrame = 0;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 0;
         saveRobot(this.robotData);    
@@ -461,6 +460,7 @@ RobotKompis.MapOverview.prototype = {
     elseButton: function () {
         this.character = 'else';
         this.robotchoice.frame = 4;
+        this.robotFrame = 4;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 4;
         saveRobot(this.robotData);
@@ -468,6 +468,7 @@ RobotKompis.MapOverview.prototype = {
     gotoButton: function () {
         this.character = 'goto';
         this.robotchoice.frame = 2;
+        this.robotFrame = 2;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 2;
         saveRobot(this.robotData);
@@ -475,6 +476,7 @@ RobotKompis.MapOverview.prototype = {
     ifButton: function () {
         this.character = 'if';
         this.robotchoice.frame = 3;
+        this.robotFrame = 3;
         this.robotData.robot = this.character;
         this.robotData.robotFrame = 3;
         saveRobot(this.robotData);
