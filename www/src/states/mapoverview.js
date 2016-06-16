@@ -3,9 +3,9 @@ RobotKompis.MapOverview = function (game) {
     this.title = null;
 
     this.settingIcon = null;
-    this.setting_cloud; // The popUp (cloud) which is shown when you click on the settings icon. 
-    this.mute_button;
-    this.tut_button;
+    this.settingCloud; // The popUp (cloud) which is shown when you click on the settings icon. 
+    this.muteButton;
+    this.tutButton;
     
     this.tilemapKey = null; // The tilemap key from Preloader which matches the given level. 
     this.commandKeys = null; // The commands which are available on a certain level. 
@@ -17,8 +17,6 @@ RobotKompis.MapOverview = function (game) {
     this.playerData = {};
     this.robotFrame;
     this.robotData = {};
-    this.robotSpawnX;
-    this.robotSpawnY;
 
     this.currentWorld; // Vairabel for level select
     this.worldOpenArray = [0,0,0,0,0];
@@ -87,15 +85,15 @@ RobotKompis.MapOverview.prototype = {
         this.popupGroup = this.add.group();
  
         // Create the settings could sprite and put it where it should be
-        this.setting_cloud = this.add.image(430, 50, 'settingsCloud');
-        this.setting_cloud.bringToTop();
-        this.setting_cloud.visible = false;
+        this.settingCloud = this.add.image(430, 50, 'settingsCloud');
+        this.settingCloud.bringToTop();
+        this.settingCloud.visible = false;
 
         // Mute and Tutorial button initiation
-        this.mute_button = this.add.button(500, 65,  'muteUnMute', this.Mute, this);
-        this.tut_button = this.add.button(500, 300,  'tutBtn', this.LoadTutorial, this)
-        this.mute_button.visible = false;
-        this.tut_button.visible = false;
+        this.muteButton = this.add.button(500, 65,  'muteUnMute', this.Mute, this);
+        this.tutButton = this.add.button(500, 300,  'tutBtn', this.LoadTutorial, this)
+        this.muteButton.visible = false;
+        this.tutButton.visible = false;
 
         // Robot choosing menu
         this.robotchoice = this.add.button(5, 5, 'robotButton' , this.popuprobot, this);
@@ -138,29 +136,32 @@ RobotKompis.MapOverview.prototype = {
     startSettings: function () {
         'use strict';
         
-        if (this.setting_cloud.visible==false) {
-            this.setting_cloud.visible = true;
-            this.mute_button.visible = true;
+        if (this.settingCloud.visible==false) {
+            this.settingCloud.visible = true;
+            this.muteButton.visible = true;
         }
         
         else {
-            this.mute_button.visible = false;
-            this.tut_button.visible = false;
-            this.setting_cloud.visible = false;
+            this.muteButton.visible = false;
+            this.tutButton.visible = false;
+            this.settingCloud.visible = false;
   
          }
     },
     
     createLevelSelect: function() {
 
-        // Create left and right arrows for level select navigation
+        // Create left and right arrows for level select navigation and adjust them in accordance with the current world page
         this.leftArrow = this.add.button(this.world.centerX - 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 0, 0, 1);
         this.leftArrow.anchor.setTo(0.5);
         this.leftArrow.frame = 0;
-        this.leftArrow.alpha = 0.3;
+        if(this.currentPage == 0){this.leftArrow.alpha = 0.3}
+        else {this.leftArrow.alpha = 1}        
         this.rightArrow = this.add.button(this.world.centerX + 100, this.world.centerY + 150, 'menuArrows', this.arrowClicked, this, 2, 2, 3);
         this.rightArrow.anchor.setTo(0.5);
         this.rightArrow.frame = 2;
+        if(this.currentPage == this.pages-1){this.rightArrow.alpha = 0.3}
+        else {this.rightArrow.alpha = 1} 
 
         //Creation of levelButton group
         this.levelButtonsGroup = this.add.group();
@@ -245,42 +246,27 @@ RobotKompis.MapOverview.prototype = {
                 }
             }
         }
+        // Putting you in the world where you have played. 
+        var buttonsTween = this.add.tween(this.levelButtonsGroup);
+        buttonsTween.to({
+            x: this.currentPage * this.world.width * -1
+        }, 500, Phaser.Easing.Cubic.None);
+        buttonsTween.start();
     },
      buttonClicked: function (button, pointer) {
 
          // Start correct level
         if(button.frame < 4) {
-
-            if (button.levelNumber == 1) {
-                this.startLevelOne();
-            }
-            else if (button.levelNumber == 2) {
-                this.startLevelTwo();
-            }
-            else if (button.levelNumber == 3) {
-                this.startLevelThree();
-            }
-             else if (button.levelNumber == 4) {
-                this.startLevelFour();
-            }
-             else if (button.levelNumber == 5) {
-                this.startLevelFive();
-            }
-            else if (button.levelNumber == 6) {
-                this.startLevelSix();
-            }
-            else if (button.levelNumber == 7) {
-                this.startLevelSeven();
-            }
-             else if (button.levelNumber == 8) {
-                this.startLevelEight();
-            }
-             else if (button.levelNumber == 9) {
-                this.startLevelNine();
-            }
-            else if (button.levelNumber == 10) {
-                this.startLevelTen();
-            }
+            if (button.levelNumber == 1) {this.startLevelOne()}
+            else if (button.levelNumber == 2) {this.startLevelTwo()}
+            else if (button.levelNumber == 3) {this.startLevelThree()}
+            else if (button.levelNumber == 4) {this.startLevelFour()}
+            else if (button.levelNumber == 5) {this.startLevelFive()}
+            else if (button.levelNumber == 6) {this.startLevelSix()}
+            else if (button.levelNumber == 7) {this.startLevelSeven()}
+            else if (button.levelNumber == 8) {this.startLevelEight()}
+            else if (button.levelNumber == 9) {this.startLevelNine()}
+            else if (button.levelNumber == 10) {this.startLevelTen()}
             else {
                 console.log('Something went wrong');
             }
@@ -311,6 +297,7 @@ RobotKompis.MapOverview.prototype = {
     },
     arrowClicked: function (button) {
         // Touching right arrow and still not reached last page
+        console.log("CurrentPage", this.currentPage)
         if(button.frame==3 && this.currentPage < this.pages-1){
             this.leftArrow.alpha = 1;
             this.currentPage++;
@@ -327,7 +314,7 @@ RobotKompis.MapOverview.prototype = {
             buttonsTween.start();
         }
         // Touching left arrow and still not reached first page
-        if(button.frame==1 && this.currentPage>0){
+        if(button.frame==1 && this.currentPage > 0){
             this.rightArrow.alpha = 1;
             this.currentPage--;
             // Fade out the button if we reached first page
@@ -486,11 +473,11 @@ RobotKompis.MapOverview.prototype = {
     Mute: function(){
         if (this.sound.mute == false) {
             this.sound.mute = true;
-            this.mute_button.frame = 1;
+            this.muteButton.frame = 1;
         } else {
             this.sound.mute = false;
             
-            this.mute_button.frame = 0;
+            this.muteButton.frame = 0;
         };   
     },
 
