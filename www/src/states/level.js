@@ -188,8 +188,10 @@ RobotKompis.Level.prototype = {
         this.layer4 = this.map.createLayer('ladder');
         this.layer5 = this.map.createLayer('door');
     
-        // Activate collision on the blocked layer
+        // Layer collisions. this.map.setCollisionBetween(startTileIndex, endTileIndex, collision, layerKey)
         this.map.setCollisionBetween(1, 3000, true, 'blocked');
+        this.map.setCollisionBetween(1, 3000, true, 'water');
+        this.map.setCollisionBetween(1, 3000, true, 'ice');
 
         // Create the playern and enable physics on it
         this.player = this.add.sprite(this.robotSpawnPosX, this.robotSpawnPosY, this.robot);
@@ -210,21 +212,16 @@ RobotKompis.Level.prototype = {
         this.player.animations.add('idle', [0, 1, 2], 4.5, false);
         this.player.animations.add('climb', [7], 1, false);
 
-        // Layer collisions. this.map.setCollisionBetween(startTileIndex, endTileIndex, collision, layerKey) 
-        this.map.setCollisionBetween(1, 5000, true, 'water');
-        //this.map.setCollisionBetween(1, 5000, true, 'ice');
-
         // The water layer. Enables physics
         this.game.physics.arcade.enable(this.layer1); 
         this.physics.enable( [ this.layer1 ], Phaser.Physics.ARCADE);
         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit); // If the player collides with the water layer, call this.waterHit()
 
-        // The ice layer
-        /*
+        // The ice layer        
         this.game.physics.arcade.enable(this.layer6);        
         this.physics.enable( [ this.layer6 ], Phaser.Physics.ARCADE);        
-        this.game.physics.arcade.collide(this.player, this.layer6, this.iceHIT);
-        */
+        this.game.physics.arcade.collide(this.player, this.layer6, this.iceHit);
+        
 
 
         // Outer Block Library. Black
@@ -418,7 +415,7 @@ RobotKompis.Level.prototype = {
     update: function () {
         // Set the layers to collide with the player. Set in update so it is kept in action. 
         this.game.physics.arcade.collide(this.player, this.layer1, this.waterHit, null, this);
-        //this.game.physics.arcade.collide(this.player, this.layer6, this.iceHIT, null, this);
+        this.game.physics.arcade.collide(this.player, this.layer6, this.iceHit, null, this);
         this.game.physics.arcade.collide(this.player, this.layer2);
         this.game.physics.arcade.collide(this.player, this.layer4, this.ladderHit);
         this.game.physics.arcade.collide(this.player, this.layer5, this.doorHit);

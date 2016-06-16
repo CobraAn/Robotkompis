@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="15" tilewidth="32" tileheight="32" nextobjectid="8">
  <tileset firstgid="1" name="spritesheet_tiles" tilewidth="32" tileheight="32" tilecount="128" columns="8">
-  <image source="../kenney32/spritesheet_tiles.png" trans="ff00ff" width="256" height="512"/>
+  <image source="../spritesheets/spritesheet_tiles.png" trans="ff00ff" width="256" height="512"/>
  </tileset>
  <tileset firstgid="129" name="spritesheet_items" tilewidth="32" tileheight="32" tilecount="32" columns="8">
-  <image source="../kenney32/spritesheet_items.png" trans="ff00ff" width="256" height="128"/>
+  <image source="../spritesheets/spritesheet_items.png" trans="ff00ff" width="256" height="128"/>
  </tileset>
  <tileset firstgid="161" name="newdesert" tilewidth="32" tileheight="32" tilecount="450" columns="30">
   <image source="../backgrounds/newdesert.jpg" trans="ff00ff" width="960" height="480"/>
  </tileset>
  <tileset firstgid="611" name="spritesheet_ground2" tilewidth="32" tileheight="32" tilecount="128" columns="8">
-  <image source="../kenney32/spritesheet_ground2.png" trans="ff00ff" width="256" height="512"/>
+  <image source="../spritesheets/spritesheet_ground2.png" trans="ff00ff" width="256" height="512"/>
  </tileset>
  <layer name="background" width="30" height="15">
   <data encoding="csv">
@@ -48,6 +48,25 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,121,121,121,121,121,121,121,121,121,121,121,121,121,
 0,0,0,0,0,0,0,122,122,122,0,0,0,0,0,2,10,10,10,10,10,10,10,10,10,10,10,10,10,10
+</data>
+ </layer>
+ <layer name="ice" width="30" height="15">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <layer name="unblocked" width="30" height="15">
