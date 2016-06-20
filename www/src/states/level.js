@@ -109,6 +109,8 @@ RobotKompis.Level = function (game) {
     this.ladderOverlap = false;
     this.doorOverlap = false;
     this.wrongCommand = false;
+    this.onIce = false;
+    this.iceStop = false; 
     this.doorX = 0;
     this.doorY = 0;
     this.downActive = false;
@@ -221,8 +223,6 @@ RobotKompis.Level.prototype = {
         this.game.physics.arcade.enable(this.layer6);        
         this.physics.enable( [ this.layer6 ], Phaser.Physics.ARCADE);        
         this.game.physics.arcade.collide(this.player, this.layer6, this.iceHit);
-        
-
 
         // Outer Block Library. Black
         graphics.lineStyle(0);
@@ -464,6 +464,22 @@ RobotKompis.Level.prototype = {
         // Velocity control and command movement. Activates constantly but only if a command is currently in play (comKey != "nope")
         if (this.runInitiated == false && this.comKey != "nope") {
             // If the command is walk_right or hop_right, and they have reached or passed finalPosX, and are still moving (velocity != 0)
+            if (this.onIce) {
+                // First get the blocked tiles which are in the area of the player. 
+                var layer2tiles = this.layer2.getTiles(this.player.x-10, this.player.y, 10, 30);
+                var iceEnd = false // Set iceEnd to be false until proven otherwise
+                console.log(layer2tiles);
+                // Check each tile for if it has a valid block (invalid blocks are -1). All valid blocks in this layer count as ice blocks
+                for (i = 0; i < layer2tiles.length; i++) {
+                    if (layer2tiles[i].index != (-1)) {
+                        iceEnd = true; // A dirt/snow block has been found. 
+                    }
+                }
+                // We've found a snow or dirt block. Stop sliding.
+                if (iceEnd) {
+                    this.iceStop = true;
+                } 
+            }
             if ((this.comKey == "walk_right_com" || this.comKey == "hop_right_com") && (this.player.x >= this.finalPosX || this.player.body.velocity.x == 0)) {
                 this.player.body.velocity.x = 0; // Stop all movement
                 this.player.body.velocity.y = 0;
@@ -511,7 +527,9 @@ RobotKompis.Level.prototype = {
         // runInitiated = True has been set by the play button, and we'll run through as long as we have commands to work through
         if (this.runInitiated == true && this.comArrIndex < this.commandArray.length) {
             // Get the command's image key from the command array.
-            this.comKey = this.commandArray[this.comArrIndex].key; // Because ain't nobody got time to type that every single time. 
+            this.comKey = this.commandArray[this.comArrIndex].key; // Because ain't nobody got time to type that every single time.
+            this.onIce = false; 
+            this.iceStop = false; 
             if (this.comKey == "walk_right_com") {
                 this.animationCheck = 1; // Set the animation to be walking right
                 this.player.body.velocity.x = 100; // Set the player velocity to be 100
@@ -642,27 +660,23 @@ RobotKompis.Level.prototype = {
     },
     // Reset the player and inputs
     iceHit: function(){
+        // Make the robot slide in a cool way
         this.animationCheck = 0;
-
-        // Re-activate commands and their input related functionality. 
-        for (i = 0; i < this.commandGroup.length; i++) {
-            this.commandGroup.getAt(i).input.enabled = true;
+        // IF the robot is moving horizontally, is planning to move more (at least one block) and we're checking commands (this.runInitiated == false)
+        if (this.runInitiated == false && this.player.body.velocity.x != 0 && !this.iceStop) {
+            // this.player.x <= this.finalPosX
+            // IF: this is the first block of ice. Only move as intended (1 block)
+            if (((this.player.x) > this.finalPosX) && this.player.body.velocity.x > 0) {
+                // Keep moving in the direction you're headed. 
+                console.log("slide right");
+                this.onIce = true; 
+                this.finalPosX += 31;
+            } else if (((this.player.x) < this.finalPosX) && this.player.body.velocity.x < 0) {
+                console.log("slide left");
+                this.onIce = true; 
+                this.finalPosX -= 31;
+            }
         }
-
-        this.rightArrow20.input.enabled = true;
-        this.leftArrow20.input.enabled = true;
-        this.newCommand.input.draggable = true;
-        this.newButton.input.enabled = true; 
-        this.clearButton.input.enabled = true;
-
-        this.stopButton.visible = false;
-        this.runButton.visible = true;
-        this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
-        this.runInitiated = false; 
-        this.comArrIndex = 0;
-        this.commandArray = [];
-        this.comKey = "nope";
-        
     },
 
     // Reset the player and inputs
@@ -938,6 +952,7 @@ RobotKompis.Level.prototype = {
 
         this.stopButton.visible = true;
         this.runButton.visible = false;
+        this.onIce = false; // just in case
 
         this.commandGroup.sort("x");
         this.funcLineGroup.sort("x");
@@ -980,6 +995,7 @@ RobotKompis.Level.prototype = {
 	    this.player.body.allowGravity = true;
         this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
         this.runInitiated = false; 
+        this.onIce = false; 
         this.comArrIndex = 0;
         this.commandArray = [];
         this.comKey = "nope";
