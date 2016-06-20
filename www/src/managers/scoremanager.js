@@ -49,24 +49,24 @@ function calculateScore(noBlocks, levelName) {
             minStarsRq.threeStars = 23;
             break;
         case "Level6":
-            minStarsRq.twoStars = 15;
-            minStarsRq.threeStars = 8;
+            minStarsRq.twoStars = 22;
+            minStarsRq.threeStars = 19;
             break;
         case "Level7":
-            minStarsRq.twoStars = 15;
-            minStarsRq.threeStars = 10;
+            minStarsRq.twoStars = 20;
+            minStarsRq.threeStars = 18;
             break;
         case "Level8":
-            minStarsRq.twoStars = 15;
+            minStarsRq.twoStars = 13;
             minStarsRq.threeStars = 10;
             break;
         case "Level9":
-            minStarsRq.twoStars = 15;
-            minStarsRq.threeStars = 10;
+            minStarsRq.twoStars = 22;
+            minStarsRq.threeStars = 18;
             break;
         case "Level10":
-            minStarsRq.twoStars = 15;
-            minStarsRq.threeStars = 10;
+            minStarsRq.twoStars = 17;
+            minStarsRq.threeStars = 14;
             break;
         default:
             return;
