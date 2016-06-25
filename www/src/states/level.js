@@ -136,7 +136,6 @@ RobotKompis.Level.prototype = {
     init: function (character, robotFrame, levelName, robotX, robotY){
         this.robot = character;
         this.saveDataArgs.robot = character;
-        console.log("robotFrame", robotFrame, character, levelName)
         this.saveDataArgs.robotFrame = robotFrame; 
         this.saveDataArgs.levelName = levelName;
         this.robotSpawnPosX = robotX;
@@ -468,7 +467,6 @@ RobotKompis.Level.prototype = {
                 // First get the blocked tiles which are in the area of the player. 
                 var layer2tiles = this.layer2.getTiles(this.player.x-10, this.player.y, 10, 30);
                 var iceEnd = false // Set iceEnd to be false until proven otherwise
-                console.log(layer2tiles);
                 // Check each tile for if it has a valid block (invalid blocks are -1). All valid blocks in this layer count as ice blocks
                 for (i = 0; i < layer2tiles.length; i++) {
                     if (layer2tiles[i].index != (-1)) {
@@ -564,8 +562,8 @@ RobotKompis.Level.prototype = {
             } else if (this.comKey == "down_com") {
                 // Check if there's a ladder BELOW the player.
                 var layer4tiles = this.layer4.getTiles(this.player.x, this.player.y + 64, 20, 20);
-
                 // Ladder overlap check
+                this.ladderOverlap = false;
                 for (i = 0; i < layer4tiles.length; i++) {
                     if (layer4tiles[i].index != (-1)) {
                         this.ladderOverlap = true;
@@ -668,13 +666,11 @@ RobotKompis.Level.prototype = {
             // IF: this is the first block of ice. Only move as intended (1 block)
             if (((this.player.x) > this.finalPosX) && this.player.body.velocity.x > 0) {
                 // Keep moving in the direction you're headed. 
-                console.log("slide right");
                 this.onIce = true; 
-                this.finalPosX += 31;
+                this.finalPosX += 32;
             } else if (((this.player.x) < this.finalPosX) && this.player.body.velocity.x < 0) {
-                console.log("slide left");
                 this.onIce = true; 
-                this.finalPosX -= 31;
+                this.finalPosX -= 32;
             }
         }
     },
@@ -993,6 +989,7 @@ RobotKompis.Level.prototype = {
 
         // Resets player and commands
 	    this.player.body.allowGravity = true;
+        this.map.setCollisionBetween(1, 5000, true, 'blocked');
         this.player.reset(this.robotSpawnPosX, this.robotSpawnPosY);
         this.runInitiated = false; 
         this.onIce = false; 
@@ -1155,9 +1152,6 @@ RobotKompis.Level.prototype = {
                 this.funcCreateArray[i].visible = true;    
             } 
         }      
-        console.log(this.funcLineGroup.getAt(0).key);
-        console.log(this.funcTreeGroup.getAt(index).getAt(0).key);
-
     },
     // OWN FUNCTION: click on "AVBRYT" and cancel the function creating process. 
     cancelCreateFunctionOnClick: function(index) {

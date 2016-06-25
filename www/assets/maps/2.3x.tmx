@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="15" tilewidth="32" tileheight="32" nextobjectid="13">
  <tileset firstgid="1" name="spritesheet_tiles" tilewidth="32" tileheight="32" tilecount="128" columns="8">
-  <image source="../kenney32/spritesheet_tiles.png" trans="ff00ff" width="256" height="512"/>
+  <image source="../spritesheets/spritesheet_tiles.png" trans="ff00ff" width="256" height="512"/>
  </tileset>
  <tileset firstgid="129" name="spritesheet_ground2" tilewidth="32" tileheight="32" tilecount="128" columns="8">
-  <image source="../kenney32/spritesheet_ground2.png" trans="ff00ff" width="256" height="512"/>
+  <image source="../spritesheets/spritesheet_ground2.png" trans="ff00ff" width="256" height="512"/>
  </tileset>
  <tileset firstgid="257" name="spritesheet_items" tilewidth="32" tileheight="32" tilecount="32" columns="8">
-  <image source="../kenney32/spritesheet_items.png" trans="ff00ff" width="256" height="128"/>
+  <image source="../spritesheets/spritesheet_items.png" trans="ff00ff" width="256" height="128"/>
  </tileset>
  <tileset firstgid="289" name="ice32xx" tilewidth="32" tileheight="32" tilecount="100" columns="10">
-  <image source="../kenney32/ice32xx.png" trans="ff00ff" width="320" height="320"/>
+  <image source="../spritesheets/ice32xx.png" trans="ff00ff" width="320" height="320"/>
  </tileset>
  <tileset firstgid="389" name="iceland" tilewidth="32" tileheight="32" tilecount="527" columns="31">
   <image source="../backgrounds/iceland.png" trans="ff00ff" width="1000" height="562"/>
@@ -82,7 +82,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,343,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -101,7 +101,7 @@
 0,0,0,0,0,0,348,328,348,0,0,0,348,348,348,0,0,0,0,0,0,348,348,348,348,348,348,348,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-11,0,0,0,0,0,0,0,0,0,343,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 348,348,348,348,348,348,348,348,348,348,348,348,348,348,348,348,348,348,0,0,0,348,348,348,348,348,348,348,348,348,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -69,7 +69,6 @@ RobotKompis.MapOverview.prototype = {
         if (typeof this.playerData != "undefined" && this.playerData != null && this.playerData.robot != "") {
             this.character = this.playerData.robot;
             this.robotFrame = this.playerData.robotFrame;
-            console.log("While", this.character, this.robotFrame)
             this.funcArray = this.playerData.funcArray;
 
         } else {
@@ -194,7 +193,6 @@ RobotKompis.MapOverview.prototype = {
                         if (typeof this.playerData.levels[dictKey] !== "undefined" && this.playerData.levels[dictKey] !== null) {
                             currentWorldTotalStars += this.playerData.levels[dictKey]; // Take the data drom local storage (see in init function)
                             levelStars = this.playerData.levels[dictKey];
-                            console.log(currentWorldTotalStars);
                         }
                     }
 
@@ -297,7 +295,6 @@ RobotKompis.MapOverview.prototype = {
     },
     arrowClicked: function (button) {
         // Touching right arrow and still not reached last page
-        console.log("CurrentPage", this.currentPage)
         if(button.frame==3 && this.currentPage < this.pages-1){
             this.leftArrow.alpha = 1;
             this.currentPage++;
@@ -334,7 +331,6 @@ RobotKompis.MapOverview.prototype = {
     // Functions connected to the level buttons for loading correct game states
     startLevelOne: function () {
         'use strict';
-        console.log("robotFrame in startLVL1", this.robotFrame)
         this.state.states['Level'].tilemapKey = 'tilemap1'; // Start a variable in the 'Level' state, name it tilemapKey and assign it 'tilemap1'.
         this.state.states['Level'].commandKeys = ['walk_right_com', 'walk_left_com', 'ladder_com', 'key_com'];
         this.state.states['Level'].playerData = this.playerData;
