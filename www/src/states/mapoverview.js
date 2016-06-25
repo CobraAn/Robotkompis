@@ -35,7 +35,7 @@ RobotKompis.MapOverview = function (game) {
      * 5 = Locked level
     */
     //ORIGINAL this.starsArray = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    this.starsArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    this.starsArray = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     // Number of world pages. 
     this.pages = 2; // this.starsArray.length/(this.buttonRows*this.buttonCols)
 
